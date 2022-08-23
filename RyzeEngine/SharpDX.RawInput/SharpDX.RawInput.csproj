@@ -1,0 +1,94 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="..\packages\SharpGenTools.Sdk.1.2.1\build\SharpGenTools.Sdk.props" Condition="Exists('..\packages\SharpGenTools.Sdk.1.2.1\build\SharpGenTools.Sdk.props')" />
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{F9D27B7C-0825-4AB7-83DE-133E00FD0A68}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>SharpDX.RawInput</RootNamespace>
+    <AssemblyName>SharpDX.RawInput</AssemblyName>
+    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <Deterministic>true</Deterministic>
+    <SccProjectName>SAK</SccProjectName>
+    <SccLocalPath>SAK</SccLocalPath>
+    <SccAuxPath>SAK</SccAuxPath>
+    <SccProvider>SAK</SccProvider>
+    <TargetFrameworkProfile />
+    <NuGetPackageImportStamp>
+    </NuGetPackageImportStamp>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="AssemblyDoc.cs" />
+    <Compile Include="Device.cs" />
+    <Compile Include="DeviceInfo.cs" />
+    <Compile Include="Generated\net40_DESKTOP_APP\Enumerations.cs" />
+    <Compile Include="Generated\net40_DESKTOP_APP\Functions.cs" />
+    <Compile Include="Generated\net40_DESKTOP_APP\Interfaces.cs" />
+    <Compile Include="Generated\net40_DESKTOP_APP\LocalInterop.cs" />
+    <Compile Include="Generated\net40_DESKTOP_APP\Structures.cs" />
+    <Compile Include="HidInfo.cs" />
+    <Compile Include="HidInputEventArgs.cs" />
+    <Compile Include="KeyboardInfo.cs" />
+    <Compile Include="KeyboardInputEventArgs.cs" />
+    <Compile Include="MouseInfo.cs" />
+    <Compile Include="MouseInputEventArgs.cs" />
+    <Compile Include="NamespaceDoc.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="RawInputEventArgs.cs" />
+    <Compile Include="RawMouse.cs" />
+    <Compile Include="RegisterDeviceOptions.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\SharpDX.Desktop\SharpDX.Desktop.csproj">
+      <Project>{06b05f31-4e4b-4f8e-92e5-6abe1344a351}</Project>
+      <Name>SharpDX.Desktop</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\SharpDX\SharpDX.csproj">
+      <Project>{de77b263-c855-4b19-babf-2f4dc53caebd}</Project>
+      <Name>SharpDX</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
+    <PropertyGroup>
+      <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
+    </PropertyGroup>
+    <Error Condition="!Exists('..\packages\SharpGenTools.Sdk.1.2.1\build\SharpGenTools.Sdk.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\SharpGenTools.Sdk.1.2.1\build\SharpGenTools.Sdk.props'))" />
+    <Error Condition="!Exists('..\packages\SharpGenTools.Sdk.1.2.1\build\SharpGenTools.Sdk.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\SharpGenTools.Sdk.1.2.1\build\SharpGenTools.Sdk.targets'))" />
+  </Target>
+  <Import Project="..\packages\SharpGenTools.Sdk.1.2.1\build\SharpGenTools.Sdk.targets" Condition="Exists('..\packages\SharpGenTools.Sdk.1.2.1\build\SharpGenTools.Sdk.targets')" />
+</Project>

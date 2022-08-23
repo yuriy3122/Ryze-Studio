@@ -1,0 +1,121 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="..\packages\SharpGenTools.Sdk.1.2.1\build\SharpGenTools.Sdk.props" Condition="Exists('..\packages\SharpGenTools.Sdk.1.2.1\build\SharpGenTools.Sdk.props')" />
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{7372ECFC-211C-458C-B337-489C5D18CF28}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>SharpDX.DXGI</RootNamespace>
+    <AssemblyName>SharpDX.DXGI</AssemblyName>
+    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <Deterministic>true</Deterministic>
+    <SccProjectName>SAK</SccProjectName>
+    <SccLocalPath>SAK</SccLocalPath>
+    <SccAuxPath>SAK</SccAuxPath>
+    <SccProvider>SAK</SccProvider>
+    <TargetFrameworkProfile />
+    <NuGetPackageImportStamp>
+    </NuGetPackageImportStamp>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>1</WarningLevel>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>1</WarningLevel>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+  </PropertyGroup>
+  <PropertyGroup>
+    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.IO.Compression.FileSystem" />
+    <Reference Include="System.Numerics" />
+    <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Adapter.cs" />
+    <Compile Include="AssemblyDoc.cs" />
+    <Compile Include="DebugId.cs" />
+    <Compile Include="DebugInterface.cs" />
+    <Compile Include="Device.cs" />
+    <Compile Include="DeviceChild.cs" />
+    <Compile Include="DXGIDebug.cs" />
+    <Compile Include="DXGIDebug1.cs" />
+    <Compile Include="DXGIObject.cs" />
+    <Compile Include="Factory.cs" />
+    <Compile Include="Factory1.cs" />
+    <Compile Include="Factory2.cs" />
+    <Compile Include="Factory4.cs" />
+    <Compile Include="Factory5.cs" />
+    <Compile Include="FormatHelper.cs" />
+    <Compile Include="Generated\net40_DESKTOP_APP\Enumerations.cs" />
+    <Compile Include="Generated\net40_DESKTOP_APP\Functions.cs" />
+    <Compile Include="Generated\net40_DESKTOP_APP\Interfaces.cs" />
+    <Compile Include="Generated\net40_DESKTOP_APP\LocalInterop.cs" />
+    <Compile Include="Generated\net40_DESKTOP_APP\Structures.cs" />
+    <Compile Include="InfoQueue.cs" />
+    <Compile Include="IVirtualSurfaceImageSourceNative.cs" />
+    <Compile Include="IVirtualSurfaceUpdatesCallbackNative.cs" />
+    <Compile Include="IVirtualSurfaceUpdatesCallbackNativeNative.cs" />
+    <Compile Include="Kernel32.cs" />
+    <Compile Include="ModeDescription.cs" />
+    <Compile Include="ModuleInit.cs" />
+    <Compile Include="NamespaceDoc.cs" />
+    <Compile Include="Output.cs" />
+    <Compile Include="Output1.cs" />
+    <Compile Include="Output2.cs" />
+    <Compile Include="OutputDuplication.cs" />
+    <Compile Include="PresentParameters.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Rational.cs" />
+    <Compile Include="Resource1.cs" />
+    <Compile Include="SampleDescription.cs" />
+    <Compile Include="Surface.cs" />
+    <Compile Include="Surface1.cs" />
+    <Compile Include="Surface2.cs" />
+    <Compile Include="SwapChain.cs" />
+    <Compile Include="SwapChain1.cs" />
+    <Compile Include="SwapChain2.cs" />
+    <Compile Include="VirtualSurfaceUpdatesCallbackNativeShadow.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\SharpDX\SharpDX.csproj">
+      <Project>{de77b263-c855-4b19-babf-2f4dc53caebd}</Project>
+      <Name>SharpDX</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
+    <PropertyGroup>
+      <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
+    </PropertyGroup>
+    <Error Condition="!Exists('..\packages\SharpGenTools.Sdk.1.2.1\build\SharpGenTools.Sdk.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\SharpGenTools.Sdk.1.2.1\build\SharpGenTools.Sdk.props'))" />
+    <Error Condition="!Exists('..\packages\SharpGenTools.Sdk.1.2.1\build\SharpGenTools.Sdk.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\SharpGenTools.Sdk.1.2.1\build\SharpGenTools.Sdk.targets'))" />
+  </Target>
+  <Import Project="..\packages\SharpGenTools.Sdk.1.2.1\build\SharpGenTools.Sdk.targets" Condition="Exists('..\packages\SharpGenTools.Sdk.1.2.1\build\SharpGenTools.Sdk.targets')" />
+</Project>

@@ -1,0 +1,21 @@
+﻿<?xml version='1.0' encoding='utf-8'?>
+<SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="RyzeEditor.Properties" GeneratedClassName="Settings">
+  <Profiles />
+  <Settings>
+    <Setting Name="StorageType" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">FileStorage</Value>
+    </Setting>
+    <Setting Name="TextureFormat" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">PVR</Value>
+    </Setting>
+    <Setting Name="PlatformAlignment" Type="System.Int32" Scope="Application">
+      <Value Profile="(Default)">16384</Value>
+    </Setting>
+    <Setting Name="StoragePath" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">C:\Users\Yuriy\Documents\Storage</Value>
+    </Setting>
+    <Setting Name="OutputFilePath" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">C:\Users\Yuriy\Documents\Ryze.bin</Value>
+    </Setting>
+  </Settings>
+</SettingsFile>

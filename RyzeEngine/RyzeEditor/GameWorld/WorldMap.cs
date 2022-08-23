@@ -1,0 +1,139 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Runtime.Serialization;
+using RyzeEditor.UndoRedo;
+
+namespace RyzeEditor.GameWorld
+{
+	[Serializable]
+	public class WorldMap
+	{
+		private readonly List<EntityBase> _entities = new List<EntityBase>();
+
+		[field: NonSerialized]
+		private static UndoRedoManager _undoRedoManager;
+
+        public event EventHandler<EntityEventArgs> EntityAdded;
+
+		public event EventHandler<EntityEventArgs> EntityModified;
+
+		public event EventHandler<EntityEventArgs> EntityDeleted;
+
+		public Camera Camera { get; private set; }
+
+		public IEnumerable<EntityBase> Entities
+		{
+			get { return _entities; }
+		}
+
+		public WorldMap(Camera camera)
+		{
+			_undoRedoManager = new UndoRedoManager(this);
+
+            Camera = camera;
+		}
+
+        public void AddEntity(EntityBase entity)
+		{
+			if (_entities.Any(e => e == entity))
+			{
+				return;
+			}
+
+			_entities.Add(entity);
+
+			_undoRedoManager.RegisterEntity(entity);
+
+			OnEntityAdded(new EntityEventArgs(entity.Id));
+		}
+
+		public void RemoveEntity(EntityBase entity)
+		{
+			var e = _entities.FirstOrDefault(x => x == entity);
+
+			if (e != null)
+			{
+				_entities.Remove(e);
+			}
+
+			_undoRedoManager.UnRegisterEntity(entity);
+
+			OnEntityDeleted(new EntityEventArgs(entity.Id));
+		}
+
+		public EntityBase FindEntity(Guid id)
+		{
+			return _entities.FirstOrDefault(x => x.Id == id);
+		}
+
+		public List<EntityBase> GetEntities()
+		{
+			return _entities;
+		}
+
+        protected virtual void OnEntityAdded(EntityEventArgs e)
+		{
+            EntityAdded?.Invoke(this, e);
+        }
+
+		protected virtual void OnEntityModified(EntityEventArgs e)
+		{
+            EntityModified?.Invoke(this, e);
+		}
+
+		protected virtual void OnEntityDeleted(EntityEventArgs e)
+		{
+			EntityDeleted?.Invoke(this, e);
+		}
+
+		[OnSerialized]
+		internal void OnWorldMapSerialized(StreamingContext context)
+		{
+			_undoRedoManager = new UndoRedoManager(this);
+
+			foreach (var entity in _entities)
+			{
+				_undoRedoManager.RegisterEntity(entity);
+			}
+
+			_undoRedoManager.Update();
+		}
+
+		[OnDeserialized]
+		internal void OnWorldMapDeserialized(StreamingContext context)
+		{
+			_undoRedoManager = new UndoRedoManager(this);
+
+			foreach (var entity in _entities)
+			{
+				_undoRedoManager.RegisterEntity(entity);
+			}
+		}
+
+		public static void UndoChanges()
+		{
+            _undoRedoManager?.Undo();			
+		}
+
+		public static void RedoChanges()
+		{
+            _undoRedoManager?.Redo();
+		}
+
+		public static void CommitChanges()
+		{
+            _undoRedoManager?.CommitChanges();
+		}
+	}
+
+	public class EntityEventArgs
+	{
+		public Guid EntityId { get; set; }
+
+		public EntityEventArgs(Guid entityId)
+		{
+			EntityId = entityId;
+		}
+	}
+}

@@ -1,0 +1,165 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="..\packages\SharpGenTools.Sdk.1.2.1\build\SharpGenTools.Sdk.props" Condition="Exists('..\packages\SharpGenTools.Sdk.1.2.1\build\SharpGenTools.Sdk.props')" />
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{EEC42884-8A88-4CA3-A989-50306ED9786A}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>SharpDX.Direct3D11</RootNamespace>
+    <AssemblyName>SharpDX.Direct3D11</AssemblyName>
+    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <Deterministic>true</Deterministic>
+    <SccProjectName>SAK</SccProjectName>
+    <SccLocalPath>SAK</SccLocalPath>
+    <SccAuxPath>SAK</SccAuxPath>
+    <SccProvider>SAK</SccProvider>
+    <TargetFrameworkProfile />
+    <NuGetPackageImportStamp>
+    </NuGetPackageImportStamp>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>1</WarningLevel>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>1</WarningLevel>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+  </PropertyGroup>
+  <PropertyGroup>
+    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+  </PropertyGroup>
+  <PropertyGroup>
+    <StartupObject />
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.IO.Compression.FileSystem" />
+    <Reference Include="System.Numerics" />
+    <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="AssemblyDoc.cs" />
+    <Compile Include="BlendState.cs" />
+    <Compile Include="BlendState1.cs" />
+    <Compile Include="BlendStateDescription.cs" />
+    <Compile Include="BlendStateDescription1.cs" />
+    <Compile Include="Buffer.cs" />
+    <Compile Include="BufferDescription.cs" />
+    <Compile Include="ClassInstance.cs" />
+    <Compile Include="ClassLinkage.cs" />
+    <Compile Include="ComputeShader.cs" />
+    <Compile Include="Counter.cs" />
+    <Compile Include="CounterMetadata.cs" />
+    <Compile Include="DepthStencilState.cs" />
+    <Compile Include="DepthStencilStateDescription.cs" />
+    <Compile Include="DepthStencilView.cs" />
+    <Compile Include="Device.cs" />
+    <Compile Include="Device1.cs" />
+    <Compile Include="Device2.cs" />
+    <Compile Include="Device3.cs" />
+    <Compile Include="Device5.cs" />
+    <Compile Include="DeviceChild.cs" />
+    <Compile Include="DeviceContext.CommonShaderStage.cs" />
+    <Compile Include="DeviceContext.ComputeShaderStage.cs" />
+    <Compile Include="DeviceContext.cs" />
+    <Compile Include="DeviceContext.InputAssemblerStage.cs" />
+    <Compile Include="DeviceContext.OutputMergerStage.cs" />
+    <Compile Include="DeviceContext.RasterizerStage.cs" />
+    <Compile Include="DeviceContext.StreamOutputStage.cs" />
+    <Compile Include="DeviceContext1.cs" />
+    <Compile Include="DeviceContext2.cs" />
+    <Compile Include="DeviceContext3.cs" />
+    <Compile Include="DeviceDebug.cs" />
+    <Compile Include="DomainShader.cs" />
+    <Compile Include="Fence.cs" />
+    <Compile Include="Generated\net40_DESKTOP_APP\Enumerations.cs" />
+    <Compile Include="Generated\net40_DESKTOP_APP\Functions.cs" />
+    <Compile Include="Generated\net40_DESKTOP_APP\Interfaces.cs" />
+    <Compile Include="Generated\net40_DESKTOP_APP\LocalInterop.cs" />
+    <Compile Include="Generated\net40_DESKTOP_APP\Structures.cs" />
+    <Compile Include="GeometryShader.cs" />
+    <Compile Include="HullShader.cs" />
+    <Compile Include="InfoQueue.cs" />
+    <Compile Include="InfoQueueFilterDescription.cs" />
+    <Compile Include="InputElement.cs" />
+    <Compile Include="InputLayout.cs" />
+    <Compile Include="Message.cs" />
+    <Compile Include="ModuleInit.cs" />
+    <Compile Include="NamespaceDoc.cs" />
+    <Compile Include="PixelShader.cs" />
+    <Compile Include="Predicate.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Query.cs" />
+    <Compile Include="Query1.cs" />
+    <Compile Include="RasterizerState.cs" />
+    <Compile Include="RasterizerState1.cs" />
+    <Compile Include="RasterizerState2.cs" />
+    <Compile Include="RasterizerStateDescription.cs" />
+    <Compile Include="RasterizerStateDescription1.cs" />
+    <Compile Include="RenderTargetBlendDescription.cs" />
+    <Compile Include="RenderTargetView.cs" />
+    <Compile Include="RenderTargetView1.cs" />
+    <Compile Include="Resource.cs" />
+    <Compile Include="ResourceRegion.cs" />
+    <Compile Include="ResourceView.cs" />
+    <Compile Include="SamplerState.cs" />
+    <Compile Include="SamplerStateDescription.cs" />
+    <Compile Include="ShaderResourceView.cs" />
+    <Compile Include="ShaderResourceView1.cs" />
+    <Compile Include="StreamOutputBufferBinding.cs" />
+    <Compile Include="StreamOutputElement.cs" />
+    <Compile Include="Texture1D.cs" />
+    <Compile Include="Texture2D.cs" />
+    <Compile Include="Texture2D1.cs" />
+    <Compile Include="Texture3D.cs" />
+    <Compile Include="Texture3D1.cs" />
+    <Compile Include="UnorderedAccessView.cs" />
+    <Compile Include="UnorderedAccessView1.cs" />
+    <Compile Include="VertexBufferBinding.cs" />
+    <Compile Include="VertexShader.cs" />
+    <Compile Include="VideoContext.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\SharpDX.DXGI\SharpDX.DXGI.csproj">
+      <Project>{7372ecfc-211c-458c-b337-489c5d18cf28}</Project>
+      <Name>SharpDX.DXGI</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\SharpDX\SharpDX.csproj">
+      <Project>{de77b263-c855-4b19-babf-2f4dc53caebd}</Project>
+      <Name>SharpDX</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="app.config" />
+    <None Include="packages.config" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
+    <PropertyGroup>
+      <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
+    </PropertyGroup>
+    <Error Condition="!Exists('..\packages\SharpGenTools.Sdk.1.2.1\build\SharpGenTools.Sdk.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\SharpGenTools.Sdk.1.2.1\build\SharpGenTools.Sdk.props'))" />
+    <Error Condition="!Exists('..\packages\SharpGenTools.Sdk.1.2.1\build\SharpGenTools.Sdk.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\SharpGenTools.Sdk.1.2.1\build\SharpGenTools.Sdk.targets'))" />
+  </Target>
+  <Import Project="..\packages\SharpGenTools.Sdk.1.2.1\build\SharpGenTools.Sdk.targets" Condition="Exists('..\packages\SharpGenTools.Sdk.1.2.1\build\SharpGenTools.Sdk.targets')" />
+</Project>

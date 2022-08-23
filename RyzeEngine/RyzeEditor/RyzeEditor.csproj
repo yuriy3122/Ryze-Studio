@@ -1,0 +1,303 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{7F73781D-6BB3-4730-86D7-05D528A93D86}</ProjectGuid>
+    <OutputType>WinExe</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>RyzeEditor</RootNamespace>
+    <AssemblyName>RyzeEditor</AssemblyName>
+    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <SccProjectName>SAK</SccProjectName>
+    <SccLocalPath>SAK</SccLocalPath>
+    <SccAuxPath>SAK</SccAuxPath>
+    <SccProvider>SAK</SccProvider>
+    <NuGetPackageImportStamp>
+    </NuGetPackageImportStamp>
+    <TargetFrameworkProfile />
+    <PublishUrl>publish\</PublishUrl>
+    <Install>true</Install>
+    <InstallFrom>Disk</InstallFrom>
+    <UpdateEnabled>false</UpdateEnabled>
+    <UpdateMode>Foreground</UpdateMode>
+    <UpdateInterval>7</UpdateInterval>
+    <UpdateIntervalUnits>Days</UpdateIntervalUnits>
+    <UpdatePeriodically>false</UpdatePeriodically>
+    <UpdateRequired>false</UpdateRequired>
+    <MapFileExtensions>true</MapFileExtensions>
+    <ApplicationRevision>0</ApplicationRevision>
+    <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
+    <IsWebBootstrapper>false</IsWebBootstrapper>
+    <UseApplicationTrust>false</UseApplicationTrust>
+    <BootstrapperEnabled>true</BootstrapperEnabled>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <PlatformTarget>x64</PlatformTarget>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>true</Prefer32Bit>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <LangVersion>7</LangVersion>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <PlatformTarget>x64</PlatformTarget>
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <LangVersion>7</LangVersion>
+  </PropertyGroup>
+  <PropertyGroup>
+    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="BulletSharp, Version=0.11.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\BulletSharp.0.11.1\lib\net40-client\BulletSharp.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Newtonsoft.Json, Version=11.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.11.0.2\lib\net45\Newtonsoft.Json.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="PropertyChanged">
+      <HintPath>..\packages\PropertyChanged.Fody.1.50.3\Lib\dotnet\PropertyChanged.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Controls\WheelControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Controls\WheelControl.Designer.cs">
+      <DependentUpon>WheelControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="GameWorld\PointLight.cs" />
+    <Compile Include="Helpers\PatchHelper.cs" />
+    <Compile Include="Helpers\StringUtils.cs" />
+    <Compile Include="Tools\PointLightTool.cs" />
+    <Compile Include="Tools\VehicleTool.cs" />
+    <Compile Include="WorldMapPacker\CollisionWriter.cs" />
+    <Compile Include="Controls\Matrix3x3Control.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Controls\Matrix3X3Control.Designer.cs">
+      <DependentUpon>Matrix3x3Control.cs</DependentUpon>
+    </Compile>
+    <Compile Include="EditorApp.cs" />
+    <Compile Include="GameWorld\InspectorVisible.cs" />
+    <Compile Include="GameWorld\RelativeChangeable.cs" />
+    <Compile Include="GameWorld\RigidBody.cs" />
+    <Compile Include="Helpers\CollisionTests.cs" />
+    <Compile Include="Helpers\GeometryShape.cs" />
+    <Compile Include="Helpers\MatrixHelper.cs" />
+    <Compile Include="ResourceManagment\IMaterial.cs" />
+    <Compile Include="WorldMapPacker\PackerValidator.cs" />
+    <Compile Include="WorldMapPacker\ITextureCompressor.cs" />
+    <Compile Include="WorldMapPacker\PreProcessor.cs" />
+    <Compile Include="WorldMapPacker\PVRTextureCompressor.cs" />
+    <Compile Include="WorldMapPacker\BinaryWriter.cs" />
+    <Compile Include="WorldMapPacker\VehicleWriter.cs" />
+    <Compile Include="WorldMapPacker\WorldChunkWriter.cs" />
+    <Compile Include="WorldMapPacker\WorldMapPacker.cs" />
+    <Compile Include="WorldMapPacker\PackerOptions.cs" />
+    <Compile Include="WorldMapPacker\WorldMapData.cs" />
+    <Compile Include="Controls\InspectorControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Controls\InspectorControl.Designer.cs">
+      <DependentUpon>InspectorControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\VectorUpDown.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Controls\VectorUpDown.Designer.cs">
+      <DependentUpon>VectorUpDown.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Extentions\Extentions.cs" />
+    <Compile Include="GameWorld\Vehicle.cs" />
+    <Compile Include="Properties\Annotations.cs" />
+    <Compile Include="Renderer\Effect.cs" />
+    <Compile Include="Renderer\EffectManager.cs" />
+    <Compile Include="Renderer\QuardPatch.cs" />
+    <Compile Include="Renderer\PlaneGrid.cs" />
+    <Compile Include="Renderer\RenderContext.cs" />
+    <Compile Include="Renderer\IRenderer.cs" />
+    <Compile Include="Renderer\RenderD3dBase.cs" />
+    <Compile Include="Renderer\RendererD3d.cs" />
+    <Compile Include="Renderer\RenderHelper.cs" />
+    <Compile Include="Renderer\ShaderResourceManager.cs" />
+    <Compile Include="ResourceManagment\IResourceManager.cs" />
+    <Compile Include="ResourceManagment\StorageFactory.cs" />
+    <Compile Include="ResourceManagment\FileStorage.cs" />
+    <Compile Include="ResourceManagment\GeometryMesh.cs" />
+    <Compile Include="ResourceManagment\IAssetStorage.cs" />
+    <Compile Include="ResourceManagment\IMesh.cs" />
+    <Compile Include="ResourceManagment\ITexture.cs" />
+    <Compile Include="ResourceManagment\Material.cs" />
+    <Compile Include="ResourceManagment\ResourceManager.cs" />
+    <Compile Include="ResourceManagment\Texture.cs" />
+    <Compile Include="Serialization\BoundingBoxSurrogate.cs" />
+    <Compile Include="Serialization\BoundingSphereSurrogate.cs" />
+    <Compile Include="Serialization\Matrix3x3Surrogate.cs" />
+    <Compile Include="Serialization\MatrixSurrogate.cs" />
+    <Compile Include="Serialization\QuaternionSurrogate.cs" />
+    <Compile Include="Serialization\Vector2Surrogate.cs" />
+    <Compile Include="Serialization\Vector3Surrogate.cs" />
+    <Compile Include="Serialization\WorldMapSerializer.cs" />
+    <Content Include="Redist\x64\d3dcompiler_47.dll" />
+    <Content Include="Redist\x64\d3dcsx_47.dll" />
+    <Content Include="Redist\x86\d3dcompiler_47.dll" />
+    <Content Include="Redist\x86\d3dcsx_47.dll" />
+    <Content Include="Shaders\FXAA.fx">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Compile Include="Tools\CameraTool.cs" />
+    <Compile Include="Tools\CollisionTool.cs" />
+    <Compile Include="Tools\CustomSelectTool.cs" />
+    <Compile Include="Tools\ITool.cs" />
+    <Compile Include="Tools\PlacementTool.cs" />
+    <Compile Include="Tools\RotationTool.cs" />
+    <Compile Include="Tools\SelectTool.cs" />
+    <Compile Include="Tools\ToolBase.cs" />
+    <Compile Include="Tools\ToolManager.cs" />
+    <Compile Include="GameWorld\EntityBase.cs" />
+    <Compile Include="GameWorld\Camera.cs" />
+    <Compile Include="MainForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="MainForm.Designer.cs">
+      <DependentUpon>MainForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="GameWorld\IEntity.cs" />
+    <Compile Include="GameWorld\IVisualElement.cs" />
+    <Compile Include="GameWorld\GameObject.cs" />
+    <Compile Include="Program.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="GameWorld\Selection.cs" />
+    <Compile Include="GameWorld\WorldMap.cs" />
+    <Compile Include="Tools\TranslationTool.cs" />
+    <Compile Include="UndoRedo\Command.cs" />
+    <Compile Include="UndoRedo\UndoRedoManager.cs" />
+    <EmbeddedResource Include="Controls\InspectorControl.resx">
+      <DependentUpon>InspectorControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Controls\Matrix3X3Control.resx">
+      <DependentUpon>Matrix3x3Control.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Controls\VectorUpDown.resx">
+      <DependentUpon>VectorUpDown.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Controls\WheelControl.resx">
+      <DependentUpon>WheelControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="MainForm.resx">
+      <DependentUpon>MainForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Resources.resx</DependentUpon>
+      <DesignTime>True</DesignTime>
+    </Compile>
+    <None Include="packages.config">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Properties\Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+    </None>
+    <Compile Include="Properties\Settings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Settings.settings</DependentUpon>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="App.config">
+      <SubType>Designer</SubType>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="ExternalTools\PVRTexTool.exe" />
+    <Content Include="FodyWeavers.xml" />
+    <Content Include="Shaders\Mesh.fx">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Shaders\Primitive.fx">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\SharpDX.D3DCompiler\SharpDX.D3DCompiler.csproj">
+      <Project>{dd3909e6-250b-426f-9eac-c56dfa059be6}</Project>
+      <Name>SharpDX.D3DCompiler</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\SharpDX.Desktop\SharpDX.Desktop.csproj">
+      <Project>{06b05f31-4e4b-4f8e-92e5-6abe1344a351}</Project>
+      <Name>SharpDX.Desktop</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\SharpDX.Direct3D11\SharpDX.Direct3D11.csproj">
+      <Project>{eec42884-8a88-4ca3-a989-50306ed9786a}</Project>
+      <Name>SharpDX.Direct3D11</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\SharpDX.DXGI\SharpDX.DXGI.csproj">
+      <Project>{7372ecfc-211c-458c-b337-489c5d18cf28}</Project>
+      <Name>SharpDX.DXGI</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\SharpDX.Mathematics\SharpDX.Mathematics.csproj">
+      <Project>{137c9abe-4109-4344-a9e6-651cb79b3d90}</Project>
+      <Name>SharpDX.Mathematics</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\SharpDX.RawInput\SharpDX.RawInput.csproj">
+      <Project>{f9d27b7c-0825-4ab7-83de-133e00fd0a68}</Project>
+      <Name>SharpDX.RawInput</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\SharpDX\SharpDX.csproj">
+      <Project>{de77b263-c855-4b19-babf-2f4dc53caebd}</Project>
+      <Name>SharpDX</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
+    <PropertyGroup>
+      <ErrorText>This project references NuGet package(s) that are missing on this computer. Enable NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
+    </PropertyGroup>
+    <Error Condition="!Exists('..\packages\Fody.1.29.4\build\portable-net+sl+win+wpa+wp\Fody.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Fody.1.29.4\build\portable-net+sl+win+wpa+wp\Fody.targets'))" />
+    <Error Condition="!Exists('..\packages\BulletSharp.0.11.1\build\net40-client\BulletSharp.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\BulletSharp.0.11.1\build\net40-client\BulletSharp.targets'))" />
+  </Target>
+  <Import Project="..\packages\Fody.1.29.4\build\portable-net+sl+win+wpa+wp\Fody.targets" Condition="Exists('..\packages\Fody.1.29.4\build\portable-net+sl+win+wpa+wp\Fody.targets')" />
+  <PropertyGroup>
+    <PostBuildEvent>copy "$(SolutionDir)\RyzeEditor\ExternalTools\*.*" "$(SolutionDir)\RyzeEditor\bin\$(Configuration)\*.*"
+copy "$(SolutionDir)\RyzeEditor\Redist\x86\*.*" "$(SolutionDir)\RyzeEditor\bin\$(Configuration)\*.*"</PostBuildEvent>
+  </PropertyGroup>
+  <Import Project="..\packages\BulletSharp.0.11.1\build\net40-client\BulletSharp.targets" Condition="Exists('..\packages\BulletSharp.0.11.1\build\net40-client\BulletSharp.targets')" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>
