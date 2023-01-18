@@ -3,3 +3,15 @@
 ################################################################################
 
 /RyzeEngine/RyzeEditor/bin
+/RyzeEngine/RyzeEditor/obj
+/RyzeEngine/.vs/RyzeEngine
+/.vs
+/RyzeEngine/MaxExportPlugin/obj/x64
+/RyzeEngine/MaxExportPlugin/MaxExportPlugin.vcxproj.user
+/RyzeEngine/SharpDX.RawInput
+/RyzeEngine/SharpDX.Mathematics
+/RyzeEngine/SharpDX.DXGI
+/RyzeEngine/SharpDX.Direct3D11
+/RyzeEngine/SharpDX.Desktop
+/RyzeEngine/SharpDX.D3DCompiler
+/RyzeEngine/SharpDX

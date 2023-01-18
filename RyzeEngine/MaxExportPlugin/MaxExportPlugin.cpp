@@ -297,7 +297,7 @@ void MeshExporter::ExportStdMaterial(Mtl *material)
 	g_outputFile.write((char*)&color.b, sizeof(float));
 
 	// Get shininess
-	float shininess = mStd->GetShininess(g_interfacePtr->GetTime()) + mStd->GetShinStr(g_interfacePtr->GetTime());
+	float shininess = mStd->GetShininess(g_interfacePtr->GetTime());
 	g_outputFile.write((char*)&shininess, sizeof(float));
 
 	//Get Transparency
