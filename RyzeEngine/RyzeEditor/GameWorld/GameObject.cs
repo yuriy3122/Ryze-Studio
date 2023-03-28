@@ -77,6 +77,11 @@ namespace RyzeEditor.GameWorld
 
         public bool RenderBitangents { get; set; }
 
+        /// <summary>
+        /// Include in Ray Traced acceleration stucture
+        /// </summary>
+        public bool IncludeInRTAccelStructure{ get; set; }
+
         public List<IMesh> GeometryMeshes
         {
             get
