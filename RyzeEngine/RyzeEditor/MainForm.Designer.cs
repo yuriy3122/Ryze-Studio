@@ -35,6 +35,7 @@ namespace RyzeEditor
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainForm));
             this.inspectorPanel = new System.Windows.Forms.Panel();
             this.Inspector = new RyzeEditor.Controls.InspectorControl();
+            this.ObjectHierarchyControl = new RyzeEditor.Controls.ObjectHierarchyControl();
             this.menuStrip = new System.Windows.Forms.MenuStrip();
             this.tsmiWorldMap = new System.Windows.Forms.ToolStripMenuItem();
             this.openToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -260,6 +261,7 @@ namespace RyzeEditor
             // 
             // leftPanel
             // 
+            this.leftPanel.Controls.Add(ObjectHierarchyControl);
             this.leftPanel.Dock = System.Windows.Forms.DockStyle.Left;
             this.leftPanel.Location = new System.Drawing.Point(0, 24);
             this.leftPanel.Name = "leftPanel";
@@ -300,6 +302,7 @@ namespace RyzeEditor
         private ToolStripMenuItem tsmiLevel;
         private ToolStrip toolStrip;
 		public Controls.InspectorControl Inspector;
+        public Controls.ObjectHierarchyControl ObjectHierarchyControl;
 		private ToolStripButton tbTranslate;
 		private ToolStripButton tbCustomSelect;
 		private ToolStripMenuItem openToolStripMenuItem;

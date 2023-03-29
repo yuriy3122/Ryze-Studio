@@ -81,6 +81,12 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Controls\ObjectHierarchyControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Controls\ObjectHierarchyControl.Designer.cs">
+      <DependentUpon>ObjectHierarchyControl.cs</DependentUpon>
+    </Compile>
     <Compile Include="Controls\WheelControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -199,6 +205,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Controls\Matrix3X3Control.resx">
       <DependentUpon>Matrix3x3Control.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Controls\ObjectHierarchyControl.resx">
+      <DependentUpon>ObjectHierarchyControl.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Controls\VectorUpDown.resx">
       <DependentUpon>VectorUpDown.cs</DependentUpon>
