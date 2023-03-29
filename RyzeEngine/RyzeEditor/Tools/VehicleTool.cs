@@ -172,7 +172,7 @@ namespace RyzeEditor.Tools
                 return;
             }
 
-            if (selectedVehicle.RenderChassisPoints)
+            if (selectedVehicle.DrawChassisPoints)
             {
                 if (_chassisPoints == null)
                 {

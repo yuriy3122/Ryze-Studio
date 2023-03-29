@@ -170,6 +170,6 @@ namespace RyzeEditor.GameWorld
 
         public float SteeringClamp { get; set; }
 
-        public bool RenderChassisPoints { get; set; }
+        public bool DrawChassisPoints { get; set; }
     }
 }

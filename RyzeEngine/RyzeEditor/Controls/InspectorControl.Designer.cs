@@ -43,6 +43,7 @@ namespace RyzeEditor.Controls
             // 
             this.tabControl.Controls.Add(this.gameObjectTab);
             this.tabControl.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.tabControl.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
             this.tabControl.Location = new System.Drawing.Point(0, 0);
             this.tabControl.Name = "tabControl";
             this.tabControl.SelectedIndex = 0;
@@ -52,12 +53,12 @@ namespace RyzeEditor.Controls
             // gameObjectTab
             // 
             this.gameObjectTab.Controls.Add(this.layoutPanel);
-            this.gameObjectTab.Location = new System.Drawing.Point(4, 22);
+            this.gameObjectTab.Location = new System.Drawing.Point(4, 25);
             this.gameObjectTab.Name = "gameObjectTab";
             this.gameObjectTab.Padding = new System.Windows.Forms.Padding(3);
-            this.gameObjectTab.Size = new System.Drawing.Size(392, 419);
+            this.gameObjectTab.Size = new System.Drawing.Size(392, 416);
             this.gameObjectTab.TabIndex = 0;
-            this.gameObjectTab.Text = "Object Properties";
+            this.gameObjectTab.Text = "Properties";
             this.gameObjectTab.UseVisualStyleBackColor = true;
             // 
             // layoutPanel
@@ -72,7 +73,7 @@ namespace RyzeEditor.Controls
             this.layoutPanel.Padding = new System.Windows.Forms.Padding(0, 0, 17, 0);
             this.layoutPanel.RowCount = 1;
             this.layoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle());
-            this.layoutPanel.Size = new System.Drawing.Size(386, 413);
+            this.layoutPanel.Size = new System.Drawing.Size(386, 410);
             this.layoutPanel.TabIndex = 4;
             // 
             // InspectorControl
