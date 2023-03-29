@@ -134,7 +134,7 @@ namespace RyzeEditor.Renderer
 		{
             _shaderResourceManager.CleanupUnusedResources();
 
-            _context.ClearRenderTargetView(_proxyRenderView, Color.Black);
+            _context.ClearRenderTargetView(_proxyRenderView, Color.Gray);
             _context.ClearDepthStencilView(_depthView, DepthStencilClearFlags.Depth, 1.0f, 0);
             _context.OutputMerger.SetTargets(_depthView, _proxyRenderView);
             _context.OutputMerger.DepthStencilState = _defaultStentilState;
@@ -143,7 +143,7 @@ namespace RyzeEditor.Renderer
 
         public void PostRender()
         {
-            _context.ClearRenderTargetView(_renderView, Color.Black);
+            _context.ClearRenderTargetView(_renderView, Color.Gray);
             _context.ClearDepthStencilView(_depthView, DepthStencilClearFlags.Depth, 1.0f, 0);
             _context.OutputMerger.SetTargets(_depthView, _renderView);
             _context.OutputMerger.DepthStencilState = _disabledDepthStencilState;

@@ -18,7 +18,7 @@ namespace RyzeEditor.Renderer
 
 		public static void RenderGridPatch(IRenderer renderer, QuardPatch patch)
 		{
-			var color = new Vector4(0.5f, 0.5f, 0.5f, 0.0f);
+			var color = new Vector4(0.1f, 0.1f, 0.1f, 0.0f);
 
 			var points = new List<Point3>
 			{
