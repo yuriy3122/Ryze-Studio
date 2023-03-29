@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Drawing;
 using System.IO;
 using System.Windows.Forms;
@@ -11,6 +12,7 @@ using RyzeEditor.Renderer;
 using RyzeEditor.Serialization;
 using RyzeEditor.Tools;
 using RyzeEditor.Packer;
+using RyzeEditor.Controls;
 
 namespace RyzeEditor
 {
@@ -34,6 +36,12 @@ namespace RyzeEditor
 
         [field: NonSerialized]
         private Size _clientSize;
+
+        [field: NonSerialized]
+        private ObjectHierarchyControl _objectHierarchyControl;
+
+        [field: NonSerialized]
+        private InspectorControl _inspectorControl;
 
         public void Run()
         {
@@ -60,6 +68,14 @@ namespace RyzeEditor
 
             form.Inspector.Selection = _selection;
 
+            _objectHierarchyControl = form.ObjectHierarchyControl;
+
+            _worldMap.EntityAdded += WorldMapEntityAdded;
+
+            _objectHierarchyControl.SelectionChanged += ObjectHierarchyControlSelectionChanged;
+
+            _inspectorControl = form.Inspector;
+
             InitToolManager(form);
 
             InitFormEventHandlers(form);
@@ -84,6 +100,28 @@ namespace RyzeEditor
             });
 
             context.Dispose();
+        }
+
+        private void ObjectHierarchyControlSelectionChanged(object sender, EntityEventArgs e)
+        {
+            var entity = _worldMap.Entities.FirstOrDefault(x => x.Id == e.EntityId);
+
+            if (entity != null)
+            {
+                _selection.Clear();
+                _selection.AddEntity(entity);
+
+                _toolManager.SetActiveTool(Tool.Select);
+
+                _inspectorControl.UpdateControls(_toolManager.GetFirstActiveTool());
+            }
+        }
+
+        private void WorldMapEntityAdded(object sender, EntityEventArgs e)
+        {
+            var entities = _worldMap.Entities.ToList();
+
+            _objectHierarchyControl.UpdateHierarchy(entities);
         }
 
         private void WorldMapEntityDeleted(object sender, EntityEventArgs e)
@@ -189,6 +227,12 @@ namespace RyzeEditor
                 _worldMap.EntityDeleted += (s, e) => { _selection?.RemoveEntity(e.EntityId); };
                 _toolManager.WorldMap = _worldMap;
                 _renderer.Camera = _worldMap.Camera;
+
+                if (_objectHierarchyControl != null)
+                {
+                    _objectHierarchyControl.UpdateHierarchy(_worldMap.Entities.ToList());
+                }
+
                 _userResized = true;
             }
         }
