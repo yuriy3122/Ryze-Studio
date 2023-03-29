@@ -51,23 +51,26 @@ namespace RyzeEditor
             this.tbTranslate = new System.Windows.Forms.ToolStripButton();
             this.tbRotate = new System.Windows.Forms.ToolStripButton();
             this.tbPointLight = new System.Windows.Forms.ToolStripButton();
-            this.tbCollision = new System.Windows.Forms.ToolStripButton();
             this.tbVehicle = new System.Windows.Forms.ToolStripButton();
+            this.tbCollision = new System.Windows.Forms.ToolStripButton();
+            this.leftPanel = new System.Windows.Forms.Panel();
+            this.inspectorPanel.SuspendLayout();
             this.menuStrip.SuspendLayout();
             this.toolStrip.SuspendLayout();
             this.SuspendLayout();
             // 
             // inspectorPanel
             // 
+            this.inspectorPanel.Controls.Add(this.Inspector);
             this.inspectorPanel.Dock = System.Windows.Forms.DockStyle.Right;
-            this.inspectorPanel.Location = new System.Drawing.Point(852, 24);
+            this.inspectorPanel.Location = new System.Drawing.Point(752, 24);
             this.inspectorPanel.Name = "inspectorPanel";
             this.inspectorPanel.Size = new System.Drawing.Size(400, 543);
             this.inspectorPanel.TabIndex = 0;
-            this.inspectorPanel.Controls.Add(this.Inspector);
             // 
             // Inspector
             // 
+            this.Inspector.AutoSize = true;
             this.Inspector.Dock = System.Windows.Forms.DockStyle.Fill;
             this.Inspector.Location = new System.Drawing.Point(0, 0);
             this.Inspector.Name = "Inspector";
@@ -132,6 +135,7 @@ namespace RyzeEditor
             // 
             // toolStrip
             // 
+            this.toolStrip.Dock = System.Windows.Forms.DockStyle.None;
             this.toolStrip.ImageScalingSize = new System.Drawing.Size(32, 32);
             this.toolStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.tbUndo,
@@ -144,9 +148,9 @@ namespace RyzeEditor
             this.tbPointLight,
             this.tbVehicle,
             this.tbCollision});
-            this.toolStrip.Location = new System.Drawing.Point(0, 24);
+            this.toolStrip.Location = new System.Drawing.Point(215, 24);
             this.toolStrip.Name = "toolStrip";
-            this.toolStrip.Size = new System.Drawing.Size(852, 39);
+            this.toolStrip.Size = new System.Drawing.Size(372, 39);
             this.toolStrip.TabIndex = 2;
             this.toolStrip.Text = "toolStrip1";
             // 
@@ -233,6 +237,16 @@ namespace RyzeEditor
             this.tbPointLight.Text = "Point Light";
             this.tbPointLight.Click += new System.EventHandler(this.tbPointLight_Click);
             // 
+            // tbVehicle
+            // 
+            this.tbVehicle.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.tbVehicle.Image = ((System.Drawing.Image)(resources.GetObject("tbVehicle.Image")));
+            this.tbVehicle.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.tbVehicle.Name = "tbVehicle";
+            this.tbVehicle.Size = new System.Drawing.Size(36, 36);
+            this.tbVehicle.Text = "Vehicle";
+            this.tbVehicle.Click += new System.EventHandler(this.tbVehicle_Click);
+            // 
             // tbCollision
             // 
             this.tbCollision.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
@@ -244,15 +258,13 @@ namespace RyzeEditor
             this.tbCollision.Text = "Collision";
             this.tbCollision.Click += new System.EventHandler(this.tbCollision_Click);
             // 
-            // tbVehicle
+            // leftPanel
             // 
-            this.tbVehicle.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.tbVehicle.Image = ((System.Drawing.Image)(resources.GetObject("tbVehicle.Image")));
-            this.tbVehicle.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.tbVehicle.Name = "tbVehicle";
-            this.tbVehicle.Size = new System.Drawing.Size(36, 36);
-            this.tbVehicle.Text = "Vehicle";
-            this.tbVehicle.Click += new System.EventHandler(this.tbVehicle_Click);
+            this.leftPanel.Dock = System.Windows.Forms.DockStyle.Left;
+            this.leftPanel.Location = new System.Drawing.Point(0, 24);
+            this.leftPanel.Name = "leftPanel";
+            this.leftPanel.Size = new System.Drawing.Size(215, 543);
+            this.leftPanel.TabIndex = 3;
             // 
             // MainForm
             // 
@@ -260,6 +272,7 @@ namespace RyzeEditor
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.SystemColors.Control;
             this.ClientSize = new System.Drawing.Size(1152, 567);
+            this.Controls.Add(this.leftPanel);
             this.Controls.Add(this.toolStrip);
             this.Controls.Add(this.inspectorPanel);
             this.Controls.Add(this.menuStrip);
@@ -268,6 +281,8 @@ namespace RyzeEditor
             this.SizeGripStyle = System.Windows.Forms.SizeGripStyle.Hide;
             this.Text = "RyzeEditor";
             this.WindowState = System.Windows.Forms.FormWindowState.Maximized;
+            this.inspectorPanel.ResumeLayout(false);
+            this.inspectorPanel.PerformLayout();
             this.menuStrip.ResumeLayout(false);
             this.menuStrip.PerformLayout();
             this.toolStrip.ResumeLayout(false);
@@ -299,6 +314,7 @@ namespace RyzeEditor
         private ToolStripButton tbCollision;
         private ToolStripButton tbPointLight;
         private ToolStripButton tbVehicle;
+        private Panel leftPanel;
     }
 }
 
