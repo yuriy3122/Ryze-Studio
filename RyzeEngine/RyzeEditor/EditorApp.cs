@@ -130,6 +130,10 @@ namespace RyzeEditor
             {
                 _selection.RemoveEntity(e.EntityId);
             }
+
+            var entities = _worldMap.Entities.ToList();
+
+            _objectHierarchyControl.UpdateHierarchy(entities);
         }
 
         private void SaveWorldMap(string fileName)
