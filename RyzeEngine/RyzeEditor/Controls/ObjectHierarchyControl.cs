@@ -39,13 +39,38 @@ namespace RyzeEditor.Controls
 
             foreach (var entity in entities.Where(x => x.ParentId == Guid.Empty))
             {
-                var node = new TreeNode
+                var parentNode = new TreeNode
                 {
                     Name = entity.Id.ToString(),
                     Text = entity.GetType().Name
                 };
 
-                rootNode.Nodes.Add(node);
+                rootNode.Nodes.Add(parentNode);
+
+                var childEntities = entities.Where(x => x.ParentId == entity.Id).ToList();
+
+                do
+                {
+                    var newChildEntities = new List<EntityBase>();
+
+                    foreach (var childEntity in childEntities)
+                    {
+                        var childNode = new TreeNode
+                        {
+                            Name = childEntity.Id.ToString(),
+                            Text = childEntity.GetType().Name
+                        };
+
+                        parentNode = rootNode.Nodes.Find(childEntity.ParentId.ToString(), true).FirstOrDefault();
+
+                        parentNode.Nodes.Add(childNode);
+
+                        newChildEntities.AddRange(entities.Where(x => x.ParentId == childEntity.Id));
+                    }
+
+                    childEntities = newChildEntities;
+                }
+                while (childEntities.Any());
             }
 
             HierarchyTreeView.Nodes.Add(rootNode);
