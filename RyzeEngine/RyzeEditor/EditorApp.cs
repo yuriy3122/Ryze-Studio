@@ -64,14 +64,12 @@ namespace RyzeEditor
 
             _selection = new Selection();
 
+            _worldMap.EntityAdded += WorldMapEntityAdded;
             _worldMap.EntityDeleted += WorldMapEntityDeleted;
 
             form.Inspector.Selection = _selection;
 
             _objectHierarchyControl = form.ObjectHierarchyControl;
-
-            _worldMap.EntityAdded += WorldMapEntityAdded;
-
             _objectHierarchyControl.SelectionChanged += ObjectHierarchyControlSelectionChanged;
 
             _inspectorControl = form.Inspector;
