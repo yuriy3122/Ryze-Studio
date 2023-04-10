@@ -130,6 +130,10 @@ namespace RyzeEditor.Renderer
 			set { _camera = value; }
 		}
 
+        public void PreRenderShadowMap()
+        {
+        }
+
 		public void PreRender()
 		{
             _shaderResourceManager.CleanupUnusedResources();

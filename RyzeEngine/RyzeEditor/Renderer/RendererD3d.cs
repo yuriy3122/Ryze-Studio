@@ -59,7 +59,11 @@ namespace RyzeEditor.Renderer
 			_context.InputAssembler.PrimitiveTopology = PrimitiveTopology.TriangleList;
 			_context.VertexShader.SetConstantBuffer(0, effect.ContantBuffer);
 			_context.VertexShader.Set(effect.VertexShader);
-			_context.PixelShader.Set(effect.PixelShader);
+
+            if (!mode.ShadowMap)
+            {
+                _context.PixelShader.Set(effect.PixelShader);
+            }
 
             _context.MapSubresource(_instanceBuffer, MapMode.WriteDiscard, MapFlags.None, out DataStream stream);
             stream.WriteRange(matrices.ToArray());
@@ -96,7 +100,7 @@ namespace RyzeEditor.Renderer
 
 					var material = subMesh.Materials[i];
 
-					if (material.DiffuseTexture != null)
+					if (!mode.ShadowMap && material.DiffuseTexture != null)
 					{
 						var textureView = _shaderResourceManager.GetShaderResource(material.DiffuseTexture);
 
@@ -106,8 +110,19 @@ namespace RyzeEditor.Renderer
 						material.Diffuse = new Vector3(0.0f, 0.0f, 0.0f);
 					}
 
-					var view = Matrix.LookAtLH(_camera.Position, _camera.LookAtDir, _camera.UpDir);
-					var proj = Matrix.PerspectiveFovLH(_camera.FOV, _camera.AspectRatio, _camera.ZNear, _camera.ZFar);
+                    Matrix view;
+                    Matrix proj;
+
+                    if (mode.ShadowMap)
+                    {
+                        view = Matrix.LookAtLH(mode.SunLightDir * -1000.0f, Vector3.Zero, _camera.UpDir);
+                        proj = Matrix.Identity;
+                    }
+                    else
+                    {
+                        view = Matrix.LookAtLH(_camera.Position, _camera.LookAtDir, _camera.UpDir);
+                        proj = Matrix.PerspectiveFovLH(_camera.FOV, _camera.AspectRatio, _camera.ZNear, _camera.ZFar);
+                    }
 
 					var viewProj = view * proj;
                     viewProj.Transpose();
