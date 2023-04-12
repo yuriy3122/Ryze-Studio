@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
-using System.Windows.Forms;
 using RyzeEditor.GameWorld;
 using RyzeEditor.ResourceManagment;
 using SharpDX;
@@ -52,8 +51,6 @@ namespace RyzeEditor.Renderer
 		{
 			_handle = handle;
 			_camera = camera;
-
-            var resolution = Screen.PrimaryScreen.Bounds;
             _widthScale = 1.0f;
             _heigthScale = 1.0f;
 
