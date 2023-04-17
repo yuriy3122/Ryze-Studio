@@ -267,6 +267,11 @@ namespace RyzeEditor
             this.leftPanel.Name = "leftPanel";
             this.leftPanel.Size = new System.Drawing.Size(215, 543);
             this.leftPanel.TabIndex = 3;
+
+            this.ObjectHierarchyControl.AutoSize = true;
+            this.ObjectHierarchyControl.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.ObjectHierarchyControl.Location = new System.Drawing.Point(0, 0);
+            this.ObjectHierarchyControl.Name = "ObjectHierarchyControl";
             // 
             // MainForm
             // 
