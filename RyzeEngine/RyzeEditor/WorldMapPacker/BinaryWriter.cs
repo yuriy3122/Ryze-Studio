@@ -9,6 +9,8 @@ using RyzeEditor.Extentions;
 using RyzeEditor.Helpers;
 using RyzeEditor.GameWorld;
 using System.Drawing;
+using SharpDX.Direct3D11;
+using System.Reflection;
 
 namespace RyzeEditor.Packer
 {
@@ -64,6 +66,8 @@ namespace RyzeEditor.Packer
 
         private const ushort ID_SKYBOX_MESH_CHUNK = 0x0038;
 
+        private const ushort ID_ACCELERATION_STRUCTURE = 0x0039;
+
         #endregion
 
         public BinaryWriter(WorldMapData worldMapData)
@@ -113,10 +117,41 @@ namespace RyzeEditor.Packer
 
                 WriteSkyboxMeshData(stream);
 
+                WriteAccelerationStructureData(stream);
+
                 WriteTextureData(stream);
             }
 
             _collisionWriter.Dispose();
+        }
+
+        private void WriteAccelerationStructureData(FileStream stream)
+        {
+            var gameObjects = _worldMapData.GameObjects.Where(x => x.Key.IncludeInAccStructure).Select(x => x.Key).ToList();
+
+            if (gameObjects.Any())
+            {
+                var ids = new List<int>();
+
+                foreach (var gameObject in gameObjects)
+                {
+                    if (gameObject.UserData != null && int.TryParse(gameObject.UserData.ToString(), out int id))
+                    {
+                        ids.Add(id);
+                    }
+                }
+
+                if (ids.Count > 0)
+                {
+                    stream.Write(BitConverter.GetBytes(ID_ACCELERATION_STRUCTURE), 0, sizeof(ushort));
+                    stream.Write(BitConverter.GetBytes(ids.Count), 0, sizeof(int));
+
+                    foreach (var id in ids)
+                    {
+                        stream.Write(BitConverter.GetBytes(id), 0, sizeof(int));
+                    }
+                }
+            }
         }
 
         private void WriteSkyboxMeshData(FileStream stream)
