@@ -33,16 +33,21 @@ namespace RyzeEditor.Controls
             var rootNode = new TreeNode
             {
                 Name = Guid.NewGuid().ToString(),
-                Text = "MainScene"
+                Text = "MainScene",
+                ImageIndex = 0
             };
             rootNode.Expand();
 
             foreach (var entity in entities.Where(x => x.ParentId == Guid.Empty))
             {
+                int imageIndex = imageIndex = GetObjectImageIndex(entity);
+
                 var parentNode = new TreeNode
                 {
                     Name = entity.Id.ToString(),
-                    Text = entity.GetType().Name
+                    Text = entity.GetType().Name,
+                    ImageIndex = imageIndex,
+                    SelectedImageIndex = imageIndex
                 };
 
                 rootNode.Nodes.Add(parentNode);
@@ -55,10 +60,14 @@ namespace RyzeEditor.Controls
 
                     foreach (var childEntity in childEntities)
                     {
+                        imageIndex = GetObjectImageIndex(childEntity);
+
                         var childNode = new TreeNode
                         {
                             Name = childEntity.Id.ToString(),
-                            Text = childEntity.GetType().Name
+                            Text = childEntity.GetType().Name,
+                            ImageIndex = imageIndex,
+                            SelectedImageIndex = imageIndex
                         };
 
                         parentNode = rootNode.Nodes.Find(childEntity.ParentId.ToString(), true).FirstOrDefault();
@@ -74,6 +83,24 @@ namespace RyzeEditor.Controls
             }
 
             HierarchyTreeView.Nodes.Add(rootNode);
+        }
+
+        private int GetObjectImageIndex(EntityBase gameObject)
+        {
+            int imageIndex;
+
+            switch (gameObject)
+            {
+                case Vehicle _:
+                    imageIndex = 2;
+                    break;
+
+                default:
+                    imageIndex = 1;
+                    break;
+            }
+
+            return imageIndex;
         }
     }
 }

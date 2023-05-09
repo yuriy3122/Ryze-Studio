@@ -41,7 +41,9 @@ namespace RyzeEditor
             this.openToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.saveAsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.tsmiLevel = new System.Windows.Forms.ToolStripMenuItem();
+            this.tsmiSettings = new System.Windows.Forms.ToolStripMenuItem();
             this.compileStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.settingStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.selectToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStrip = new System.Windows.Forms.ToolStrip();
             this.tbUndo = new System.Windows.Forms.ToolStripButton();
@@ -84,6 +86,7 @@ namespace RyzeEditor
             this.menuStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.tsmiWorldMap,
             this.tsmiLevel,
+            this.tsmiSettings,
             this.selectToolStripMenuItem});
             this.menuStrip.Location = new System.Drawing.Point(0, 0);
             this.menuStrip.Name = "menuStrip";
@@ -122,6 +125,14 @@ namespace RyzeEditor
             this.tsmiLevel.Size = new System.Drawing.Size(50, 20);
             this.tsmiLevel.Text = "LEVEL";
             // 
+            // tsmiSettings
+            // 
+            this.tsmiSettings.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.settingStripMenuItem});
+            this.tsmiSettings.Name = "tsmiSettings";
+            this.tsmiSettings.Size = new System.Drawing.Size(50, 20);
+            this.tsmiSettings.Text = "SETTINGS";
+            // 
             // compileStripMenuItem
             // 
             this.compileStripMenuItem.Name = "compileStripMenuItem";
@@ -129,6 +140,11 @@ namespace RyzeEditor
             this.compileStripMenuItem.Text = "Pack";
             this.compileStripMenuItem.Click += new System.EventHandler(this.compileStripMenuItem_Click);
             // 
+            this.settingStripMenuItem.Name = "compileStripMenuItem1";
+            this.settingStripMenuItem.Size = new System.Drawing.Size(99, 22);
+            this.settingStripMenuItem.Text = "Settings";
+            //this.settingStripMenuItem.Click += new System.EventHandler(this.compileStripMenuItem_Click);
+
             // selectToolStripMenuItem
             // 
             this.selectToolStripMenuItem.Name = "selectToolStripMenuItem";
@@ -305,6 +321,7 @@ namespace RyzeEditor
 		private MenuStrip menuStrip;
 		private ToolStripMenuItem tsmiWorldMap;
         private ToolStripMenuItem tsmiLevel;
+        private ToolStripMenuItem tsmiSettings;
         private ToolStrip toolStrip;
 		public Controls.InspectorControl Inspector;
         public Controls.ObjectHierarchyControl ObjectHierarchyControl;
@@ -312,6 +329,7 @@ namespace RyzeEditor
 		private ToolStripButton tbCustomSelect;
 		private ToolStripMenuItem openToolStripMenuItem;
         private ToolStripMenuItem compileStripMenuItem;
+        private ToolStripMenuItem settingStripMenuItem;
         private ToolStripMenuItem saveAsToolStripMenuItem;
 		private ToolStripMenuItem selectToolStripMenuItem;
 		private ToolStripButton tbSelect;
