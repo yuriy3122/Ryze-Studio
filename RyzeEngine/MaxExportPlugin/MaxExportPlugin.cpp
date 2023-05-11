@@ -276,28 +276,26 @@ void MeshExporter::ProcNode(INode* node)
 
 void MeshExporter::ExportStdMaterial(Mtl *material)
 {
-	StdMat* mStd = (StdMat*)material;
-
 	// Get Ambient component
-	Color color = mStd->GetAmbient(g_interfacePtr->GetTime());
+	Color color = material->GetAmbient(g_interfacePtr->GetTime());
 	g_outputFile.write((char*)&color.r, sizeof(float));
 	g_outputFile.write((char*)&color.g, sizeof(float));
 	g_outputFile.write((char*)&color.b, sizeof(float));
 
 	// Get Diffuse component
-	color = mStd->GetDiffuse(g_interfacePtr->GetTime());
+	color = material->GetDiffuse(g_interfacePtr->GetTime());
 	g_outputFile.write((char*)&color.r, sizeof(float));
 	g_outputFile.write((char*)&color.g, sizeof(float));
 	g_outputFile.write((char*)&color.b, sizeof(float));
 
 	// Get Specular component
-	color = mStd->GetSpecular(g_interfacePtr->GetTime());
+	color = material->GetSpecular(g_interfacePtr->GetTime());
 	g_outputFile.write((char*)&color.r, sizeof(float));
 	g_outputFile.write((char*)&color.g, sizeof(float));
 	g_outputFile.write((char*)&color.b, sizeof(float));
 
 	// Get shininess
-	float shininess = mStd->GetShininess(g_interfacePtr->GetTime());
+	float shininess = material->GetShininess(g_interfacePtr->GetTime());
 	g_outputFile.write((char*)&shininess, sizeof(float));
 
 	//Get Transparency
