@@ -51,9 +51,9 @@ namespace RyzeEditor.Controls
 
             foreach (var entity in entities.Where(x => x.ParentId == Guid.Empty))
             {
-                var cameraObject = entity as Camera;
+                int imageIndex = GetObjectImageIndex(entity);
 
-                int imageIndex = imageIndex = GetObjectImageIndex(entity);
+                var cameraObject = entity as Camera;
 
                 if (cameraObject != null)
                 {
