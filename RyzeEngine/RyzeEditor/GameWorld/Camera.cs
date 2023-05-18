@@ -62,8 +62,9 @@ namespace RyzeEditor.GameWorld
 			var viewPort = new ViewportF(0, 0, ClientWndSize.Width, ClientWndSize.Height, 0.0f, 1.0f);
 			var view = Matrix.LookAtLH(Position, LookAtDir, UpDir);
 			var proj = Matrix.PerspectiveFovLH(FOV, AspectRatio, ZNear, ZFar);
+            var matrix = view * proj;
 
-			return Ray.GetPickRay(x, y, viewPort, view * proj);
+            return Ray.GetPickRay(x, y, viewPort, matrix);
 		}
 
 		public void RotateY(float delta)

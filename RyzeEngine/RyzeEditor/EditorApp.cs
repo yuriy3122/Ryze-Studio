@@ -140,6 +140,7 @@ namespace RyzeEditor
             }
 
             var entities = _worldMap.Entities.ToList();
+            entities.Add(_worldMap.Camera);
 
             _objectHierarchyControl.UpdateHierarchy(entities);
         }
@@ -156,6 +157,7 @@ namespace RyzeEditor
         {
             return new Camera
             {
+                Id = Guid.NewGuid(),
                 IsActive = true,
                 AspectRatio = (float)form.ClientSize.Width / form.ClientSize.Height,
                 ClientWndSize = form.ClientSize,

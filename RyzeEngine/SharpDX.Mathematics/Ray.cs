@@ -286,8 +286,8 @@ namespace SharpDX
         /// <returns>Resulting <see cref="Ray"/>.</returns>
         public static Ray GetPickRay(int x, int y, ViewportF viewport, Matrix worldViewProjection)
         {
-            var nearPoint = new Vector3(x, y, 0);
-            var farPoint = new Vector3(x, y, 1);
+            var nearPoint = new Vector3(x, y, 0.0f);
+            var farPoint = new Vector3(x, y, 0.9999999f);
 
             nearPoint = Vector3.Unproject(nearPoint, viewport.X, viewport.Y, viewport.Width, viewport.Height, viewport.MinDepth,
                                         viewport.MaxDepth, worldViewProjection);
