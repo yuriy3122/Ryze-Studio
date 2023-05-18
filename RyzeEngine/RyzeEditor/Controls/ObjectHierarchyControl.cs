@@ -34,13 +34,46 @@ namespace RyzeEditor.Controls
             {
                 Name = Guid.NewGuid().ToString(),
                 Text = "MainScene",
-                ImageIndex = 0
+                ImageIndex = 0,
+                SelectedImageIndex = 0
             };
             rootNode.Expand();
 
+            var gameObjectsNode = new TreeNode
+            {
+                Name = Guid.NewGuid().ToString(),
+                Text = "Game Objects",
+                ImageIndex = 1,
+                SelectedImageIndex = 1
+            };
+
+            rootNode.Nodes.Add(gameObjectsNode);
+
             foreach (var entity in entities.Where(x => x.ParentId == Guid.Empty))
             {
+                var cameraObject = entity as Camera;
+
                 int imageIndex = imageIndex = GetObjectImageIndex(entity);
+
+                if (cameraObject != null)
+                {
+                    var cameraNode = new TreeNode
+                    {
+                        Name = entity.Id.ToString(),
+                        Text = "Camera",
+                        ImageIndex = imageIndex,
+                        SelectedImageIndex = imageIndex
+                    };
+
+                    rootNode.Nodes.Add(cameraNode);
+                }
+
+                var gameObject = entity as GameObject;
+
+                if (gameObject == null)
+                {
+                    continue;
+                }
 
                 var parentNode = new TreeNode
                 {
@@ -50,7 +83,7 @@ namespace RyzeEditor.Controls
                     SelectedImageIndex = imageIndex
                 };
 
-                rootNode.Nodes.Add(parentNode);
+                gameObjectsNode.Nodes.Add(parentNode);
 
                 var childEntities = entities.Where(x => x.ParentId == entity.Id).ToList();
 
@@ -70,7 +103,7 @@ namespace RyzeEditor.Controls
                             SelectedImageIndex = imageIndex
                         };
 
-                        parentNode = rootNode.Nodes.Find(childEntity.ParentId.ToString(), true).FirstOrDefault();
+                        parentNode = gameObjectsNode.Nodes.Find(childEntity.ParentId.ToString(), true).FirstOrDefault();
 
                         parentNode.Nodes.Add(childNode);
 
@@ -94,6 +127,9 @@ namespace RyzeEditor.Controls
                 case Vehicle _:
                     imageIndex = 2;
                     break;
+                case Camera _:
+                    imageIndex = 3;
+                    break;
 
                 default:
                     imageIndex = 1;
@@ -101,6 +137,16 @@ namespace RyzeEditor.Controls
             }
 
             return imageIndex;
+        }
+
+        private void HierarchyTreeView_KeyDown(object sender, KeyEventArgs e)
+        {
+            e.Handled = true;
+        }
+
+        private void HierarchyTreeView_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            e.Handled = true;
         }
     }
 }

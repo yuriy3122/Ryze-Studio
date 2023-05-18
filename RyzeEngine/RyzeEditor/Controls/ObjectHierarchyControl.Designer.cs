@@ -87,6 +87,8 @@
             this.HierarchyTreeView.SelectedImageIndex = 0;
             this.HierarchyTreeView.Size = new System.Drawing.Size(633, 982);
             this.HierarchyTreeView.TabIndex = 0;
+            this.HierarchyTreeView.KeyDown += new System.Windows.Forms.KeyEventHandler(this.HierarchyTreeView_KeyDown);
+            this.HierarchyTreeView.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.HierarchyTreeView_KeyPress);
             // 
             // imageList
             // 
@@ -95,6 +97,7 @@
             this.imageList.Images.SetKeyName(0, "world.png");
             this.imageList.Images.SetKeyName(1, "gameObject.png");
             this.imageList.Images.SetKeyName(2, "vehicle.png");
+            this.imageList.Images.SetKeyName(3, "camera.png");
             // 
             // ObjectHierarchyControl
             // 

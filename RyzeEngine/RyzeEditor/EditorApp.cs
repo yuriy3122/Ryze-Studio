@@ -102,7 +102,16 @@ namespace RyzeEditor
 
         private void ObjectHierarchyControlSelectionChanged(object sender, EntityEventArgs e)
         {
-            var entity = _worldMap.Entities.FirstOrDefault(x => x.Id == e.EntityId);
+            EntityBase entity;
+
+            if (_worldMap.Camera.Id == e.EntityId)
+            {
+                entity = _worldMap.Camera;
+            }
+            else
+            {
+                entity = _worldMap.Entities.FirstOrDefault(x => x.Id == e.EntityId);
+            }
 
             if (entity != null)
             {
@@ -118,6 +127,7 @@ namespace RyzeEditor
         private void WorldMapEntityAdded(object sender, EntityEventArgs e)
         {
             var entities = _worldMap.Entities.ToList();
+            entities.Add(_worldMap.Camera);
 
             _objectHierarchyControl.UpdateHierarchy(entities);
         }
@@ -232,7 +242,10 @@ namespace RyzeEditor
 
                 if (_objectHierarchyControl != null)
                 {
-                    _objectHierarchyControl.UpdateHierarchy(_worldMap.Entities.ToList());
+                    var entities = _worldMap.Entities.ToList();
+                    entities.Add(_worldMap.Camera);
+
+                    _objectHierarchyControl.UpdateHierarchy(entities);
                 }
 
                 _userResized = true;

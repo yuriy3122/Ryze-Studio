@@ -1,11 +1,13 @@
 ﻿using System;
 using System.Drawing;
+using PropertyChanged;
 using SharpDX;
 
 namespace RyzeEditor.GameWorld
 {
 	[Serializable]
-	public class Camera : EntityBase
+    [ImplementPropertyChanged]
+    public class Camera : EntityBase
 	{
 		/// <summary>
 		/// Position of the camera
@@ -47,10 +49,11 @@ namespace RyzeEditor.GameWorld
 		/// </summary>
 		public bool IsActive { get; set; }
 
-		/// <summary>
-		/// Render window
-		/// </summary>
-		public Size ClientWndSize { get; set; }
+        /// <summary>
+        /// Render window
+        /// </summary>
+        [InspectorVisible(false)]
+        public Size ClientWndSize { get; set; }
 
 		public bool IsOrthoProj { get; set; }
 
