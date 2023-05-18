@@ -39,6 +39,26 @@ namespace RyzeEditor.Controls
             };
             rootNode.Expand();
 
+            foreach (var entity in entities)
+            {
+                var cameraObject = entity as Camera;
+
+                if (cameraObject != null)
+                {
+                    int imageIndex = GetObjectImageIndex(entity);
+
+                    var cameraNode = new TreeNode
+                    {
+                        Name = entity.Id.ToString(),
+                        Text = "Camera",
+                        ImageIndex = imageIndex,
+                        SelectedImageIndex = imageIndex
+                    };
+
+                    rootNode.Nodes.Add(cameraNode);
+                }
+            }
+
             var gameObjectsNode = new TreeNode
             {
                 Name = Guid.NewGuid().ToString(),
@@ -52,21 +72,6 @@ namespace RyzeEditor.Controls
             foreach (var entity in entities.Where(x => x.ParentId == Guid.Empty))
             {
                 int imageIndex = GetObjectImageIndex(entity);
-
-                var cameraObject = entity as Camera;
-
-                if (cameraObject != null)
-                {
-                    var cameraNode = new TreeNode
-                    {
-                        Name = entity.Id.ToString(),
-                        Text = "Camera",
-                        ImageIndex = imageIndex,
-                        SelectedImageIndex = imageIndex
-                    };
-
-                    rootNode.Nodes.Add(cameraNode);
-                }
 
                 var gameObject = entity as GameObject;
 
