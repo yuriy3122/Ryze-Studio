@@ -44,10 +44,11 @@ namespace RyzeEditor.GameWorld
 		/// </summary>
 		public float AspectRatio { get; set; }
 
-		/// <summary>
-		/// Active camera
-		/// </summary>
-		public bool IsActive { get; set; }
+        /// <summary>
+        /// Active camera
+        /// </summary>
+        [InspectorVisible(false)]
+        public bool IsActive { get; set; }
 
         /// <summary>
         /// Render window
@@ -55,7 +56,8 @@ namespace RyzeEditor.GameWorld
         [InspectorVisible(false)]
         public Size ClientWndSize { get; set; }
 
-		public bool IsOrthoProj { get; set; }
+        [InspectorVisible(false)]
+        public bool IsOrthoProj { get; set; }
 
 		public Ray GetPickRay(int x, int y)
 		{
