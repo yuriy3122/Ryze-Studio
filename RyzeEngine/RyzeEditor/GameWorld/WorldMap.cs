@@ -32,11 +32,16 @@ namespace RyzeEditor.GameWorld
 			_undoRedoManager = new UndoRedoManager(this);
 
             Camera = camera;
-		}
+        }
+
+        public void Update()
+        {
+            _undoRedoManager.RegisterEntity(Camera);
+        }
 
         public void AddEntity(EntityBase entity)
 		{
-			if (_entities.Any(e => e == entity))
+			if (_entities.Any(e => e == entity) || Camera.Id == entity.Id)
 			{
 				return;
 			}
@@ -64,7 +69,9 @@ namespace RyzeEditor.GameWorld
 
 		public EntityBase FindEntity(Guid id)
 		{
-			return _entities.FirstOrDefault(x => x.Id == id);
+            EntityBase entity = (Camera.Id == id ? Camera : null) ?? _entities.FirstOrDefault(x => x.Id == id);
+
+            return entity;
 		}
 
 		public List<EntityBase> GetEntities()

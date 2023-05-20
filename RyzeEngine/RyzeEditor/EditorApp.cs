@@ -60,6 +60,7 @@ namespace RyzeEditor
                 _clientSize = form.ClientSize;
                 _userResized = true;
                 userMinimized = form.WindowState == FormWindowState.Minimized;
+                _worldMap.Update();
             };
 
             _selection = new Selection();

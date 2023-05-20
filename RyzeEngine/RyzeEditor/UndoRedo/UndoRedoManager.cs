@@ -31,10 +31,17 @@ namespace RyzeEditor.UndoRedo
 			{
 				RegisterEntity(entity);
 			}
+
+            RegisterEntity(_worldMap.Camera);
 		}
 
 		public void RegisterEntity(EntityBase e)
 		{
+            if (_entityChangedValues.ContainsKey(e.Id))
+            {
+                return;
+            }
+
 			var dic = new Dictionary<String, ChangeSet>();
 			var properties = e.GetType().GetProperties();
 
@@ -135,8 +142,7 @@ namespace RyzeEditor.UndoRedo
 
             foreach (var entityChange in _entityChangedValues)
 			{
-				var entity = _worldMap.Entities.SingleOrDefault(x => x.Id == entityChange.Key);
-
+				var entity = _worldMap.Entities.SingleOrDefault(x => x.Id == entityChange.Key) ?? (_worldMap.Camera.Id == entityChange.Key ? _worldMap.Camera : null);
                 var dic = entityChange.Value;
 
                 var keys = dic.Keys.ToList();
