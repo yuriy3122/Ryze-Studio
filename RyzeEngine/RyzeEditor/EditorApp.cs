@@ -73,6 +73,11 @@ namespace RyzeEditor
             _objectHierarchyControl = form.ObjectHierarchyControl;
             _objectHierarchyControl.SelectionChanged += ObjectHierarchyControlSelectionChanged;
 
+            var entities = _worldMap.Entities.ToList();
+            entities.Add(_worldMap.Camera);
+
+            _objectHierarchyControl.UpdateHierarchy(entities);
+
             _inspectorControl = form.Inspector;
 
             InitToolManager(form);
