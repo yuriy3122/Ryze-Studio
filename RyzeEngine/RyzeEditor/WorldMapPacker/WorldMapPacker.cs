@@ -11,8 +11,6 @@ namespace RyzeEditor.Packer
 
         private readonly PreProcessor _preProcessor;
 
-        private readonly PackerValidator _validator;
-
         private readonly WorldMapData _worldMapData;
 
         private readonly BinaryWriter _binaryWriter;
@@ -25,7 +23,6 @@ namespace RyzeEditor.Packer
             CreateDefaultOptions();
 
             _preProcessor = new PreProcessor(options);
-            _validator = new PackerValidator(options);
             _worldMapData = new WorldMapData(_worldMap);
             _binaryWriter = new BinaryWriter(_worldMapData);
         }

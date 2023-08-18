@@ -2,15 +2,13 @@
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Drawing;
 using System.Collections.Generic;
 using SharpDX;
 using RyzeEditor.ResourceManagment;
 using RyzeEditor.Extentions;
 using RyzeEditor.Helpers;
 using RyzeEditor.GameWorld;
-using System.Drawing;
-using SharpDX.Direct3D11;
-using System.Reflection;
 
 namespace RyzeEditor.Packer
 {
@@ -570,6 +568,11 @@ namespace RyzeEditor.Packer
 
                         for (int i = 0; i < subMesh.Materials.Count; i++)
                         {
+                            if (!subMeshGeometry.Indices.ContainsKey(i))
+                            {
+                                continue;
+                            }
+
                             var indices = new List<uint>(subMeshGeometry.Indices[i]);
 
                             for (int j = 0; j < indices.Count; j++)
