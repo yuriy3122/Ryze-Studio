@@ -91,7 +91,7 @@ namespace RyzeEditor.Renderer
 				{
                     if (!subMesh.Indices.ContainsKey(i))
                     {
-                        return;
+                        continue;
                     }
 
 					_context.MapSubresource(_indexBuffer, MapMode.WriteDiscard, MapFlags.None, out stream);
