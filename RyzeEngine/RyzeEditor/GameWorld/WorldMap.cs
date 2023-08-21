@@ -14,11 +14,14 @@ namespace RyzeEditor.GameWorld
 		[field: NonSerialized]
 		private static UndoRedoManager _undoRedoManager;
 
+        [field: NonSerialized]
         public event EventHandler<EntityEventArgs> EntityAdded;
 
-		public event EventHandler<EntityEventArgs> EntityModified;
+        [field: NonSerialized]
+        public event EventHandler<EntityEventArgs> EntityModified;
 
-		public event EventHandler<EntityEventArgs> EntityDeleted;
+        [field: NonSerialized]
+        public event EventHandler<EntityEventArgs> EntityDeleted;
 
 		public Camera Camera { get; private set; }
 

@@ -65,9 +65,6 @@ namespace RyzeEditor
 
             _selection = new Selection();
 
-            _worldMap.EntityAdded += WorldMapEntityAdded;
-            _worldMap.EntityDeleted += WorldMapEntityDeleted;
-
             form.Inspector.Selection = _selection;
 
             _objectHierarchyControl = form.ObjectHierarchyControl;
@@ -87,6 +84,9 @@ namespace RyzeEditor
             _renderer = new RendererD3d();
             _renderer.Initialize(form.Handle, _worldMap.Camera);
             var context = new RenderContext(_renderer, _toolManager);
+
+            _worldMap.EntityAdded += WorldMapEntityAdded;
+            _worldMap.EntityDeleted += WorldMapEntityDeleted;
 
             RenderLoop.Run(form, () =>
             {
@@ -244,9 +244,11 @@ namespace RyzeEditor
 
                 _worldMap.Camera.AspectRatio = (float)_clientSize.Width / _clientSize.Height;
                 _worldMap.Camera.ClientWndSize = _clientSize;
-                _worldMap.EntityDeleted += (s, e) => { _selection?.RemoveEntity(e.EntityId); };
                 _toolManager.WorldMap = _worldMap;
                 _renderer.Camera = _worldMap.Camera;
+
+                _worldMap.EntityAdded += WorldMapEntityAdded;
+                _worldMap.EntityDeleted += WorldMapEntityDeleted;
 
                 if (_objectHierarchyControl != null)
                 {
