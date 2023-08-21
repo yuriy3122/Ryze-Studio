@@ -59,7 +59,7 @@ float4 PS(PS_IN input) : SV_Target
 	float3 L = normalize(input.light.xyz);
     float Kd = dot(N, L);
 
-	float3 color = (0.6 * ambientColor + 0.4f * lightColor * Kd * Kd);
+	float3 color = saturate(2.0 * (0.6 * ambientColor + 0.4f * lightColor * Kd * Kd));
 
     return float4(color, 0.0);
 }
