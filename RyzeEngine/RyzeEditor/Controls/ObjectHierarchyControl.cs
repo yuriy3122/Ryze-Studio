@@ -83,7 +83,7 @@ namespace RyzeEditor.Controls
                 var parentNode = new TreeNode
                 {
                     Name = entity.Id.ToString(),
-                    Text = entity.GetType().Name,
+                    Text = gameObject != null ? gameObject.GeometryMeshes.FirstOrDefault().Name : entity.GetType().Name,
                     ImageIndex = imageIndex,
                     SelectedImageIndex = imageIndex
                 };
@@ -100,10 +100,12 @@ namespace RyzeEditor.Controls
                     {
                         imageIndex = GetObjectImageIndex(childEntity);
 
+                        var obj = entity as GameObject;
+
                         var childNode = new TreeNode
                         {
                             Name = childEntity.Id.ToString(),
-                            Text = childEntity.GetType().Name,
+                            Text = obj != null ? obj.GeometryMeshes.FirstOrDefault().Name : childEntity.GetType().Name,
                             ImageIndex = imageIndex,
                             SelectedImageIndex = imageIndex
                         };

@@ -7,6 +7,8 @@ namespace RyzeEditor.ResourceManagment
 	{
 		string Id { get; set; }
 
+        string Name { get; set; }
+
 		BoundingBox BoundingBox { get; set; }
 
         BoundingSphere BoundingSphere { get; set; }

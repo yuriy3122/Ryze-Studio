@@ -94,6 +94,7 @@ namespace RyzeEditor.ResourceManagment
                     {
                         mesh = GeometryMesh.FromStream(stream);
                         mesh.Id = meshId;
+                        mesh.Name = id.Split('.').FirstOrDefault();
                     }
                 }
 

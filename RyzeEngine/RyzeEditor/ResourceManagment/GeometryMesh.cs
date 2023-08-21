@@ -244,7 +244,8 @@ namespace RyzeEditor.ResourceManagment
         private const short IdMaterialHeader = 0x1FF1;
 
 		public string Id { get; set; }
-		public BoundingBox BoundingBox { get; set; }
+        public string Name { get; set; }
+        public BoundingBox BoundingBox { get; set; }
         public BoundingSphere BoundingSphere { get; set; }
 
         public List<SubMesh> SubMeshes { get; } = new List<SubMesh>();
