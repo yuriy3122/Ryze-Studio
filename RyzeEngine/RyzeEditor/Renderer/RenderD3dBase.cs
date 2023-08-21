@@ -21,15 +21,22 @@ namespace RyzeEditor.Renderer
 		protected Device _device;
 		protected SwapChain _swapChain;
 		protected DeviceContext _context;
+
+        protected Texture2D _depthMap;
 		protected Texture2D _backBuffer;
         protected Texture2D _proxyBackBuffer;
+        protected Texture2D _depthBuffer;
+
         protected RenderTargetView _renderView;
         protected RenderTargetView _proxyRenderView;
         protected ShaderResourceView _proxyShaderResourceView;
-        protected Texture2D _depthBuffer;
+        protected ShaderResourceView _depthMapSRV;
+
+        protected DepthStencilView _depthMapDSV;
 		protected DepthStencilView _depthView;
         protected DepthStencilState _defaultStentilState;
         protected DepthStencilState _disabledDepthStencilState;
+
         protected SwapChainDescription _desc;
         protected RasterizerState _rasterState;
         protected RasterizerState _cullDisabledRasterizerState;
@@ -44,6 +51,7 @@ namespace RyzeEditor.Renderer
         protected const int IndexBufferCapacity = 200000000;
 		protected const int VertexBufferCapacity = 30000000;
 		protected const int InstanceMaxValue = 100000;
+
         private float _widthScale;
         private float _heigthScale;
 
