@@ -125,7 +125,7 @@ namespace RyzeEditor.Packer
 
         private void WriteAccelerationStructureData(FileStream stream)
         {
-            var gameObjects = _worldMapData.GameObjects.Where(x => x.Key.IncludeInAccStructure).Select(x => x.Key).ToList();
+            var gameObjects = _worldMapData.GameObjects.Where(x => x.Key.AccelerationStructure).Select(x => x.Key).ToList();
 
             if (gameObjects.Any())
             {

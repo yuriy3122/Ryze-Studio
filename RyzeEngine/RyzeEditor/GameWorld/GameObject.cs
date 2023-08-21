@@ -80,7 +80,7 @@ namespace RyzeEditor.GameWorld
         /// <summary>
         /// Include in Ray Traced acceleration stucture
         /// </summary>
-        public bool IncludeInAccStructure { get; set; }
+        public bool AccelerationStructure { get; set; }
 
         public List<IMesh> GeometryMeshes
         {
