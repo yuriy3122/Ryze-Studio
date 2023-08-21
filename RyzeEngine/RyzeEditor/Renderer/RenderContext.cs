@@ -90,6 +90,8 @@ namespace RyzeEditor.Renderer
 				}
 			}
 
+            _renderer.RenderShadowMap();
+
 			_renderer.PreRender();
 
 			RenderPlaneGrid(frustum, camera);

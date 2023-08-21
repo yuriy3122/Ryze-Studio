@@ -127,7 +127,7 @@ namespace RyzeEditor.Renderer
 			set { _camera = value; }
 		}
 
-        public void PreRenderShadowMap()
+        public void RenderShadowMap()
         {
         }
 

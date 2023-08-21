@@ -51,7 +51,7 @@ namespace RyzeEditor.Renderer
 	{
 		void Initialize(IntPtr handle, Camera camera);
 
-        void PreRenderShadowMap();
+        void RenderShadowMap();
 
 		void PreRender();
 
@@ -65,10 +65,8 @@ namespace RyzeEditor.Renderer
 
 		void Dispose();
 
-		//drawing primitives
 		void DrawLineStrip(IEnumerable<Point3> points, RenderMode mode);
 
-		//drawing complex objects
 		void DrawMeshInstanced(IMesh mesh, Matrix[] matrices, RenderMode mode);
 	}
 }
