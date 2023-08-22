@@ -94,7 +94,7 @@ namespace RyzeEditor.Renderer
 
 			_renderer.PreRender();
 
-			RenderPlaneGrid(frustum, camera);
+			//RenderPlaneGrid(frustum, camera);
 
 			var gameObjects = _entities.OfType<GameObject>().ToList();
             var options = GetRenderOptions();

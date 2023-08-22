@@ -54,6 +54,7 @@ namespace RyzeEditor.Renderer
 
         private float _widthScale;
         private float _heigthScale;
+        private int _shadowMapSize;
 
         public void Initialize(IntPtr handle, Camera camera)
 		{
@@ -61,6 +62,7 @@ namespace RyzeEditor.Renderer
 			_camera = camera;
             _widthScale = 1.0f;
             _heigthScale = 1.0f;
+            _shadowMapSize = 2048;
 
             _desc = new SwapChainDescription
 			{
@@ -287,7 +289,42 @@ namespace RyzeEditor.Renderer
             _proxyShaderResourceView = new ShaderResourceView(_device, _proxyBackBuffer);
 
             _depthView = new DepthStencilView(_device, _depthBuffer);
-			_context.Rasterizer.SetViewport(new Viewport(0, 0, width, height, 0.0f, 1.0f));
+
+            _depthMap = new Texture2D(_device, new Texture2DDescription
+            {
+                Format = Format.R24G8_Typeless,
+                ArraySize = 1,
+                MipLevels = 1,
+                Width = _shadowMapSize,
+                Height = _shadowMapSize,
+                SampleDescription = new SampleDescription(1, 0),
+                Usage = ResourceUsage.Default,
+                BindFlags = BindFlags.DepthStencil | BindFlags.ShaderResource,
+                CpuAccessFlags = CpuAccessFlags.None,
+                OptionFlags = ResourceOptionFlags.None
+            });
+
+            var depthMapDSVDesc = new DepthStencilViewDescription
+            {
+                Flags = 0,
+                Format = Format.D24_UNorm_S8_UInt,
+                Dimension = DepthStencilViewDimension.Texture2D,
+            };
+            depthMapDSVDesc.Texture2D.MipSlice = 0;
+
+            _depthMapDSV = new DepthStencilView(_device, _depthMap, depthMapDSVDesc);
+
+            var depthMapSRVDesc = new ShaderResourceViewDescription
+            {
+                Format = Format.R24_UNorm_X8_Typeless,
+                Dimension = ShaderResourceViewDimension.Texture2D
+            };
+            depthMapSRVDesc.Texture2D.MipLevels = 1;
+            depthMapSRVDesc.Texture2D.MostDetailedMip = 0;
+
+            _depthMapSRV = new ShaderResourceView(_device, _depthMap, depthMapSRVDesc);
+
+            _context.Rasterizer.SetViewport(new Viewport(0, 0, width, height, 0.0f, 1.0f));
 		}
 	}
 }
