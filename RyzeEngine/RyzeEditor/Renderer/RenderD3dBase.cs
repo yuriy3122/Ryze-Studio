@@ -216,6 +216,9 @@ namespace RyzeEditor.Renderer
             Utilities.Dispose(ref _proxyRenderView);
             Utilities.Dispose(ref _proxyShaderResourceView);
             Utilities.Dispose(ref _backBuffer);
+            Utilities.Dispose(ref _depthMapDSV);
+            Utilities.Dispose(ref _depthMapSRV);
+            Utilities.Dispose(ref _depthMap);
             Utilities.Dispose(ref _proxyBackBuffer);
             Utilities.Dispose(ref _rasterState);
             Utilities.Dispose(ref _cullDisabledRasterizerState);
