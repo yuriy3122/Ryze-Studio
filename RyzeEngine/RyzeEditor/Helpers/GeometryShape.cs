@@ -83,7 +83,7 @@ namespace RyzeEditor.Helpers
             return mesh;
         }
 
-        public static GeometryMesh BuildConeShape(float radius = 5.0f, float length = 30.0f, uint segments = 12)
+        public static GeometryMesh BuildConeShape(float radius = 3.0f, float length = 30.0f, uint segments = 12)
         {
             var vertexData = new List<Vertex>();
             var indices = new List<uint>();

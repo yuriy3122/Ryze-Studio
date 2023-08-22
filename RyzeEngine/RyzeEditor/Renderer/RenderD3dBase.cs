@@ -137,8 +137,10 @@ namespace RyzeEditor.Renderer
 			set { _camera = value; }
 		}
 
-        public void RenderShadowMap()
+        public void PreRenderShadowMap()
         {
+            _context.OutputMerger.SetTargets(_depthMapDSV);
+            _context.ClearDepthStencilView(_depthMapDSV, DepthStencilClearFlags.Depth, 1.0f, 0);
         }
 
 		public void PreRender()

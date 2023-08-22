@@ -20,8 +20,6 @@ namespace RyzeEditor.Renderer
 
 		private readonly List<EntityBase> _entities;
 
-		private readonly PlaneGrid _planeGrid;
-
 		public RenderContext(IRenderer renderer, IToolManager toolManager)
 		{
 			_renderer = renderer;
@@ -29,24 +27,53 @@ namespace RyzeEditor.Renderer
 			_renderMode = new RenderMode();
 			_meshGroup = new Dictionary<string, List<Matrix>>();
 			_entities = new List<EntityBase>();
-			_planeGrid = new PlaneGrid(25, 2.0f);
 		}
 
 		public void Dispose()
 		{
-			if (_renderer != null)
-			{
-				_renderer.Dispose();
-			}
+			_renderer?.Dispose();
 		}
 
 		public void ResizeWindow(Size wndSize)
 		{
-			if (_renderer != null)
-			{
-				_renderer.ResizeWindow(wndSize);
-			}
+            _renderer?.ResizeWindow(wndSize);
 		}
+
+        private List<GameObject> GetVisibleObjectsInFrustum(WorldMap worldMap, BoundingFrustum frustum)
+        {
+            _entities.Clear();
+
+            foreach (var entity in worldMap.Entities)
+            {
+                if (!(entity is IVisualElement visualElement) || entity.IsHidden)
+                {
+                    continue;
+                }
+
+                var gameObject = visualElement as GameObject;
+
+                if (gameObject != null)
+                {
+                    var boundingBox = GetGameObjectBoundingBox(gameObject);
+
+                    if (frustum.Contains(boundingBox) != ContainmentType.Disjoint)
+                    {
+                        _entities.Add(entity);
+                    }
+                }
+                else
+                {
+                    if (frustum.Contains(visualElement.BoundingBox) != ContainmentType.Disjoint)
+                    {
+                        _entities.Add(entity);
+                    }
+                }
+            }
+
+            var gameObjects = _entities.OfType<GameObject>().ToList();
+
+            return gameObjects;
+        }
 
 		public void RenderWorld(WorldMap worldMap)
 		{
@@ -55,48 +82,27 @@ namespace RyzeEditor.Renderer
 				return;
 			}
 
-			var camera = worldMap.Camera;
-			var lookAtDir = worldMap.Camera.LookAtDir - worldMap.Camera.Position;
-			lookAtDir.Normalize();
+            _renderMode.ShadowMap = true;
 
-			var frustum = BoundingFrustum.FromCamera(camera.Position, lookAtDir, camera.UpDir, camera.FOV, camera.ZNear, camera.ZFar, camera.AspectRatio);
+            _renderer.PreRenderShadowMap();
 
-			_entities.Clear();
+            var gameObjects = _entities.OfType<GameObject>().Where(x => !x.IsHidden).ToList();
 
-			foreach (var entity in worldMap.Entities)
-			{
-                if (!(entity is IVisualElement visualElement) || entity.IsHidden)
-                {
-                    continue;
-                }
+            _renderMode.SunLightDir = new Vector3(1.0f, 1.0f, 1.0f);
 
-                var gameObject = visualElement as GameObject;
+            RenderGameObjects(gameObjects);
 
-				if (gameObject != null)
-				{
-					var boundingBox = GetGameObjectBoundingBox(gameObject);
+            _renderMode.ShadowMap = false;
 
-					if (frustum.Contains(boundingBox) != ContainmentType.Disjoint)
-					{
-						_entities.Add(entity);
-					}
-				}
-				else
-				{
-					if (frustum.Contains(visualElement.BoundingBox) != ContainmentType.Disjoint)
-					{
-						_entities.Add(entity);
-					}
-				}
-			}
+            _renderer.PreRender();
 
-            _renderer.RenderShadowMap();
+            var camera = worldMap.Camera;
+            var lookAtDir = (camera.LookAtDir - camera.Position);
+            lookAtDir.Normalize();
+            var frustum = BoundingFrustum.FromCamera(camera.Position, lookAtDir, camera.UpDir, camera.FOV, camera.ZNear, camera.ZFar, camera.AspectRatio);
 
-			_renderer.PreRender();
+            gameObjects = GetVisibleObjectsInFrustum(worldMap, frustum);
 
-			//RenderPlaneGrid(frustum, camera);
-
-			var gameObjects = _entities.OfType<GameObject>().ToList();
             var options = GetRenderOptions();
             var objectIds = options.Where(x => x.ShapeType != ShapeType.GeometryMesh).Select(x => x.GameObjectId);
 
@@ -109,6 +115,8 @@ namespace RyzeEditor.Renderer
                     gameObjects.Remove(gameObject);
                 }
             }
+
+            _renderMode.SunLightDir = camera.Position - camera.LookAtDir;
 
             RenderGameObjects(gameObjects);
 
@@ -194,35 +202,6 @@ namespace RyzeEditor.Renderer
             return new BoundingBox(minT, maxT);
         }
 
-        private void RenderPlaneGrid(BoundingFrustum frustum, Camera camera)
-		{
-			foreach (var patch in _planeGrid.Patches)
-			{
-				int visiblePoints = 0;
-
-				var dist = (patch.Points[0] - camera.Position).Length();
-
-				if (dist > 2000.0f)
-				{
-					continue;
-				}
-
-				foreach (var point in patch.Points)
-				{
-					var pt = point;
-					if (frustum.Contains(ref pt) != ContainmentType.Disjoint)
-					{
-						visiblePoints++;
-					}
-				}
-
-				if (visiblePoints != 0)
-				{
-					RenderHelper.RenderGridPatch(_renderer, patch);
-				}
-			}
-		}
-
         private void RenderGameObjects(IEnumerable<GameObject> gameObjects)
         {
             _meshGroup.Clear();
@@ -249,13 +228,16 @@ namespace RyzeEditor.Renderer
                 }
             }
 
-            foreach (var gameObject in gameObjectList)
+            if (!_renderMode.ShadowMap)
             {
-                RenderNormals(gameObject);
+                foreach (var gameObject in gameObjectList)
+                {
+                    RenderNormals(gameObject);
 
-                RenderTangents(gameObject);
+                    RenderTangents(gameObject);
 
-                RenderBitangents(gameObject);
+                    RenderBitangents(gameObject);
+                }
             }
         }
 

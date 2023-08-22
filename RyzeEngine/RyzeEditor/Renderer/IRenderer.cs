@@ -37,21 +37,21 @@ namespace RyzeEditor.Renderer
         }
     }
 
-    public struct RenderMode
+    public class RenderMode
     {
-        public bool ShadowMap;
-        public bool BoundBox;
-		public bool IsDepthClipEnabled;
-        public List<int> SubMeshIds;
-        public Vector4 Color;
-        public Vector3 SunLightDir;
-	}
+        public bool ShadowMap { get; set; }
+        public bool BoundBox { get; set; }
+        public bool IsDepthClipEnabled { get; set; }
+        public List<int> SubMeshIds { get; set; }
+        public Vector4 Color { get; set; }
+        public Vector3 SunLightDir { get; set; }
+    }
 
 	public interface IRenderer
 	{
 		void Initialize(IntPtr handle, Camera camera);
 
-        void RenderShadowMap();
+        void PreRenderShadowMap();
 
 		void PreRender();
 

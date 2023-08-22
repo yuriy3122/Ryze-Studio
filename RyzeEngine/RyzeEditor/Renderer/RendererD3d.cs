@@ -133,7 +133,7 @@ namespace RyzeEditor.Renderer
                     var normMatrix = subMesh.GetNormalMatrix(mesh);
                     normMatrix.Transpose();
 
-                    var lightDir = Vector4.Normalize((new Vector4(_camera.Position - _camera.LookAtDir, 0)));
+                    var lightDir = Vector4.Normalize((new Vector4(mode.SunLightDir, 0)));
                     var diffuseColor = (mode.SubMeshIds != null && mode.SubMeshIds.Contains((int)subMesh.Id)) ? mode.Color : new Vector4(material.Diffuse, 0);
 
                     var data = new List<float>();
