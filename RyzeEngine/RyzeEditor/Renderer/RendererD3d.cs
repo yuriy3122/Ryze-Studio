@@ -121,7 +121,7 @@ namespace RyzeEditor.Renderer
                     }
 
                     Matrix viewProj;
-                    Matrix orthoViewProj = Matrix.LookAtLH(mode.DirectLightDir, Vector3.Zero, _camera.UpDir) * Matrix.OrthoLH(1000, 1000, -1000.0f, 1000.0f);
+                    Matrix orthoViewProj = Matrix.LookAtLH(mode.DirectLightDir, Vector3.Zero, _camera.UpDir) * Matrix.OrthoLH(100, 100, -100.0f, 100.0f);
                     orthoViewProj.Transpose();
 
                     if (mode.ShadowMap)
