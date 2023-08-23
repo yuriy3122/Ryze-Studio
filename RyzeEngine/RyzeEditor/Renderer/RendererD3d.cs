@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using RyzeEditor.Extentions;
+using RyzeEditor.GameWorld;
 using RyzeEditor.ResourceManagment;
 using SharpDX;
 using SharpDX.Direct3D;
@@ -120,7 +121,7 @@ namespace RyzeEditor.Renderer
                     }
 
                     Matrix viewProj;
-                    Matrix orthoViewProj = Matrix.LookAtLH(mode.SunLightDir, Vector3.Zero, _camera.UpDir) * Matrix.OrthoLH(1000, 1000, -1000.0f, 1000.0f);
+                    Matrix orthoViewProj = Matrix.LookAtLH(mode.DirectLightDir, Vector3.Zero, _camera.UpDir) * Matrix.OrthoLH(1000, 1000, -1000.0f, 1000.0f);
                     orthoViewProj.Transpose();
 
                     if (mode.ShadowMap)
@@ -141,7 +142,8 @@ namespace RyzeEditor.Renderer
                     var normMatrix = subMesh.GetNormalMatrix(mesh);
                     normMatrix.Transpose();
 
-                    var lightDir = Vector4.Normalize((new Vector4(mode.SunLightDir, 0)));
+                    var dir = _camera.Position - _camera.LookAtDir;
+                    var lightDir = Vector4.Normalize((new Vector4(dir, 0)));
                     var diffuseColor = (mode.SubMeshIds != null && mode.SubMeshIds.Contains((int)subMesh.Id)) ? mode.Color : new Vector4(material.Diffuse, 0);
 
                     var data = new List<float>();

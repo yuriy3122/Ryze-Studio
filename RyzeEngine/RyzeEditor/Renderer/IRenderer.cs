@@ -44,7 +44,7 @@ namespace RyzeEditor.Renderer
         public bool IsDepthClipEnabled { get; set; }
         public List<int> SubMeshIds { get; set; }
         public Vector4 Color { get; set; }
-        public Vector3 SunLightDir { get; set; }
+        public Vector3 DirectLightDir { get; set; }
     }
 
 	public interface IRenderer

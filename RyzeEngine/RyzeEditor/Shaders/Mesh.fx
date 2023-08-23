@@ -26,20 +26,9 @@ float4 diffuse;
 float4 light;
 
 Texture2D diffuseTexture: register( t0 );
+Texture2D shadowMap : register(t1);
+
 SamplerState textureSampler: register( s0 );
-
-Texture2D shadowMap: register( t1 );
-
-SamplerComparisonState samShadow
-{
-    Filter = COMPARISON_MIN_MAG_LINEAR_MIP_POINT;
-    AddressU = BORDER;
-    AddressV = BORDER;
-    AddressW = BORDER;
-    BorderColor = float4(0.0f, 0.0f, 0.0f, 0.0f);
-    ComparisonFunc = LESS_EQUAL;
-};
-
 
 PS_IN VS(VS_IN input)
 {
@@ -81,7 +70,13 @@ float4 PS(PS_IN input) : SV_Target
     tc.x = input.shadowPosH.x * 0.5f + 0.5f;
     tc.y = input.shadowPosH.y * -0.5f + 0.5f;
     
-    float4 shadow = shadowMap.SampleCmpLevelZero(samShadow, tc, input.shadowPosH.z);
+    float bias = 0.001f;
+    float shadow = shadowMap.Sample(textureSampler, tc).r;
+    
+    if ((shadow + bias) < input.shadowPosH.z)
+    {
+        color = 0.6f * color;
+    }
 
     return float4(color, 0.0);
 }

@@ -88,8 +88,8 @@ namespace RyzeEditor.Renderer
 
             var gameObjects = _entities.OfType<GameObject>().Where(x => !x.IsHidden).ToList();
 
-            _renderMode.SunLightDir = new Vector3(1.0f, 1.0f, 1.0f);
-            _renderMode.SunLightDir.Normalize();
+            _renderMode.DirectLightDir = new Vector3(1.0f, 1.0f, 1.0f);
+            _renderMode.DirectLightDir.Normalize();
 
             RenderGameObjects(gameObjects);
 
@@ -116,8 +116,6 @@ namespace RyzeEditor.Renderer
                     gameObjects.Remove(gameObject);
                 }
             }
-
-            _renderMode.SunLightDir = camera.Position - camera.LookAtDir;
 
             RenderGameObjects(gameObjects);
 
