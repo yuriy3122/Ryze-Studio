@@ -75,7 +75,7 @@ float4 PS(PS_IN input) : SV_Target
     
     if ((shadow + bias) < input.shadowPosH.z)
     {
-        color = 0.6f * color;
+        //color = 0.6f * color;
     }
 
     return float4(color, 0.0);
