@@ -13,6 +13,7 @@ struct PS_IN
 	float4 pos : SV_POSITION;
     float3 norm : NORMAL;
     float2 tex : TEXTURE0;
+    float4 shadowPosH : TEXCOORD1;
     float4 color : COLOR0;
 	float4 light : COLOR1;
 };
@@ -20,11 +21,25 @@ struct PS_IN
 float4x4 posProj;
 float4x4 normProj;
 float4x4 viewProj;
+float4x4 orthoViewProj;
 float4 diffuse;
 float4 light;
 
-Texture2D diffuseTexture;
-SamplerState textureSampler;
+Texture2D diffuseTexture: register( t0 );
+SamplerState textureSampler: register( s0 );
+
+Texture2D shadowMap: register( t1 );
+
+SamplerComparisonState samShadow
+{
+    Filter = COMPARISON_MIN_MAG_LINEAR_MIP_POINT;
+    AddressU = BORDER;
+    AddressV = BORDER;
+    AddressW = BORDER;
+    BorderColor = float4(0.0f, 0.0f, 0.0f, 0.0f);
+    ComparisonFunc = LESS_EQUAL;
+};
+
 
 PS_IN VS(VS_IN input)
 {
@@ -35,6 +50,7 @@ PS_IN VS(VS_IN input)
 	float3 norm = mul(input.norm, (float3x3)normProj);
 
 	output.pos = mul(instancePosition, viewProj);
+    output.shadowPosH = mul(instancePosition, orthoViewProj);
     output.norm = mul(norm, (float3x3)input.mTransform);
     output.tex = input.tex;
 	output.color = diffuse;
@@ -60,6 +76,12 @@ float4 PS(PS_IN input) : SV_Target
     float Kd = dot(N, L);
 
 	float3 color = saturate(2.0 * (0.6 * ambientColor + 0.4f * lightColor * Kd * Kd));
+    
+    float2 tc;
+    tc.x = input.shadowPosH.x * 0.5f + 0.5f;
+    tc.y = input.shadowPosH.y * -0.5f + 0.5f;
+    
+    float4 shadow = shadowMap.SampleCmpLevelZero(samShadow, tc, input.shadowPosH.z);
 
     return float4(color, 0.0);
 }

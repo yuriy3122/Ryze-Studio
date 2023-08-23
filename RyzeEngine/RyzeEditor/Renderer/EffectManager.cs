@@ -129,7 +129,7 @@ namespace RyzeEditor.Renderer
  				new InputElement("INSTANCE", 3, Format.R32G32B32A32_Float, 48, 1, InputClassification.PerInstanceData, 1)
 			};
 
-			var constBufferSize = 3 * Utilities.SizeOf<Matrix>() + 2 * Utilities.SizeOf<Vector4>();
+			var constBufferSize = 4 * Utilities.SizeOf<Matrix>() + 2 * Utilities.SizeOf<Vector4>();
 
 			var effect = new Effect("Shaders\\Mesh.fx", elements, constBufferSize, samplerStateDesc, "4_0");
 

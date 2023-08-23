@@ -89,6 +89,7 @@ namespace RyzeEditor.Renderer
             var gameObjects = _entities.OfType<GameObject>().Where(x => !x.IsHidden).ToList();
 
             _renderMode.SunLightDir = new Vector3(1.0f, 1.0f, 1.0f);
+            _renderMode.SunLightDir.Normalize();
 
             RenderGameObjects(gameObjects);
 

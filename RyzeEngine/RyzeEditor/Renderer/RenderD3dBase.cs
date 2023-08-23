@@ -62,7 +62,7 @@ namespace RyzeEditor.Renderer
 			_camera = camera;
             _widthScale = 1.0f;
             _heigthScale = 1.0f;
-            _shadowMapSize = 2048;
+            _shadowMapSize = 4096;
 
             _desc = new SwapChainDescription
 			{
@@ -140,7 +140,9 @@ namespace RyzeEditor.Renderer
         public void PreRenderShadowMap()
         {
             _context.OutputMerger.SetTargets(_depthMapDSV);
+            _context.OutputMerger.DepthStencilState = _defaultStentilState;
             _context.ClearDepthStencilView(_depthMapDSV, DepthStencilClearFlags.Depth, 1.0f, 0);
+            _context.Rasterizer.State = _rasterState;
         }
 
 		public void PreRender()
@@ -300,8 +302,8 @@ namespace RyzeEditor.Renderer
                 Format = Format.R24G8_Typeless,
                 ArraySize = 1,
                 MipLevels = 1,
-                Width = _shadowMapSize,
-                Height = _shadowMapSize,
+                Width = width,
+                Height = height,
                 SampleDescription = new SampleDescription(1, 0),
                 Usage = ResourceUsage.Default,
                 BindFlags = BindFlags.DepthStencil | BindFlags.ShaderResource,
