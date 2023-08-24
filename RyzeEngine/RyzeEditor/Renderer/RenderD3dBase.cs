@@ -39,6 +39,7 @@ namespace RyzeEditor.Renderer
 
         protected SwapChainDescription _desc;
         protected RasterizerState _rasterState;
+        protected RasterizerState _depthMapRasterState;
         protected RasterizerState _cullDisabledRasterizerState;
         protected Factory _factory;
 		protected Buffer _vertBuffer;
@@ -120,6 +121,12 @@ namespace RyzeEditor.Renderer
             rasterDesc = RasterizerStateDescription.Default();
             _rasterState = new RasterizerState(_device, rasterDesc);
 
+            var depthRasterDesc = RasterizerStateDescription.Default();
+            depthRasterDesc.DepthBias = 1;
+            depthRasterDesc.DepthBiasClamp = 0.0f;
+            depthRasterDesc.SlopeScaledDepthBias = 0.0001f;
+            _depthMapRasterState = new RasterizerState(_device, depthRasterDesc);
+
             var depthStencilDesc = DepthStencilStateDescription.Default();
             _defaultStentilState = new DepthStencilState(_device, depthStencilDesc);
 
@@ -142,7 +149,7 @@ namespace RyzeEditor.Renderer
             _context.OutputMerger.SetTargets(_depthMapDSV);
             _context.OutputMerger.DepthStencilState = _defaultStentilState;
             _context.ClearDepthStencilView(_depthMapDSV, DepthStencilClearFlags.Depth, 1.0f, 0);
-            _context.Rasterizer.State = _rasterState;
+            _context.Rasterizer.State = _depthMapRasterState;
         }
 
 		public void PreRender()
@@ -225,6 +232,7 @@ namespace RyzeEditor.Renderer
             Utilities.Dispose(ref _depthMap);
             Utilities.Dispose(ref _proxyBackBuffer);
             Utilities.Dispose(ref _rasterState);
+            Utilities.Dispose(ref _depthMapRasterState);
             Utilities.Dispose(ref _cullDisabledRasterizerState);
             Utilities.Dispose(ref _defaultStentilState);
             Utilities.Dispose(ref _disabledDepthStencilState);
