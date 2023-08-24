@@ -122,14 +122,14 @@ namespace RyzeEditor.Renderer
 
                     Vector3 ligthPos = mode.DirectLightDir * 10.0f + _camera.LookAtDir;
                     float size = Vector3.Distance(_camera.LookAtDir, _camera.Position) * 4.0f;
-                    Matrix orthoViewProj = Matrix.LookAtLH(ligthPos, _camera.LookAtDir, _camera.UpDir) * Matrix.OrthoLH(size, size, -size, size);
-                    orthoViewProj.Transpose();
+                    Matrix lightViewProj = Matrix.LookAtLH(ligthPos, _camera.LookAtDir, _camera.UpDir) * Matrix.OrthoLH(size, size, -size, size);
+                    lightViewProj.Transpose();
 
                     Matrix viewProj;
 
                     if (mode.ShadowMap)
                     {
-                        viewProj = orthoViewProj;
+                        viewProj = lightViewProj;
                     }
                     else
                     {
@@ -153,7 +153,7 @@ namespace RyzeEditor.Renderer
                     data.AddRange(posMatrix.ToArray());
                     data.AddRange(normMatrix.ToArray());
                     data.AddRange(viewProj.ToArray());
-                    data.AddRange(orthoViewProj.ToArray());
+                    data.AddRange(lightViewProj.ToArray());
 					data.AddRange(diffuseColor.ToArray());
                     data.AddRange(lightDir.ToArray());
 
