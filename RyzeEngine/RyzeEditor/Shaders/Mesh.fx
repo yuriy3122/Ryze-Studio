@@ -25,10 +25,10 @@ float4x4 orthoViewProj;
 float4 diffuse;
 float4 light;
 
-Texture2D diffuseTexture: register( t0 );
-Texture2D shadowMap : register(t1);
+Texture2D diffuseTexture    : register( t0 );
+Texture2D shadowMap         : register( t1 );
 
-SamplerState textureSampler: register( s0 );
+SamplerState textureSampler : register( s0 );
 
 PS_IN VS(VS_IN input)
 {
@@ -75,7 +75,7 @@ float4 PS(PS_IN input) : SV_Target
     
     if ((shadow + bias) < input.shadowPosH.z)
     {
-        //color = 0.6f * color;
+        color = 0.6f * color;
     }
 
     return float4(color, 0.0);

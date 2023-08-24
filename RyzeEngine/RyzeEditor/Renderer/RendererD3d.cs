@@ -1,7 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using RyzeEditor.Extentions;
-using RyzeEditor.GameWorld;
 using RyzeEditor.ResourceManagment;
 using SharpDX;
 using SharpDX.Direct3D;
@@ -120,9 +120,12 @@ namespace RyzeEditor.Renderer
                         _context.PixelShader.SetShaderResource(1, _depthMapSRV);
                     }
 
-                    Matrix viewProj;
-                    Matrix orthoViewProj = Matrix.LookAtLH(mode.DirectLightDir, Vector3.Zero, _camera.UpDir) * Matrix.OrthoLH(100, 100, -100.0f, 100.0f);
+                    Vector3 ligthPos = mode.DirectLightDir * 10.0f + _camera.LookAtDir;
+                    float size = Vector3.Distance(_camera.LookAtDir, _camera.Position) * 4.0f;
+                    Matrix orthoViewProj = Matrix.LookAtLH(ligthPos, _camera.LookAtDir, _camera.UpDir) * Matrix.OrthoLH(size, size, -size, size);
                     orthoViewProj.Transpose();
+
+                    Matrix viewProj;
 
                     if (mode.ShadowMap)
                     {
@@ -151,7 +154,6 @@ namespace RyzeEditor.Renderer
                     data.AddRange(normMatrix.ToArray());
                     data.AddRange(viewProj.ToArray());
                     data.AddRange(orthoViewProj.ToArray());
-
 					data.AddRange(diffuseColor.ToArray());
                     data.AddRange(lightDir.ToArray());
 

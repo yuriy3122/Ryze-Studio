@@ -89,7 +89,7 @@ namespace RyzeEditor.Renderer
             var gameObjects = _entities.OfType<GameObject>().Where(x => !x.IsHidden).ToList();
 
             _renderMode.DirectLightDir = new Vector3(1.0f, 1.0f, 1.0f);
-            _renderMode.DirectLightDir.Normalize();
+            _renderMode.DirectLightDir = Vector3.Normalize(_renderMode.DirectLightDir);
 
             RenderGameObjects(gameObjects);
 
