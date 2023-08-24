@@ -49,13 +49,12 @@ namespace RyzeEditor.Renderer
         protected Buffer _fxaaIndexBuffer;
         protected EffectManager _effectManager;
 		protected ShaderResourceManager _shaderResourceManager;
-        protected const int IndexBufferCapacity = 200000000;
-		protected const int VertexBufferCapacity = 30000000;
-		protected const int InstanceMaxValue = 100000;
+        protected const int IndexBufferCapacity = 2000000;
+		protected const int VertexBufferCapacity = 300000;
+		protected const int InstanceMaxValue = 1000;
 
         private float _widthScale;
         private float _heigthScale;
-        private int _shadowMapSize;
 
         public void Initialize(IntPtr handle, Camera camera)
 		{
@@ -63,7 +62,6 @@ namespace RyzeEditor.Renderer
 			_camera = camera;
             _widthScale = 1.0f;
             _heigthScale = 1.0f;
-            _shadowMapSize = 4096;
 
             _desc = new SwapChainDescription
 			{
