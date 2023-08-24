@@ -49,8 +49,8 @@ namespace RyzeEditor.Renderer
         protected Buffer _fxaaIndexBuffer;
         protected EffectManager _effectManager;
 		protected ShaderResourceManager _shaderResourceManager;
-        protected const int IndexBufferCapacity = 2000000;
-		protected const int VertexBufferCapacity = 300000;
+        protected const int IndexBufferCapacity = 300 * 1024 * 100;
+        protected const int VertexBufferCapacity = 300 * 1024;
 		protected const int InstanceMaxValue = 1000;
 
         private float _widthScale;
