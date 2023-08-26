@@ -52,6 +52,7 @@ namespace RyzeEditor
 
             var camera = CreateDefaultCamera(form);
             _worldMap = new WorldMap(camera);
+            _worldMap.AddEntity(new SunLight());
 
             form.UserResized += (sender, args) =>
             {

@@ -57,6 +57,23 @@ namespace RyzeEditor.Controls
 
                     rootNode.Nodes.Add(cameraNode);
                 }
+
+                var sunLight = entity as SunLight;
+
+                if (sunLight != null)
+                {
+                    int imageIndex = GetObjectImageIndex(sunLight);
+
+                    var sunLightNode = new TreeNode
+                    {
+                        Name = sunLight.Id.ToString(),
+                        Text = "SunLight",
+                        ImageIndex = imageIndex,
+                        SelectedImageIndex = imageIndex
+                    };
+
+                    rootNode.Nodes.Add(sunLightNode);
+                }
             }
 
             var gameObjectsNode = new TreeNode

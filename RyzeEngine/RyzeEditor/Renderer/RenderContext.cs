@@ -87,8 +87,9 @@ namespace RyzeEditor.Renderer
             _renderer.PreRenderShadowMap();
 
             var gameObjects = _entities.OfType<GameObject>().Where(x => !x.IsHidden).ToList();
+            var sunLight = worldMap.Entities.OfType<SunLight>().FirstOrDefault();
 
-            _renderMode.DirectLightDir = new Vector3(1.0f, 1.0f, 1.0f);
+            _renderMode.DirectLightDir = sunLight != null ? sunLight.LightDir : new Vector3(1.0f, 1.0f, 1.0f);
             _renderMode.DirectLightDir = Vector3.Normalize(_renderMode.DirectLightDir);
 
             RenderGameObjects(gameObjects);

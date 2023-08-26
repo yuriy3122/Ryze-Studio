@@ -94,6 +94,7 @@
       <DependentUpon>WheelControl.cs</DependentUpon>
     </Compile>
     <Compile Include="GameWorld\PointLight.cs" />
+    <Compile Include="GameWorld\SunLight.cs" />
     <Compile Include="Helpers\PatchHelper.cs" />
     <Compile Include="Helpers\StringUtils.cs" />
     <Compile Include="Tools\PointLightTool.cs" />
