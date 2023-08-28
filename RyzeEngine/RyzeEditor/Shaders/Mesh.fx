@@ -13,20 +13,25 @@ struct PS_IN
 	float4 pos        : SV_POSITION;
     float3 norm       : NORMAL;
     float2 tex        : TEXTURE0;
-    float4 shadowPosH : TEXCOORD1;
+    float4 shadowPosN : TEXCOORD1;
+    float4 shadowPosF : TEXCOORD2;
+    float4 PosV       : TEXCOORD3;
     float4 color      : COLOR0;
 	float4 light      : COLOR1;
 };
 
 float4x4 posProj;
 float4x4 normProj;
+float4x4 view;
 float4x4 viewProj;
-float4x4 orthoViewProj;
+float4x4 orthoViewProjNear;
+float4x4 orthoViewProjFar;
 float4 diffuse;
 float4 light;
 
 Texture2D diffuseTexture    : register( t0 );
-Texture2D shadowMap         : register( t1 );
+Texture2D shadowMapNear     : register( t1 );
+Texture2D shadowMapFar      : register( t2 );
 SamplerState textureSampler : register( s0 );
 
 static const float SMAP_SIZE = 2048.0f;
@@ -46,7 +51,9 @@ PS_IN VS(VS_IN input)
 	float3 norm = mul(input.norm, (float3x3)normProj);
 
 	output.pos = mul(instancePosition, viewProj);
-    output.shadowPosH = mul(instancePosition, orthoViewProj);
+    output.PosV = mul(instancePosition, view);
+    output.shadowPosN = mul(instancePosition, orthoViewProjNear);
+    output.shadowPosF = mul(instancePosition, orthoViewProjFar);
     output.norm = mul(norm, (float3x3)input.mTransform);
     output.tex = input.tex;
 	output.color = diffuse;
@@ -73,27 +80,37 @@ float4 PS(PS_IN input) : SV_Target
 
 	float3 color = saturate(2.0 * (0.6 * ambientColor + 0.4f * lightColor * Kd * Kd));
     
-    float2 tc;
-    tc.x = input.shadowPosH.x * 0.5f + 0.5f;
-    tc.y = input.shadowPosH.y * -0.5f + 0.5f;
-    
     const float dx = SMAP_DX;
-    const float bias = 0.0001f;    
+    const float bias = 0.0001f;
     const float2 offsets[9] =
     {
         float2(-dx, -dx), float2(0.0f, -dx), float2(dx, -dx),
         float2(-dx, 0.0f), float2(0.0f, 0.0f), float2(dx, 0.0f),
         float2(-dx, +dx), float2(0.0f, +dx), float2(dx, +dx)
     };
-
+    
+    int cascadeNumber = length(input.PosV.xyz) < 20.0f ? 0 : 1;
+    float4 shadowPos = cascadeNumber == 0 ? input.shadowPosN : input.shadowPosF;
+    float2 tc;
+    tc.x = shadowPos.x * 0.5f + 0.5f;
+    tc.y = shadowPos.y * -0.5f + 0.5f;
     float percentLit = 9.0f;
     
     [unroll]
     for (int i = 0; i < 9; ++i)
     {
-        float depth = shadowMap.Sample(depthSampler, tc + offsets[i]).r;
+        float depth = 0.0f;
         
-        if ((depth + bias) < input.shadowPosH.z)
+        if (cascadeNumber == 0)
+        {
+            depth = shadowMapNear.Sample(depthSampler, tc + offsets[i]).r;
+        }
+        else
+        {
+            depth = shadowMapFar.Sample(depthSampler, tc + offsets[i]).r;
+        }
+  
+        if ((depth + bias) < shadowPos.z)
         {
             percentLit -= 0.3f;
         }

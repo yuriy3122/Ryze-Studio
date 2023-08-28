@@ -117,23 +117,29 @@ namespace RyzeEditor.Renderer
                             material.Diffuse = new Vector3(0.0f, 0.0f, 0.0f);
                         }
 
-                        _context.PixelShader.SetShaderResource(1, _depthMapSRV);
+                        _context.PixelShader.SetShaderResource(1, _depthMapNearSRV);
+                        _context.PixelShader.SetShaderResource(2, _depthMapFarSRV);
                     }
 
+                    var lightViewProj = new Matrix[2];
                     Vector3 ligthPos = mode.DirectLightDir * 10.0f + _camera.LookAtDir;
-                    float size = Vector3.Distance(_camera.LookAtDir, _camera.Position) * 4.0f;
-                    Matrix lightViewProj = Matrix.LookAtLH(ligthPos, _camera.LookAtDir, _camera.UpDir) * Matrix.OrthoLH(size, size, -size, size);
-                    lightViewProj.Transpose();
 
+                    for (int j = 0; j < 2; j++)
+                    {
+                        float size = Vector3.Distance(_camera.LookAtDir, _camera.Position) * (j * 3.5f + 1.5f);
+                        lightViewProj[j] = Matrix.LookAtLH(ligthPos, _camera.LookAtDir, _camera.UpDir) * Matrix.OrthoLH(size, size, -size, size);
+                        lightViewProj[j].Transpose();
+                    }
+
+                    var view = Matrix.LookAtLH(_camera.Position, _camera.LookAtDir, _camera.UpDir);
                     Matrix viewProj;
 
                     if (mode.ShadowMap)
                     {
-                        viewProj = lightViewProj;
+                        viewProj = lightViewProj[mode.ShadowMapCascadeNumber];
                     }
                     else
                     {
-                        var view = Matrix.LookAtLH(_camera.Position, _camera.LookAtDir, _camera.UpDir);
                         var proj = Matrix.PerspectiveFovLH(_camera.FOV, _camera.AspectRatio, _camera.ZNear, _camera.ZFar);
                         viewProj = view * proj;
                         viewProj.Transpose();
@@ -152,9 +158,11 @@ namespace RyzeEditor.Renderer
                     var data = new List<float>();
                     data.AddRange(posMatrix.ToArray());
                     data.AddRange(normMatrix.ToArray());
+                    data.AddRange(view.ToArray());
                     data.AddRange(viewProj.ToArray());
-                    data.AddRange(lightViewProj.ToArray());
-					data.AddRange(diffuseColor.ToArray());
+                    data.AddRange(lightViewProj[0].ToArray());
+                    data.AddRange(lightViewProj[1].ToArray());
+                    data.AddRange(diffuseColor.ToArray());
                     data.AddRange(lightDir.ToArray());
 
                     _context.UpdateSubresource(data.ToArray(), effect.ContantBuffer);

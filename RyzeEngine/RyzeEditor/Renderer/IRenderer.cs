@@ -40,6 +40,7 @@ namespace RyzeEditor.Renderer
     public class RenderMode
     {
         public bool ShadowMap { get; set; }
+        public int ShadowMapCascadeNumber { get; set; }
         public bool BoundBox { get; set; }
         public bool IsDepthClipEnabled { get; set; }
         public List<int> SubMeshIds { get; set; }
@@ -51,9 +52,9 @@ namespace RyzeEditor.Renderer
 	{
 		void Initialize(IntPtr handle, Camera camera);
 
-        void PreRenderShadowMap();
+        void PreRenderShadowMap(int cascadeNumber);
 
-		void PreRender();
+        void PreRender();
 
         void PostRender();
 
