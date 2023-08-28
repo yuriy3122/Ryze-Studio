@@ -39,8 +39,10 @@ namespace RyzeEditor.Renderer
 
     public class RenderMode
     {
+        public static int ShadowMapCascadeNumber = 2;
+
         public bool ShadowMap { get; set; }
-        public int ShadowMapCascadeNumber { get; set; }
+        public int ShadowMapCascadeIndex { get; set; }
         public bool BoundBox { get; set; }
         public bool IsDepthClipEnabled { get; set; }
         public List<int> SubMeshIds { get; set; }

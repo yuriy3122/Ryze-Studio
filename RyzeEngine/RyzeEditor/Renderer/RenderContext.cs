@@ -90,10 +90,10 @@ namespace RyzeEditor.Renderer
             _renderMode.DirectLightDir = sunLight != null ? sunLight.LightDir : new Vector3(1.0f, 1.0f, 1.0f);
             _renderMode.DirectLightDir = Vector3.Normalize(_renderMode.DirectLightDir);
 
-            for (int i = 0; i < 2; i++)
+            for (int i = 0; i < RenderMode.ShadowMapCascadeNumber; i++)
             {
                 _renderer.PreRenderShadowMap(i);
-                _renderMode.ShadowMapCascadeNumber = i;
+                _renderMode.ShadowMapCascadeIndex = i;
                 RenderGameObjects(gameObjects);
             }
 

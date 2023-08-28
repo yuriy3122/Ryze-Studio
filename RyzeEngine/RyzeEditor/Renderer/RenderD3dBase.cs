@@ -264,6 +264,25 @@ namespace RyzeEditor.Renderer
 		{
 		}
 
+        protected ShaderResourceView GetDepthMapShaderResourceView(int index)
+        {
+            ShaderResourceView srv;
+
+            switch (index)
+            {
+                case 0:
+                    srv = _depthMapNearSRV;
+                    break;
+                case 1:
+                    srv = _depthMapFarSRV;
+                    break;
+                default:
+                    throw new ArgumentException("Cascade index not supprted");
+            }
+
+            return srv;
+        }
+
         private void CreateWindowSizeDependentResources(Size wndSize)
 		{
 			Utilities.Dispose(ref _backBuffer);

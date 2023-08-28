@@ -99,17 +99,9 @@ float4 PS(PS_IN input) : SV_Target
     [unroll]
     for (int i = 0; i < 9; ++i)
     {
-        float depth = 0.0f;
-        
-        if (cascadeNumber == 0)
-        {
-            depth = shadowMapNear.Sample(depthSampler, tc + offsets[i]).r;
-        }
-        else
-        {
-            depth = shadowMapFar.Sample(depthSampler, tc + offsets[i]).r;
-        }
-  
+        float2 tx = tc + offsets[i];
+        float depth = cascadeNumber == 0 ? shadowMapNear.Sample(depthSampler, tx).r : shadowMapFar.Sample(depthSampler, tx).r;
+       
         if ((depth + bias) < shadowPos.z)
         {
             percentLit -= 0.3f;

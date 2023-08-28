@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using RyzeEditor.Extentions;
 using RyzeEditor.ResourceManagment;
@@ -117,14 +116,16 @@ namespace RyzeEditor.Renderer
                             material.Diffuse = new Vector3(0.0f, 0.0f, 0.0f);
                         }
 
-                        _context.PixelShader.SetShaderResource(1, _depthMapNearSRV);
-                        _context.PixelShader.SetShaderResource(2, _depthMapFarSRV);
+                        for (int j = 0; j < RenderMode.ShadowMapCascadeNumber; j++)
+                        {
+                            _context.PixelShader.SetShaderResource(1 + j, GetDepthMapShaderResourceView(j));
+                        }
                     }
 
-                    var lightViewProj = new Matrix[2];
+                    var lightViewProj = new Matrix[RenderMode.ShadowMapCascadeNumber];
                     Vector3 ligthPos = mode.DirectLightDir * 10.0f + _camera.LookAtDir;
 
-                    for (int j = 0; j < 2; j++)
+                    for (int j = 0; j < RenderMode.ShadowMapCascadeNumber; j++)
                     {
                         float size = Vector3.Distance(_camera.LookAtDir, _camera.Position) * (j * 3.5f + 1.5f);
                         lightViewProj[j] = Matrix.LookAtLH(ligthPos, _camera.LookAtDir, _camera.UpDir) * Matrix.OrthoLH(size, size, -size, size);
@@ -136,7 +137,7 @@ namespace RyzeEditor.Renderer
 
                     if (mode.ShadowMap)
                     {
-                        viewProj = lightViewProj[mode.ShadowMapCascadeNumber];
+                        viewProj = lightViewProj[mode.ShadowMapCascadeIndex];
                     }
                     else
                     {
@@ -160,8 +161,12 @@ namespace RyzeEditor.Renderer
                     data.AddRange(normMatrix.ToArray());
                     data.AddRange(view.ToArray());
                     data.AddRange(viewProj.ToArray());
-                    data.AddRange(lightViewProj[0].ToArray());
-                    data.AddRange(lightViewProj[1].ToArray());
+
+                    for (int j = 0; j < RenderMode.ShadowMapCascadeNumber; j++)
+                    {
+                        data.AddRange(lightViewProj[j].ToArray());
+                    }
+
                     data.AddRange(diffuseColor.ToArray());
                     data.AddRange(lightDir.ToArray());
 
