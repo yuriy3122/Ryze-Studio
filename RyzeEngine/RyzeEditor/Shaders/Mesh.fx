@@ -15,14 +15,13 @@ struct PS_IN
     float2 tex        : TEXTURE0;
     float4 shadowPosN : TEXCOORD1;
     float4 shadowPosF : TEXCOORD2;
-    float4 PosV       : TEXCOORD3;
+    float3 posView    : TEXCOORD3;
     float4 color      : COLOR0;
 	float4 light      : COLOR1;
 };
 
 float4x4 posProj;
 float4x4 normProj;
-float4x4 view;
 float4x4 viewProj;
 float4x4 orthoViewProjNear;
 float4x4 orthoViewProjFar;
@@ -51,7 +50,7 @@ PS_IN VS(VS_IN input)
 	float3 norm = mul(input.norm, (float3x3)normProj);
 
 	output.pos = mul(instancePosition, viewProj);
-    output.PosV = mul(instancePosition, view);
+    output.posView = mul(instancePosition, viewProj).xyz;
     output.shadowPosN = mul(instancePosition, orthoViewProjNear);
     output.shadowPosF = mul(instancePosition, orthoViewProjFar);
     output.norm = mul(norm, (float3x3)input.mTransform);
@@ -89,8 +88,9 @@ float4 PS(PS_IN input) : SV_Target
         float2(-dx, +dx), float2(0.0f, +dx), float2(dx, +dx)
     };
     
-    int cascadeNumber = length(input.PosV.xyz) < 20.0f ? 0 : 1;
-    float4 shadowPos = cascadeNumber == 0 ? input.shadowPosN : input.shadowPosF;
+    float dist = length(input.posView);
+    float4 shadowPos = (dist < 30.0f) ? input.shadowPosN : input.shadowPosF;
+    
     float2 tc;
     tc.x = shadowPos.x * 0.5f + 0.5f;
     tc.y = shadowPos.y * -0.5f + 0.5f;
@@ -100,7 +100,7 @@ float4 PS(PS_IN input) : SV_Target
     for (int i = 0; i < 9; ++i)
     {
         float2 tx = tc + offsets[i];
-        float depth = cascadeNumber == 0 ? shadowMapNear.Sample(depthSampler, tx).r : shadowMapFar.Sample(depthSampler, tx).r;
+        float depth = (dist < 30.0f) ? shadowMapNear.Sample(depthSampler, tx).r : shadowMapFar.Sample(depthSampler, tx).r;
        
         if ((depth + bias) < shadowPos.z)
         {

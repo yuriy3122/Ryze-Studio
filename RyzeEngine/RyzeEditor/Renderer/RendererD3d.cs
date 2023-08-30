@@ -127,7 +127,7 @@ namespace RyzeEditor.Renderer
 
                     for (int j = 0; j < RenderMode.ShadowMapCascadeNumber; j++)
                     {
-                        float size = Vector3.Distance(_camera.LookAtDir, _camera.Position) * (j * 3.5f + 1.5f);
+                        float size = Vector3.Distance(_camera.LookAtDir, _camera.Position) * (j * 5.5f + 1.5f);
                         lightViewProj[j] = Matrix.LookAtLH(ligthPos, _camera.LookAtDir, _camera.UpDir) * Matrix.OrthoLH(size, size, -size, size);
                         lightViewProj[j].Transpose();
                     }
@@ -159,7 +159,6 @@ namespace RyzeEditor.Renderer
                     var data = new List<float>();
                     data.AddRange(posMatrix.ToArray());
                     data.AddRange(normMatrix.ToArray());
-                    data.AddRange(view.ToArray());
                     data.AddRange(viewProj.ToArray());
 
                     for (int j = 0; j < RenderMode.ShadowMapCascadeNumber; j++)
