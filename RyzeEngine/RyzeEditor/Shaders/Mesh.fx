@@ -79,6 +79,7 @@ float4 PS(PS_IN input) : SV_Target
 
 	float3 color = saturate(2.0 * (0.6 * ambientColor + 0.4f * lightColor * Kd * Kd));
     
+    const float step = 40.0f;
     const float dx = SMAP_DX;
     const float bias = 0.0001f;
     const float2 offsets[9] =
@@ -89,7 +90,7 @@ float4 PS(PS_IN input) : SV_Target
     };
     
     float dist = length(input.posView);
-    float4 shadowPos = (dist < 30.0f) ? input.shadowPosN : input.shadowPosF;
+    float4 shadowPos = (dist < step) ? input.shadowPosN : input.shadowPosF;
     
     float2 tc;
     tc.x = shadowPos.x * 0.5f + 0.5f;
@@ -100,7 +101,7 @@ float4 PS(PS_IN input) : SV_Target
     for (int i = 0; i < 9; ++i)
     {
         float2 tx = tc + offsets[i];
-        float depth = (dist < 30.0f) ? shadowMapNear.Sample(depthSampler, tx).r : shadowMapFar.Sample(depthSampler, tx).r;
+        float depth = (dist < step) ? shadowMapNear.Sample(depthSampler, tx).r : shadowMapFar.Sample(depthSampler, tx).r;
        
         if ((depth + bias) < shadowPos.z)
         {
