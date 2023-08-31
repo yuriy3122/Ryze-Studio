@@ -79,7 +79,7 @@ float4 PS(PS_IN input) : SV_Target
 
 	float3 color = saturate(2.0 * (0.6 * ambientColor + 0.4f * lightColor * Kd * Kd));
     
-    const float step = 40.0f;
+    const float step = 60.0f;
     const float dx = SMAP_DX;
     const float bias = 0.0001f;
     const float2 offsets[9] =
