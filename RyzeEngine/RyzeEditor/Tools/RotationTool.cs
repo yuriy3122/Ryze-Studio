@@ -12,7 +12,7 @@ namespace RyzeEditor.Tools
 	{
 		private const int Segments = 180;
 		private const int MouseMoveDelta = 2;
-		private const float RadiusDelta = 5.0f;
+		private const float RadiusDelta = 0.1f;
 
 		private float _toolRadius;
 		readonly List<Point3> _pointsRotationX = new List<Point3>();
@@ -68,6 +68,8 @@ namespace RyzeEditor.Tools
 				_dataChanged = false;
 			}
 
+            Cursor.Current = Cursors.Default;
+
             return true;
 		}
 
@@ -105,9 +107,9 @@ namespace RyzeEditor.Tools
                 return true;
             }
 
-            float d1 = 5.0f;
-			float d2 = 5.0f;
-			float d3 = 5.0f;
+            float d1 = 1.0f;
+			float d2 = 1.0f;
+			float d3 = 1.0f;
 
 			var p1 = CalcNearestPoint(_pointsRotationX, ray, ref d1);
 			var p2 = CalcNearestPoint(_pointsRotationY, ray, ref d2);
@@ -153,6 +155,8 @@ namespace RyzeEditor.Tools
 					return true;
 				}
 
+                Cursor.Current = Cursors.Hand;
+
                 foreach (var gameObject in gameObjects)
                 {
                     gameObject.Rotate(_axis, dir, angle);
@@ -190,30 +194,33 @@ namespace RyzeEditor.Tools
 
 			for (int i = 0; i < Segments; i++)
 			{
-				var norm = Vector3.Normalize(_world.Camera.LookAtDir - _world.Camera.Position);
+                var norm = Vector3.Normalize(_world.Camera.LookAtDir - _world.Camera.Position);
 
-				var matrix = Matrix.RotationX((float)Math.PI * i / 90.0f) * Matrix.Translation(averagePos);
-				Vector4.Transform(ref vz, ref matrix, out _pointsRotationX[i].Position);
-				var pos = _pointsRotationX[i].Position;
-				var d = Vector3.Dot((new Vector3(pos.X, pos.Y, pos.Z) - _world.Camera.Position), norm);
+                var matrix = Matrix.RotationX((float)Math.PI * i / 90.0f) * Matrix.Translation(averagePos);
+                Vector4.Transform(ref vz, ref matrix, out _pointsRotationX[i].Position);
+                var pos = _pointsRotationX[i].Position;
+                var d = Vector3.Dot((new Vector3(pos.X, pos.Y, pos.Z) - _world.Camera.Position), norm);
 
-				_pointsRotationX[i].Color = d > distance ? new Vector4(0.2f, 0.1f, 0.1f, 0.0f) : new Vector4(1.0f, 0.0f, 0.0f, 0.0f);
+                _pointsRotationX[i].Color = d > distance ? new Vector4(0.2f, 0.1f, 0.1f, 0.0f) :
+                    _axis == Axis.X ? new Vector4(1.0f, 1.0f, 0.0f, 0.0f) : new Vector4(1.0f, 0.0f, 0.0f, 0.0f);
 
-				matrix = Matrix.RotationY((float)Math.PI * i / 90.0f) * Matrix.Translation(averagePos);
-				Vector4.Transform(ref vz, ref matrix, out _pointsRotationY[i].Position);
-				pos = _pointsRotationY[i].Position;
-				d = Vector3.Dot((new Vector3(pos.X, pos.Y, pos.Z) - _world.Camera.Position), norm);
+                matrix = Matrix.RotationY((float)Math.PI * i / 90.0f) * Matrix.Translation(averagePos);
+                Vector4.Transform(ref vz, ref matrix, out _pointsRotationY[i].Position);
+                pos = _pointsRotationY[i].Position;
+                d = Vector3.Dot((new Vector3(pos.X, pos.Y, pos.Z) - _world.Camera.Position), norm);
 
-				_pointsRotationY[i].Color = d > distance ? new Vector4(0.1f, 0.2f, 0.1f, 0.0f) : new Vector4(0.0f, 1.0f, 0.0f, 0.0f);
+                _pointsRotationY[i].Color = d > distance ? new Vector4(0.1f, 0.2f, 0.1f, 0.0f) :
+                    _axis == Axis.Y ? new Vector4(1.0f, 1.0f, 0.0f, 0.0f) : new Vector4(0.0f, 1.0f, 0.0f, 0.0f);
 
-				var vy = new Vector4(0.0f, _toolRadius, 0.0f, 1.0f);
-				matrix = Matrix.RotationZ((float)Math.PI * i / 90.0f) * Matrix.Translation(averagePos);
-				Vector4.Transform(ref vy, ref matrix, out _pointsRotationZ[i].Position);
-				pos = _pointsRotationZ[i].Position;
-				d = Vector3.Dot((new Vector3(pos.X, pos.Y, pos.Z) - _world.Camera.Position), norm);
+                var vy = new Vector4(0.0f, _toolRadius, 0.0f, 1.0f);
+                matrix = Matrix.RotationZ((float)Math.PI * i / 90.0f) * Matrix.Translation(averagePos);
+                Vector4.Transform(ref vy, ref matrix, out _pointsRotationZ[i].Position);
+                pos = _pointsRotationZ[i].Position;
+                d = Vector3.Dot((new Vector3(pos.X, pos.Y, pos.Z) - _world.Camera.Position), norm);
 
-				_pointsRotationZ[i].Color = d > distance ? new Vector4(0.1f, 0.1f, 0.2f, 0.0f) : new Vector4(0.0f, 0.0f, 1.0f, 0.0f);
-			}
+                _pointsRotationZ[i].Color = d > distance ? new Vector4(0.1f, 0.1f, 0.2f, 0.0f) :
+                    _axis == Axis.Z ? new Vector4(1.0f, 1.0f, 0.0f, 0.0f) : new Vector4(0.0f, 0.0f, 1.0f, 0.0f);
+            }
 
 			renderer.DrawLineStrip(_pointsRotationX, new RenderMode { BoundBox = false, IsDepthClipEnabled = false });
 			renderer.DrawLineStrip(_pointsRotationY, new RenderMode { BoundBox = false, IsDepthClipEnabled = false });

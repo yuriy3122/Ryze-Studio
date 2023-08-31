@@ -68,6 +68,8 @@ namespace RyzeEditor.Tools
 				WorldMap.CommitChanges();
 			}
 
+            Cursor.Current = Cursors.Default;
+
             return true;
 		}
 
@@ -118,12 +120,20 @@ namespace RyzeEditor.Tools
 				}				
 			}
 
-			if (!_leftMouseButtonPressed || intersectData == null)
+            if (intersectData == null)
 			{
+                Cursor.Current = Cursors.Default;
                 return true;
             }
 
-			if (_lastPoint == null)
+            Cursor.Current = Cursors.Hand;
+
+            if (!_leftMouseButtonPressed)
+            {
+                return true;
+            }
+
+            if (_lastPoint == null)
 			{
 				_lastPoint = new Point(mouseEventArgs.X, mouseEventArgs.Y);
 			}
@@ -146,7 +156,7 @@ namespace RyzeEditor.Tools
                 return true;
             }
 
-			if (_lastIntersectPoint == null)
+            if (_lastIntersectPoint == null)
 			{
 				_lastIntersectPoint = intersectPoint;
 			}
