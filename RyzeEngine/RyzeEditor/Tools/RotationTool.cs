@@ -12,7 +12,7 @@ namespace RyzeEditor.Tools
 	{
 		private const int Segments = 180;
 		private const int MouseMoveDelta = 2;
-		private const float RadiusDelta = 1.0f;
+		private const float RadiusDelta = 0.5f;
 
 		private float _toolRadius;
 		readonly List<Point3> _pointsRotationX = new List<Point3>();
@@ -109,9 +109,9 @@ namespace RyzeEditor.Tools
                 return true;
             }
 
-            float d1 = 1.0f;
-			float d2 = 1.0f;
-			float d3 = 1.0f;
+            float d1 = 0.5f;
+			float d2 = 0.5f;
+			float d3 = 0.5f;
 
 			var p1 = CalcNearestPoint(_pointsRotationX, ray, ref d1);
 			var p2 = CalcNearestPoint(_pointsRotationY, ray, ref d2);
