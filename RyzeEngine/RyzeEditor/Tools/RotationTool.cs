@@ -96,8 +96,6 @@ namespace RyzeEditor.Tools
 				return true;
 			}
 
-            _axis = Axis.None;
-
             _lastPoint = new Point(mouseEventArgs.X, mouseEventArgs.Y);
 
 			var ray = _world.Camera.GetPickRay(mouseEventArgs.X, mouseEventArgs.Y);
@@ -105,6 +103,7 @@ namespace RyzeEditor.Tools
 
             if (!Collision.RayIntersectsSphere(ref ray, ref sphere, out Vector3 point))
             {
+                _axis = Axis.None;
                 _prevRotationVector = null;
                 return true;
             }
@@ -136,7 +135,10 @@ namespace RyzeEditor.Tools
 				vec = Vector3.Normalize(p3 - average);
 			}
 
-            _axis = rot;
+            if (!_leftMouseButtonPressed)
+            {
+                _axis = rot;
+            }
 
             if (_prevRotationVector == null)
 			{
