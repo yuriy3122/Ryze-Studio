@@ -12,7 +12,7 @@ namespace RyzeEditor.Tools
 	{
 		private const int Segments = 180;
 		private const int MouseMoveDelta = 2;
-		private const float RadiusDelta = 0.1f;
+		private const float RadiusDelta = 1.0f;
 
 		private float _toolRadius;
 		readonly List<Point3> _pointsRotationX = new List<Point3>();
@@ -77,7 +77,7 @@ namespace RyzeEditor.Tools
 		{
             var gameObjects = _selection.Get().OfType<GameObject>().ToList();
 
-            if (gameObjects == null || gameObjects.Count == 0 || _leftMouseButtonPressed == false)
+            if (gameObjects == null || gameObjects.Count == 0)
             {
                 return true;
             }
@@ -96,7 +96,9 @@ namespace RyzeEditor.Tools
 				return true;
 			}
 
-			_lastPoint = new Point(mouseEventArgs.X, mouseEventArgs.Y);
+            _axis = Axis.None;
+
+            _lastPoint = new Point(mouseEventArgs.X, mouseEventArgs.Y);
 
 			var ray = _world.Camera.GetPickRay(mouseEventArgs.X, mouseEventArgs.Y);
 			var sphere = new BoundingSphere(average, _toolRadius + RadiusDelta);
@@ -134,10 +136,11 @@ namespace RyzeEditor.Tools
 				vec = Vector3.Normalize(p3 - average);
 			}
 
-			if (_prevRotationVector == null)
+            _axis = rot;
+
+            if (_prevRotationVector == null)
 			{
 				_prevRotationVector = vec;
-				_axis = rot;
 			}
 			else
 			{
@@ -146,23 +149,27 @@ namespace RyzeEditor.Tools
 					return true;
 				}
 
-				var angle = Convert.ToSingle(Math.Acos(Vector3.Dot(vec, _prevRotationVector.Value)));
-
-				var dir = Vector3.Cross(_prevRotationVector.Value, vec);
-
-				if (angle < 0.000001f || angle > Math.PI / 4.0f)
-				{
-					return true;
-				}
-
-                Cursor.Current = Cursors.Hand;
-
-                foreach (var gameObject in gameObjects)
+                if (_leftMouseButtonPressed)
                 {
-                    gameObject.Rotate(_axis, dir, angle);
+                    Cursor.Current = Cursors.Hand;
+
+                    var angle = Convert.ToSingle(Math.Acos(Vector3.Dot(vec, _prevRotationVector.Value)));
+
+                    var dir = Vector3.Cross(_prevRotationVector.Value, vec);
+
+                    if (angle < 0.000001f || angle > Math.PI / 4.0f)
+                    {
+                        return true;
+                    }
+
+                    foreach (var gameObject in gameObjects)
+                    {
+                        gameObject.Rotate(_axis, dir, angle);
+                    }
+
+                    _dataChanged = true;
                 }
 
-                _dataChanged = true;
 				_prevRotationVector = vec;
 			}
 

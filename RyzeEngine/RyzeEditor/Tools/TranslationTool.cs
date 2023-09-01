@@ -126,12 +126,12 @@ namespace RyzeEditor.Tools
                 return true;
             }
 
-            Cursor.Current = Cursors.Hand;
-
             if (!_leftMouseButtonPressed)
             {
                 return true;
             }
+
+            Cursor.Current = Cursors.Hand;
 
             if (_lastPoint == null)
 			{
