@@ -15,7 +15,7 @@ struct PS_IN
     float2 tex        : TEXTURE0;
     float4 shadowPosN : TEXCOORD1;
     float4 shadowPosF : TEXCOORD2;
-    float3 posView    : TEXCOORD3;
+    float3 viewPos    : TEXCOORD3;
     float4 color      : COLOR0;
 	float4 light      : COLOR1;
 };
@@ -50,7 +50,7 @@ PS_IN VS(VS_IN input)
 	float3 norm = mul(input.norm, (float3x3)normProj);
 
 	output.pos = mul(instancePosition, viewProj);
-    output.posView = mul(instancePosition, viewProj).xyz;
+    output.viewPos = mul(instancePosition, viewProj).xyz;
     output.shadowPosN = mul(instancePosition, orthoViewProjNear);
     output.shadowPosF = mul(instancePosition, orthoViewProjFar);
     output.norm = mul(norm, (float3x3)input.mTransform);
@@ -89,7 +89,7 @@ float4 PS(PS_IN input) : SV_Target
         float2(-dx, +dx), float2(0.0f, +dx), float2(dx, +dx)
     };
     
-    float dist = length(input.posView);
+    float dist = length(input.viewPos);
     float4 shadowPos = (dist < step) ? input.shadowPosN : input.shadowPosF;
     
     float2 tc;
