@@ -368,6 +368,69 @@ namespace RyzeEditor.Controls
 			layoutPanel.PerformLayout();			
 		}
 
+        private void InitQuaternionControl(IReadOnlyCollection<EntityBase> entities, PropertyInfo property)
+        {
+            if (_selection == null || !_selection.Get().OfType<EntityBase>().Any())
+            {
+                return;
+            }
+
+            var label = new Label { AutoSize = true, Dock = DockStyle.Fill, Text = $@"{property.Name}:" };
+
+            int retval = layoutPanel.RowStyles.Add(new RowStyle(SizeType.AutoSize));
+            layoutPanel.Controls.Add(label, 0, retval);
+            var propertyInfo = entities.First().GetType().GetProperty(property.Name);
+
+            var control = new QuaternionUpDown();
+
+            if (entities.Count == 1)
+            {
+                if (propertyInfo != null)
+                {
+                    var quaternion = (Quaternion)propertyInfo.GetValue(entities.First());
+
+                    control.Axis = quaternion.Axis;
+                    control.Angle = quaternion.Angle;
+                }
+            }
+
+            var prop = property;
+
+            control.ValueChanged += ControlValueChanged;
+
+            foreach (var entity in entities)
+            {
+                entity.PropertyChanged += (sender, args) =>
+                {
+                    if (sender == null || !_controls.ContainsKey(args.PropertyName) || !(_controls[args.PropertyName] is QuaternionUpDown quaternionDown))
+                    {
+                        return;
+                    }
+
+                    if (control.ValueChanged != null)
+                    {
+                        control.ValueChanged -= ControlValueChanged;
+                    }
+
+                    if (_selection.Get().OfType<EntityBase>().Count() == 1)
+                    {
+                        var param = sender.GetType().GetProperty(args.PropertyName).GetValue(sender);
+                        var quaternion = (Quaternion)param;
+
+                        quaternionDown.Axis = quaternion.Axis;
+                        quaternionDown.Angle = quaternion.Angle;
+                    }
+
+                    control.ValueChanged += ControlValueChanged;
+                };
+            }
+
+            _controls.Add(prop.Name, control);
+
+            _retval = layoutPanel.RowStyles.Add(new RowStyle(SizeType.AutoSize));
+            layoutPanel.Controls.Add(control, 0, _retval);
+        }
+
         private void InitVector3Control(IReadOnlyCollection<EntityBase> entities, PropertyInfo property)
         {
             if (_selection == null || !_selection.Get().OfType<EntityBase>().Any())
@@ -612,6 +675,10 @@ namespace RyzeEditor.Controls
                 {
                     InitVector3Control(entities, property);
                 }
+                if (propType == typeof(Quaternion))
+                {
+                    InitQuaternionControl(entities, property);
+                }
                 else if (propType == typeof(int))
                 {
                     InitInt32Contol(entities, property);
@@ -748,6 +815,27 @@ namespace RyzeEditor.Controls
                     else
                     {
                         entity.GetType().GetProperty(propName)?.SetValue(entity, ((VectorUpDown)ctrl).Vector);
+                    }
+                }
+            }
+            else if (controlType.Contains("QuaternionUpDown"))
+            {
+                foreach (var entity in entities)
+                {
+                    if (entities.Count > 1 && relative)
+                    {
+                        var entityProp = (Quaternion)entity.GetType().GetProperty(propName)?.GetValue(entity);
+                        var quaternion = Quaternion.RotationAxis(((QuaternionUpDown)ctrl).Axis, ((QuaternionUpDown)ctrl).Angle);
+                        entityProp *= quaternion;
+                        entity.GetType().GetProperty(propName)?.SetValue(entity, entityProp);
+                    }
+                    else
+                    {
+                        var axis = ((QuaternionUpDown)ctrl).Axis;
+                        var angle = ((QuaternionUpDown)ctrl).Angle;
+                        var quaternion = Quaternion.RotationAxis(axis, angle);
+
+                        entity.GetType().GetProperty(propName)?.SetValue(entity, quaternion);
                     }
                 }
             }

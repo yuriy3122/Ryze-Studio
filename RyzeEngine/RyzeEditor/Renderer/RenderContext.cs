@@ -54,9 +54,9 @@ namespace RyzeEditor.Renderer
 
                 if (gameObject != null)
                 {
-                    var boundingBox = GetGameObjectBoundingBox(gameObject);
+                    //var boundingBox = GetGameObjectBoundingBox(gameObject);
 
-                    if (frustum.Contains(boundingBox) != ContainmentType.Disjoint)
+                    //if (frustum.Contains(boundingBox) != ContainmentType.Disjoint)
                     {
                         _entities.Add(entity);
                     }

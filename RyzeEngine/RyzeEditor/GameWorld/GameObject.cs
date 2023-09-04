@@ -60,10 +60,10 @@ namespace RyzeEditor.GameWorld
         [RelativeChangeable(true)]
         public Vector3 Scale { get; set; }
 
-        [InspectorVisible(false)]
+        //[InspectorVisible(false)]
         public Quaternion Rotation { get; set; }
 
-        [InspectorVisible(false)]
+        //[InspectorVisible(false)]
         public Quaternion RotationRH { get; set; }
 
         [InspectorVisible(false)]

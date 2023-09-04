@@ -136,6 +136,12 @@
     <Compile Include="Controls\VectorUpDown.Designer.cs">
       <DependentUpon>VectorUpDown.cs</DependentUpon>
     </Compile>
+    <Compile Include="Controls\QuaternionUpDown.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Controls\QuaternionUpDown.Designer.cs">
+      <DependentUpon>QuaternionUpDown.cs</DependentUpon>
+    </Compile>
     <Compile Include="Extentions\Extentions.cs" />
     <Compile Include="GameWorld\Vehicle.cs" />
     <Compile Include="Properties\Annotations.cs" />
@@ -212,6 +218,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Controls\VectorUpDown.resx">
       <DependentUpon>VectorUpDown.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Controls\QuaternionUpDown.resx">
+      <DependentUpon>QuaternionUpDown.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Controls\WheelControl.resx">
       <DependentUpon>WheelControl.cs</DependentUpon>
