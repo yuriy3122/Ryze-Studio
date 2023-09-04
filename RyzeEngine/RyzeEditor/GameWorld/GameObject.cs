@@ -67,10 +67,13 @@ namespace RyzeEditor.GameWorld
 
         public bool Static { get; set; }
 
+        [InspectorVisible(false)]
         public bool RenderNormals { get; set; }
 
+        [InspectorVisible(false)]
         public bool RenderTangents { get; set; }
 
+        [InspectorVisible(false)]
         public bool RenderBitangents { get; set; }
 
         /// <summary>
