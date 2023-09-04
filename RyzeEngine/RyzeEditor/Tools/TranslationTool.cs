@@ -22,6 +22,7 @@ namespace RyzeEditor.Tools
 		private Vector3? _lastIntersectPoint;
 		private bool _dataChanged;
         private Vector4 ColorAxis = new Vector4(1.0f, 1.0f, 0.0f, 0.0f);
+        private bool _axisLocked;
 
         private readonly List<Point3> _axisLinePoints = new List<Point3>() { new Point3(), new Point3() };
 
@@ -69,14 +70,13 @@ namespace RyzeEditor.Tools
 			}
 
             Cursor.Current = Cursors.Default;
+            _axisLocked = false;
 
             return true;
 		}
 
 		public override bool OnMouseMove(object sender, MouseEventArgs mouseEventArgs)
 		{
-            _axisSelected[0] = _axisSelected[1] = _axisSelected[2] = false;
-
             var gameObjects = _selection.Get().OfType<GameObject>().ToList();
 
             if (gameObjects == null || gameObjects.Count == 0)
@@ -93,37 +93,42 @@ namespace RyzeEditor.Tools
             _arrowAxisGameObject.Scale = new Vector3(ScaleDist * distance, ScaleDist * distance, ScaleDist * distance);
             _arrowAxisGameObject.Rotation = Quaternion.Identity;
 
-            if (_arrowAxisGameObject.Intersects(ray, out RayPickData intersectData))
-			{
-				_axisSelected[0] = true;
-			}
+            if (!_axisLocked)
+            {
+                _axisSelected[0] = _axisSelected[1] = _axisSelected[2] = false;
 
-			if (_axisSelected[0] == false)
-			{
-                _arrowAxisGameObject.Position = new Vector3(average.X, average.Y + ScalePos * distance, average.Z);
-                _arrowAxisGameObject.Rotation = Quaternion.RotationYawPitchRoll(0.0f, 0.0f, 1.0f * (float)Math.PI / 2.0f);
+                if (_arrowAxisGameObject.Intersects(ray, out RayPickData intersectData))
+                {
+                    _axisSelected[0] = true;
+                }
 
-				if (_arrowAxisGameObject.Intersects(ray, out intersectData))
-				{
-					_axisSelected[1] = true;
-				}
-			}
+                if (_axisSelected[0] == false)
+                {
+                    _arrowAxisGameObject.Position = new Vector3(average.X, average.Y + ScalePos * distance, average.Z);
+                    _arrowAxisGameObject.Rotation = Quaternion.RotationYawPitchRoll(0.0f, 0.0f, 1.0f * (float)Math.PI / 2.0f);
 
-			if (_axisSelected[0] == false && _axisSelected[1] == false)
-			{
-                _arrowAxisGameObject.Position = new Vector3(average.X, average.Y, average.Z + ScalePos * distance);
-                _arrowAxisGameObject.Rotation = Quaternion.RotationYawPitchRoll(-1.0f * (float)Math.PI / 2.0f, 0.0f, 0.0f);
+                    if (_arrowAxisGameObject.Intersects(ray, out intersectData))
+                    {
+                        _axisSelected[1] = true;
+                    }
+                }
 
-                if (_arrowAxisGameObject.Intersects(ray, out intersectData))
-				{
-					_axisSelected[2] = true;
-				}				
-			}
+                if (_axisSelected[0] == false && _axisSelected[1] == false)
+                {
+                    _arrowAxisGameObject.Position = new Vector3(average.X, average.Y, average.Z + ScalePos * distance);
+                    _arrowAxisGameObject.Rotation = Quaternion.RotationYawPitchRoll(-1.0f * (float)Math.PI / 2.0f, 0.0f, 0.0f);
 
-            if (intersectData == null)
-			{
-                Cursor.Current = Cursors.Default;
-                return true;
+                    if (_arrowAxisGameObject.Intersects(ray, out intersectData))
+                    {
+                        _axisSelected[2] = true;
+                    }
+                }
+
+                if (intersectData == null)
+                {
+                    Cursor.Current = Cursors.Default;
+                    return true;
+                }
             }
 
             if (!_leftMouseButtonPressed)
@@ -132,6 +137,7 @@ namespace RyzeEditor.Tools
             }
 
             Cursor.Current = Cursors.Hand;
+            _axisLocked = true;
 
             if (_lastPoint == null)
 			{
