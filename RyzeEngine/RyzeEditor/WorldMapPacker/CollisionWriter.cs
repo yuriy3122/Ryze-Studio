@@ -389,8 +389,12 @@ namespace RyzeEditor.Packer
 
             foreach (var group in groups)
             {
+                var rotation = group.Key.Rotation;
+                rotation.X = -rotation.X;
+                rotation.Y = -rotation.Y;
+
                 var matrix = SharpDX.Matrix.Scaling(group.Key.Scale) *
-                             SharpDX.Matrix.RotationQuaternion(group.Key.RotationRH) *
+                             SharpDX.Matrix.RotationQuaternion(rotation) *
                              SharpDX.Matrix.Translation(group.Key.Position);
 
                 if (group.Value.Count > 1)

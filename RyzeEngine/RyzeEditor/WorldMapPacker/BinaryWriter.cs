@@ -229,13 +229,17 @@ namespace RyzeEditor.Packer
                 var position = new Vector3(obj.Position.X, obj.Position.Y, obj.Position.Z);
                 position.Z = -1.0f * position.Z;
 
-                stream.Write(obj.RotationRH.GetBytes(), 0, 4 * sizeof(float));                 //Rotation
+                var rotation = obj.Rotation;
+                rotation.X = -rotation.X;
+                rotation.Y = -rotation.Y;
+
+                stream.Write(rotation.GetBytes(), 0, 4 * sizeof(float));                       //Rotation
                 stream.Write(obj.Scale.GetBytes(), 0, 3 * sizeof(float));                      //Scale
                 stream.Write(position.GetBytes(), 0, 3 * sizeof(float));                       //Position
 
                 stream.Write(BitConverter.GetBytes(0L), 0, sizeof(long));                      //Reserve for 64-bit pointer
                 stream.Write(BitConverter.GetBytes(obj.GeometryMeshes.Count), 0, sizeof(int)); //Geometry mesh count
-                stream.Write(BitConverter.GetBytes((int)obj.UserData), 0, sizeof(int));        //GameObject Id     
+                stream.Write(BitConverter.GetBytes((int)obj.UserData), 0, sizeof(int));        //GameObject Id
 
                 foreach (var mesh in obj.GeometryMeshes)
                 {

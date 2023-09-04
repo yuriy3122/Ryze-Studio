@@ -77,7 +77,6 @@ namespace RyzeEditor.Tools
             var gameObject = new GameObject(meshes, meshes)
             {
                 Rotation = Quaternion.Identity,
-                RotationRH = Quaternion.Identity,
                 Scale = Vector3.One,
                 Position = point
 			};

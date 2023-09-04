@@ -60,11 +60,7 @@ namespace RyzeEditor.GameWorld
         [RelativeChangeable(true)]
         public Vector3 Scale { get; set; }
 
-        //[InspectorVisible(false)]
         public Quaternion Rotation { get; set; }
-
-        //[InspectorVisible(false)]
-        public Quaternion RotationRH { get; set; }
 
         [InspectorVisible(false)]
         public object UserData { get; set; }
@@ -130,17 +126,14 @@ namespace RyzeEditor.GameWorld
 				case Axis.X:
                     float rotX = dir.X > 0 ? angle : -angle;
                     Rotation = Quaternion.RotationYawPitchRoll(0.0f, rotX, 0.0f) * Rotation;
-                    RotationRH = Quaternion.RotationYawPitchRoll(0.0f, -1.0f * rotX, 0.0f) * RotationRH;
                     break;
 				case Axis.Y:
                     float rotY = dir.Y > 0 ? angle : -angle;
                     Rotation = Quaternion.RotationYawPitchRoll(rotY, 0.0f, 0.0f) * Rotation;
-                    RotationRH = Quaternion.RotationYawPitchRoll(-1.0f * rotY, 0.0f, 0.0f) * RotationRH;
                     break;
 				case Axis.Z:
                     float rotZ = dir.Z > 0 ? angle : -angle;
                     Rotation = Quaternion.RotationYawPitchRoll(0.0f, 0.0f, rotZ) * Rotation;
-                    RotationRH = Quaternion.RotationYawPitchRoll(0.0f, 0.0f, rotZ) * RotationRH;
                     break;
 			}
 		}

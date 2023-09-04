@@ -65,7 +65,6 @@ namespace RyzeEditor.Tools
             var pointLight = new PointLight(sphereMesh, sphereMesh)
             {
                 Rotation = Quaternion.Identity,
-                RotationRH = Quaternion.Identity,
                 Scale = Vector3.One,
                 Color = new Vector3(1.0f, 1.0f, 1.0f),
                 Position = point,
