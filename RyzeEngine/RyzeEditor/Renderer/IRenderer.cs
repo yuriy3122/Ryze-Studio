@@ -54,7 +54,7 @@ namespace RyzeEditor.Renderer
 	{
 		void Initialize(IntPtr handle, Camera camera);
 
-        void PreRenderShadowMap(int cascadeNumber);
+        void PreRenderShadowMap(int cascadeIndex);
 
         void PreRender();
 

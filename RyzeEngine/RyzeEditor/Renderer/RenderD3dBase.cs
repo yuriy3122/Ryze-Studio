@@ -22,8 +22,7 @@ namespace RyzeEditor.Renderer
 		protected SwapChain _swapChain;
 		protected DeviceContext _context;
 
-        protected Texture2D _depthMapNear;
-        protected Texture2D _depthMapFar;
+        protected Texture2D[] _depthMap;
         protected Texture2D _backBuffer;
         protected Texture2D _proxyBackBuffer;
         protected Texture2D _depthBuffer;
@@ -31,11 +30,9 @@ namespace RyzeEditor.Renderer
         protected RenderTargetView _renderView;
         protected RenderTargetView _proxyRenderView;
         protected ShaderResourceView _proxyShaderResourceView;
-        protected ShaderResourceView _depthMapNearSRV;
-        protected ShaderResourceView _depthMapFarSRV;
+        protected ShaderResourceView[] _depthMapSRV;
 
-        protected DepthStencilView _depthMapNearDSV;
-        protected DepthStencilView _depthMapFarDSV;
+        protected DepthStencilView[] _depthMapDSV;
         protected DepthStencilView _depthView;
         protected DepthStencilState _defaultStentilState;
         protected DepthStencilState _disabledDepthStencilState;
@@ -65,6 +62,9 @@ namespace RyzeEditor.Renderer
 			_camera = camera;
             _widthScale = 1.0f;
             _heigthScale = 1.0f;
+            _depthMap = new Texture2D[RenderMode.ShadowMapCascadeNumber];
+            _depthMapSRV = new ShaderResourceView[RenderMode.ShadowMapCascadeNumber];
+            _depthMapDSV = new DepthStencilView[RenderMode.ShadowMapCascadeNumber];
 
             _desc = new SwapChainDescription
 			{
@@ -145,22 +145,12 @@ namespace RyzeEditor.Renderer
 			set { _camera = value; }
 		}
 
-        public void PreRenderShadowMap(int cascadeNumber = 0)
+        public void PreRenderShadowMap(int cascadeIndex = 0)
         {
-            if (cascadeNumber == 0)
-            {
-                _context.OutputMerger.SetTargets(_depthMapNearDSV);
-                _context.OutputMerger.DepthStencilState = _defaultStentilState;
-                _context.ClearDepthStencilView(_depthMapNearDSV, DepthStencilClearFlags.Depth, 1.0f, 0);
-                _context.Rasterizer.State = _depthMapRasterState;
-            }
-            else if (cascadeNumber == 1)
-            {
-                _context.OutputMerger.SetTargets(_depthMapFarDSV);
-                _context.OutputMerger.DepthStencilState = _defaultStentilState;
-                _context.ClearDepthStencilView(_depthMapFarDSV, DepthStencilClearFlags.Depth, 1.0f, 0);
-                _context.Rasterizer.State = _depthMapRasterState;
-            }
+            _context.OutputMerger.SetTargets(_depthMapDSV[cascadeIndex]);
+            _context.OutputMerger.DepthStencilState = _defaultStentilState;
+            _context.ClearDepthStencilView(_depthMapDSV[cascadeIndex], DepthStencilClearFlags.Depth, 1.0f, 0);
+            _context.Rasterizer.State = _depthMapRasterState;
         }
 
         public void PreRender()
@@ -238,12 +228,22 @@ namespace RyzeEditor.Renderer
             Utilities.Dispose(ref _proxyRenderView);
             Utilities.Dispose(ref _proxyShaderResourceView);
             Utilities.Dispose(ref _backBuffer);
-            Utilities.Dispose(ref _depthMapNearDSV);
-            Utilities.Dispose(ref _depthMapNearSRV);
-            Utilities.Dispose(ref _depthMapNear);
-            Utilities.Dispose(ref _depthMapFarDSV);
-            Utilities.Dispose(ref _depthMapFarSRV);
-            Utilities.Dispose(ref _depthMapFar);
+
+            for (int i = 0; i < _depthMapDSV.Length; i++)
+            {
+                Utilities.Dispose(ref _depthMapDSV[i]);
+            }
+
+            for (int i = 0; i < _depthMapSRV.Length; i++)
+            {
+                Utilities.Dispose(ref _depthMapSRV[i]);
+            }
+
+            for (int i = 0; i < _depthMap.Length; i++)
+            {
+                Utilities.Dispose(ref _depthMap[i]);
+            }
+
             Utilities.Dispose(ref _proxyBackBuffer);
             Utilities.Dispose(ref _rasterState);
             Utilities.Dispose(ref _depthMapRasterState);
@@ -266,21 +266,7 @@ namespace RyzeEditor.Renderer
 
         protected ShaderResourceView GetDepthMapShaderResourceView(int index)
         {
-            ShaderResourceView srv;
-
-            switch (index)
-            {
-                case 0:
-                    srv = _depthMapNearSRV;
-                    break;
-                case 1:
-                    srv = _depthMapFarSRV;
-                    break;
-                default:
-                    throw new ArgumentException("Cascade index not supprted");
-            }
-
-            return srv;
+            return _depthMapSRV[index];
         }
 
         private void CreateWindowSizeDependentResources(Size wndSize)
@@ -338,73 +324,42 @@ namespace RyzeEditor.Renderer
 
             _depthView = new DepthStencilView(_device, _depthBuffer);
 
-            _depthMapNear = new Texture2D(_device, new Texture2DDescription
+            for (int i = 0; i < RenderMode.ShadowMapCascadeNumber; i++)
             {
-                Format = Format.R24G8_Typeless,
-                ArraySize = 1,
-                MipLevels = 1,
-                Width = width,
-                Height = height,
-                SampleDescription = new SampleDescription(1, 0),
-                Usage = ResourceUsage.Default,
-                BindFlags = BindFlags.DepthStencil | BindFlags.ShaderResource,
-                CpuAccessFlags = CpuAccessFlags.None,
-                OptionFlags = ResourceOptionFlags.None
-            });
+                _depthMap[i] = new Texture2D(_device, new Texture2DDescription
+                {
+                    Format = Format.R24G8_Typeless,
+                    ArraySize = 1,
+                    MipLevels = 1,
+                    Width = width,
+                    Height = height,
+                    SampleDescription = new SampleDescription(1, 0),
+                    Usage = ResourceUsage.Default,
+                    BindFlags = BindFlags.DepthStencil | BindFlags.ShaderResource,
+                    CpuAccessFlags = CpuAccessFlags.None,
+                    OptionFlags = ResourceOptionFlags.None
+                });
 
-            var depthMapDSVDesc = new DepthStencilViewDescription
-            {
-                Flags = 0,
-                Format = Format.D24_UNorm_S8_UInt,
-                Dimension = DepthStencilViewDimension.Texture2D,
-            };
-            depthMapDSVDesc.Texture2D.MipSlice = 0;
+                var depthMapDSVDesc = new DepthStencilViewDescription
+                {
+                    Flags = 0,
+                    Format = Format.D24_UNorm_S8_UInt,
+                    Dimension = DepthStencilViewDimension.Texture2D,
+                };
+                depthMapDSVDesc.Texture2D.MipSlice = 0;
 
-            _depthMapNearDSV = new DepthStencilView(_device, _depthMapNear, depthMapDSVDesc);
+                _depthMapDSV[i] = new DepthStencilView(_device, _depthMap[i], depthMapDSVDesc);
 
-            var depthMapSRVDesc = new ShaderResourceViewDescription
-            {
-                Format = Format.R24_UNorm_X8_Typeless,
-                Dimension = ShaderResourceViewDimension.Texture2D
-            };
-            depthMapSRVDesc.Texture2D.MipLevels = 1;
-            depthMapSRVDesc.Texture2D.MostDetailedMip = 0;
+                var depthMapSRVDesc = new ShaderResourceViewDescription
+                {
+                    Format = Format.R24_UNorm_X8_Typeless,
+                    Dimension = ShaderResourceViewDimension.Texture2D
+                };
+                depthMapSRVDesc.Texture2D.MipLevels = 1;
+                depthMapSRVDesc.Texture2D.MostDetailedMip = 0;
 
-            _depthMapNearSRV = new ShaderResourceView(_device, _depthMapNear, depthMapSRVDesc);
-
-            _depthMapFar = new Texture2D(_device, new Texture2DDescription
-            {
-                Format = Format.R24G8_Typeless,
-                ArraySize = 1,
-                MipLevels = 1,
-                Width = width,
-                Height = height,
-                SampleDescription = new SampleDescription(1, 0),
-                Usage = ResourceUsage.Default,
-                BindFlags = BindFlags.DepthStencil | BindFlags.ShaderResource,
-                CpuAccessFlags = CpuAccessFlags.None,
-                OptionFlags = ResourceOptionFlags.None
-            });
-
-            var depthMapDSVDescFar = new DepthStencilViewDescription
-            {
-                Flags = 0,
-                Format = Format.D24_UNorm_S8_UInt,
-                Dimension = DepthStencilViewDimension.Texture2D,
-            };
-            depthMapDSVDescFar.Texture2D.MipSlice = 0;
-
-            _depthMapFarDSV = new DepthStencilView(_device, _depthMapFar, depthMapDSVDescFar);
-
-            var depthMapFarSRVDesc = new ShaderResourceViewDescription
-            {
-                Format = Format.R24_UNorm_X8_Typeless,
-                Dimension = ShaderResourceViewDimension.Texture2D
-            };
-            depthMapFarSRVDesc.Texture2D.MipLevels = 1;
-            depthMapFarSRVDesc.Texture2D.MostDetailedMip = 0;
-
-            _depthMapFarSRV = new ShaderResourceView(_device, _depthMapFar, depthMapFarSRVDesc);
+                _depthMapSRV[i] = new ShaderResourceView(_device, _depthMap[i], depthMapSRVDesc);
+            }
 
             _context.Rasterizer.SetViewport(new Viewport(0, 0, width, height, 0.0f, 1.0f));
 		}
