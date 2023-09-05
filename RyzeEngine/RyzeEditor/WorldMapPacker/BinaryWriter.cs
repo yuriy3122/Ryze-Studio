@@ -25,46 +25,26 @@ namespace RyzeEditor.Packer
         #region contants
 
         private const ushort ID_HEADER = 0x1FF1;
-
         private const ushort ID_VERSION = 0x0001;
-
         private const ushort ID_TEXTURE_CHUNK = 0x0001;
-
         private const ushort ID_MATERIAL_CHUNK = 0x0002;
-
         private const ushort ID_MESH_CHUNK = 0x0003;
-
-        private const ushort ID_SUB_MESH_MATERIAL_CHUNK = 0x0005;
-
         private const ushort ID_GAME_OBJ_CHUNK = 0x0006;
-
         private const ushort ID_POINT_LIGHT_CHUNK = 0x0007;
-
         private const ushort ID_INDEX_BUFFER_CHUNK = 0x0008;
-
         private const ushort ID_TEXTURE_FORMAT_PVR = 0x0010;
-
         private const ushort ID_TEXTURE_FORMAT_JPG = 0x0020;
-
         private const ushort ID_TEXTURE_BLOCK_CHUNK = 0x0030;
-
         private const ushort ID_MESH_PATCH_INDEX_CHUNK = 0x0031;
-
         private const ushort ID_MESH_PATCH_DATA_CHUNK = 0x0032;
-
         private const ushort ID_VERTEX_POSITION_BUFFER_CHUNK = 0x0033;
-
         private const ushort ID_VERTEX_TEXNORM_BUFFER_CHUNK = 0x0034;
-
         private const ushort ID_VERTEX_TANGENT_BUFFER_CHUNK = 0x0035;
-
         private const ushort ID_FONT_TEXTURE_ATLAS_CHUNK = 0x0036;
-
         private const ushort ID_SKYBOX_TEXTURE_CHUNK = 0x0037;
-
         private const ushort ID_SKYBOX_MESH_CHUNK = 0x0038;
-
         private const ushort ID_ACCELERATION_STRUCTURE = 0x0039;
+        private const ushort ID_HIDDEN_OBJ_STRUCTURE = 0x0040;
 
         #endregion
 
@@ -117,6 +97,8 @@ namespace RyzeEditor.Packer
 
                 WriteAccelerationStructureData(stream);
 
+                WriteHiddenObjectsData(stream);
+
                 WriteTextureData(stream);
             }
 
@@ -142,6 +124,35 @@ namespace RyzeEditor.Packer
                 if (ids.Count > 0)
                 {
                     stream.Write(BitConverter.GetBytes(ID_ACCELERATION_STRUCTURE), 0, sizeof(ushort));
+                    stream.Write(BitConverter.GetBytes(ids.Count), 0, sizeof(int));
+
+                    foreach (var id in ids)
+                    {
+                        stream.Write(BitConverter.GetBytes(id), 0, sizeof(int));
+                    }
+                }
+            }
+        }
+
+        private void WriteHiddenObjectsData(FileStream stream)
+        {
+            var gameObjects = _worldMapData.GameObjects.Where(x => x.Key.IsHidden).Select(x => x.Key).ToList();
+
+            if (gameObjects.Any())
+            {
+                var ids = new List<int>();
+
+                foreach (var gameObject in gameObjects)
+                {
+                    if (gameObject.UserData != null && int.TryParse(gameObject.UserData.ToString(), out int id))
+                    {
+                        ids.Add(id);
+                    }
+                }
+
+                if (ids.Count > 0)
+                {
+                    stream.Write(BitConverter.GetBytes(ID_HIDDEN_OBJ_STRUCTURE), 0, sizeof(ushort));
                     stream.Write(BitConverter.GetBytes(ids.Count), 0, sizeof(int));
 
                     foreach (var id in ids)
