@@ -41,8 +41,8 @@ namespace RyzeEditor
             this.openToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.saveAsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.tsmiLevel = new System.Windows.Forms.ToolStripMenuItem();
-            this.tsmiSettings = new System.Windows.Forms.ToolStripMenuItem();
             this.compileStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.tsmiSettings = new System.Windows.Forms.ToolStripMenuItem();
             this.settingStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.selectToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStrip = new System.Windows.Forms.ToolStrip();
@@ -57,18 +57,26 @@ namespace RyzeEditor
             this.tbVehicle = new System.Windows.Forms.ToolStripButton();
             this.tbCollision = new System.Windows.Forms.ToolStripButton();
             this.leftPanel = new System.Windows.Forms.Panel();
+            this.buttomPanel = new System.Windows.Forms.Panel();
+            this.buttomTabControl = new System.Windows.Forms.TabControl();
+            this.assetsTabPage = new System.Windows.Forms.TabPage();
+            this.consoleTabPage = new System.Windows.Forms.TabPage();
             this.inspectorPanel.SuspendLayout();
             this.menuStrip.SuspendLayout();
             this.toolStrip.SuspendLayout();
+            this.leftPanel.SuspendLayout();
+            this.buttomPanel.SuspendLayout();
+            this.buttomTabControl.SuspendLayout();
             this.SuspendLayout();
             // 
             // inspectorPanel
             // 
             this.inspectorPanel.Controls.Add(this.Inspector);
             this.inspectorPanel.Dock = System.Windows.Forms.DockStyle.Right;
-            this.inspectorPanel.Location = new System.Drawing.Point(752, 24);
+            this.inspectorPanel.Location = new System.Drawing.Point(1504, 40);
+            this.inspectorPanel.Margin = new System.Windows.Forms.Padding(6);
             this.inspectorPanel.Name = "inspectorPanel";
-            this.inspectorPanel.Size = new System.Drawing.Size(400, 543);
+            this.inspectorPanel.Size = new System.Drawing.Size(800, 1050);
             this.inspectorPanel.TabIndex = 0;
             // 
             // Inspector
@@ -76,13 +84,26 @@ namespace RyzeEditor
             this.Inspector.AutoSize = true;
             this.Inspector.Dock = System.Windows.Forms.DockStyle.Fill;
             this.Inspector.Location = new System.Drawing.Point(0, 0);
+            this.Inspector.Margin = new System.Windows.Forms.Padding(12);
             this.Inspector.Name = "Inspector";
             this.Inspector.Selection = null;
-            this.Inspector.Size = new System.Drawing.Size(400, 543);
+            this.Inspector.Size = new System.Drawing.Size(800, 1050);
             this.Inspector.TabIndex = 0;
+            // 
+            // ObjectHierarchyControl
+            // 
+            this.ObjectHierarchyControl.AutoSize = true;
+            this.ObjectHierarchyControl.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.ObjectHierarchyControl.Location = new System.Drawing.Point(0, 0);
+            this.ObjectHierarchyControl.Margin = new System.Windows.Forms.Padding(12);
+            this.ObjectHierarchyControl.Name = "ObjectHierarchyControl";
+            this.ObjectHierarchyControl.Size = new System.Drawing.Size(430, 1008);
+            this.ObjectHierarchyControl.TabIndex = 0;
             // 
             // menuStrip
             // 
+            this.menuStrip.GripMargin = new System.Windows.Forms.Padding(2, 2, 0, 2);
+            this.menuStrip.ImageScalingSize = new System.Drawing.Size(32, 32);
             this.menuStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.tsmiWorldMap,
             this.tsmiLevel,
@@ -90,9 +111,9 @@ namespace RyzeEditor
             this.selectToolStripMenuItem});
             this.menuStrip.Location = new System.Drawing.Point(0, 0);
             this.menuStrip.Name = "menuStrip";
-            this.menuStrip.Size = new System.Drawing.Size(1152, 24);
+            this.menuStrip.Size = new System.Drawing.Size(2304, 40);
             this.menuStrip.TabIndex = 1;
-            this.menuStrip.Text = "menuStrip1";
+            this.menuStrip.Text = "menuStrip";
             // 
             // tsmiWorldMap
             // 
@@ -100,20 +121,20 @@ namespace RyzeEditor
             this.openToolStripMenuItem,
             this.saveAsToolStripMenuItem});
             this.tsmiWorldMap.Name = "tsmiWorldMap";
-            this.tsmiWorldMap.Size = new System.Drawing.Size(40, 20);
+            this.tsmiWorldMap.Size = new System.Drawing.Size(75, 36);
             this.tsmiWorldMap.Text = "FILE";
             // 
             // openToolStripMenuItem
             // 
             this.openToolStripMenuItem.Name = "openToolStripMenuItem";
-            this.openToolStripMenuItem.Size = new System.Drawing.Size(179, 22);
+            this.openToolStripMenuItem.Size = new System.Drawing.Size(357, 44);
             this.openToolStripMenuItem.Text = "Open";
             this.openToolStripMenuItem.Click += new System.EventHandler(this.openToolStripMenuItem_Click);
             // 
             // saveAsToolStripMenuItem
             // 
             this.saveAsToolStripMenuItem.Name = "saveAsToolStripMenuItem";
-            this.saveAsToolStripMenuItem.Size = new System.Drawing.Size(179, 22);
+            this.saveAsToolStripMenuItem.Size = new System.Drawing.Size(357, 44);
             this.saveAsToolStripMenuItem.Text = "Save WorldMap As..";
             this.saveAsToolStripMenuItem.Click += new System.EventHandler(this.saveAsToolStripMenuItem_Click);
             // 
@@ -122,37 +143,37 @@ namespace RyzeEditor
             this.tsmiLevel.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.compileStripMenuItem});
             this.tsmiLevel.Name = "tsmiLevel";
-            this.tsmiLevel.Size = new System.Drawing.Size(50, 20);
-            this.tsmiLevel.Text = "LEVEL";
+            this.tsmiLevel.Size = new System.Drawing.Size(104, 36);
+            this.tsmiLevel.Text = "SCENE";
+            // 
+            // compileStripMenuItem
+            // 
+            this.compileStripMenuItem.Name = "compileStripMenuItem";
+            this.compileStripMenuItem.Size = new System.Drawing.Size(194, 44);
+            this.compileStripMenuItem.Text = "Pack";
+            this.compileStripMenuItem.Click += new System.EventHandler(this.compileStripMenuItem_Click);
             // 
             // tsmiSettings
             // 
             this.tsmiSettings.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.settingStripMenuItem});
             this.tsmiSettings.Name = "tsmiSettings";
-            this.tsmiSettings.Size = new System.Drawing.Size(50, 20);
+            this.tsmiSettings.Size = new System.Drawing.Size(138, 36);
             this.tsmiSettings.Text = "SETTINGS";
             // 
-            // compileStripMenuItem
+            // settingStripMenuItem
             // 
-            this.compileStripMenuItem.Name = "compileStripMenuItem";
-            this.compileStripMenuItem.Size = new System.Drawing.Size(99, 22);
-            this.compileStripMenuItem.Text = "Pack";
-            this.compileStripMenuItem.Click += new System.EventHandler(this.compileStripMenuItem_Click);
-            // 
-            this.settingStripMenuItem.Name = "compileStripMenuItem1";
-            this.settingStripMenuItem.Size = new System.Drawing.Size(99, 22);
+            this.settingStripMenuItem.Name = "settingStripMenuItem";
+            this.settingStripMenuItem.Size = new System.Drawing.Size(233, 44);
             this.settingStripMenuItem.Text = "Settings";
-            //this.settingStripMenuItem.Click += new System.EventHandler(this.compileStripMenuItem_Click);
-
+            // 
             // selectToolStripMenuItem
             // 
             this.selectToolStripMenuItem.Name = "selectToolStripMenuItem";
-            this.selectToolStripMenuItem.Size = new System.Drawing.Size(12, 20);
+            this.selectToolStripMenuItem.Size = new System.Drawing.Size(20, 36);
             // 
             // toolStrip
             // 
-            this.toolStrip.Dock = System.Windows.Forms.DockStyle.None;
             this.toolStrip.ImageScalingSize = new System.Drawing.Size(32, 32);
             this.toolStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.tbUndo,
@@ -165,11 +186,12 @@ namespace RyzeEditor
             this.tbPointLight,
             this.tbVehicle,
             this.tbCollision});
-            this.toolStrip.Location = new System.Drawing.Point(215, 24);
+            this.toolStrip.Location = new System.Drawing.Point(0, 40);
             this.toolStrip.Name = "toolStrip";
-            this.toolStrip.Size = new System.Drawing.Size(372, 39);
+            this.toolStrip.Padding = new System.Windows.Forms.Padding(0, 0, 4, 0);
+            this.toolStrip.Size = new System.Drawing.Size(1504, 42);
             this.toolStrip.TabIndex = 2;
-            this.toolStrip.Text = "toolStrip1";
+            this.toolStrip.Text = "toolStrip";
             // 
             // tbUndo
             // 
@@ -177,7 +199,7 @@ namespace RyzeEditor
             this.tbUndo.Image = ((System.Drawing.Image)(resources.GetObject("tbUndo.Image")));
             this.tbUndo.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.tbUndo.Name = "tbUndo";
-            this.tbUndo.Size = new System.Drawing.Size(36, 36);
+            this.tbUndo.Size = new System.Drawing.Size(46, 36);
             this.tbUndo.Text = "Undo";
             this.tbUndo.Click += new System.EventHandler(this.tbUndo_Click);
             // 
@@ -187,7 +209,7 @@ namespace RyzeEditor
             this.tbRedo.Image = ((System.Drawing.Image)(resources.GetObject("tbRedo.Image")));
             this.tbRedo.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.tbRedo.Name = "tbRedo";
-            this.tbRedo.Size = new System.Drawing.Size(36, 36);
+            this.tbRedo.Size = new System.Drawing.Size(46, 36);
             this.tbRedo.Text = "Redo";
             this.tbRedo.Click += new System.EventHandler(this.tbRedo_Click);
             // 
@@ -197,7 +219,7 @@ namespace RyzeEditor
             this.tbPlacement.Image = ((System.Drawing.Image)(resources.GetObject("tbPlacement.Image")));
             this.tbPlacement.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.tbPlacement.Name = "tbPlacement";
-            this.tbPlacement.Size = new System.Drawing.Size(36, 36);
+            this.tbPlacement.Size = new System.Drawing.Size(46, 36);
             this.tbPlacement.Text = "Placement";
             this.tbPlacement.Click += new System.EventHandler(this.tbPlacement_Click);
             // 
@@ -207,7 +229,7 @@ namespace RyzeEditor
             this.tbSelect.Image = ((System.Drawing.Image)(resources.GetObject("tbSelect.Image")));
             this.tbSelect.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.tbSelect.Name = "tbSelect";
-            this.tbSelect.Size = new System.Drawing.Size(36, 36);
+            this.tbSelect.Size = new System.Drawing.Size(46, 36);
             this.tbSelect.Text = "Select";
             this.tbSelect.Click += new System.EventHandler(this.tbSelect_Click);
             // 
@@ -217,7 +239,7 @@ namespace RyzeEditor
             this.tbCustomSelect.Image = ((System.Drawing.Image)(resources.GetObject("tbCustomSelect.Image")));
             this.tbCustomSelect.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.tbCustomSelect.Name = "tbCustomSelect";
-            this.tbCustomSelect.Size = new System.Drawing.Size(36, 36);
+            this.tbCustomSelect.Size = new System.Drawing.Size(46, 36);
             this.tbCustomSelect.Tag = "";
             this.tbCustomSelect.Text = "CustomSelect";
             this.tbCustomSelect.Click += new System.EventHandler(this.tbCustomSelect_Click);
@@ -228,7 +250,7 @@ namespace RyzeEditor
             this.tbTranslate.Image = ((System.Drawing.Image)(resources.GetObject("tbTranslate.Image")));
             this.tbTranslate.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.tbTranslate.Name = "tbTranslate";
-            this.tbTranslate.Size = new System.Drawing.Size(36, 36);
+            this.tbTranslate.Size = new System.Drawing.Size(46, 36);
             this.tbTranslate.Tag = "";
             this.tbTranslate.Text = "Translate";
             this.tbTranslate.Click += new System.EventHandler(this.tbTranslate_Click);
@@ -239,7 +261,7 @@ namespace RyzeEditor
             this.tbRotate.Image = ((System.Drawing.Image)(resources.GetObject("tbRotate.Image")));
             this.tbRotate.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.tbRotate.Name = "tbRotate";
-            this.tbRotate.Size = new System.Drawing.Size(36, 36);
+            this.tbRotate.Size = new System.Drawing.Size(46, 36);
             this.tbRotate.Tag = "";
             this.tbRotate.Text = "Rotate";
             this.tbRotate.Click += new System.EventHandler(this.tbRotate_Click);
@@ -250,7 +272,7 @@ namespace RyzeEditor
             this.tbPointLight.Image = ((System.Drawing.Image)(resources.GetObject("tbPointLight.Image")));
             this.tbPointLight.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.tbPointLight.Name = "tbPointLight";
-            this.tbPointLight.Size = new System.Drawing.Size(36, 36);
+            this.tbPointLight.Size = new System.Drawing.Size(46, 36);
             this.tbPointLight.Text = "Point Light";
             this.tbPointLight.Click += new System.EventHandler(this.tbPointLight_Click);
             // 
@@ -260,7 +282,7 @@ namespace RyzeEditor
             this.tbVehicle.Image = ((System.Drawing.Image)(resources.GetObject("tbVehicle.Image")));
             this.tbVehicle.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.tbVehicle.Name = "tbVehicle";
-            this.tbVehicle.Size = new System.Drawing.Size(36, 36);
+            this.tbVehicle.Size = new System.Drawing.Size(46, 36);
             this.tbVehicle.Text = "Vehicle";
             this.tbVehicle.Click += new System.EventHandler(this.tbVehicle_Click);
             // 
@@ -270,39 +292,80 @@ namespace RyzeEditor
             this.tbCollision.Image = ((System.Drawing.Image)(resources.GetObject("tbCollision.Image")));
             this.tbCollision.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.tbCollision.Name = "tbCollision";
-            this.tbCollision.Size = new System.Drawing.Size(36, 36);
+            this.tbCollision.Size = new System.Drawing.Size(46, 36);
             this.tbCollision.Tag = "";
             this.tbCollision.Text = "Collision";
             this.tbCollision.Click += new System.EventHandler(this.tbCollision_Click);
             // 
             // leftPanel
             // 
-            this.leftPanel.Controls.Add(ObjectHierarchyControl);
+            this.leftPanel.Controls.Add(this.ObjectHierarchyControl);
             this.leftPanel.Dock = System.Windows.Forms.DockStyle.Left;
-            this.leftPanel.Location = new System.Drawing.Point(0, 24);
+            this.leftPanel.Location = new System.Drawing.Point(0, 82);
+            this.leftPanel.Margin = new System.Windows.Forms.Padding(6);
             this.leftPanel.Name = "leftPanel";
-            this.leftPanel.Size = new System.Drawing.Size(215, 543);
+            this.leftPanel.Size = new System.Drawing.Size(430, 1008);
             this.leftPanel.TabIndex = 3;
-
-            this.ObjectHierarchyControl.AutoSize = true;
-            this.ObjectHierarchyControl.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.ObjectHierarchyControl.Location = new System.Drawing.Point(0, 0);
-            this.ObjectHierarchyControl.Name = "ObjectHierarchyControl";
+            // 
+            // buttomPanel
+            // 
+            this.buttomPanel.Controls.Add(this.buttomTabControl);
+            this.buttomPanel.Dock = System.Windows.Forms.DockStyle.Bottom;
+            this.buttomPanel.Location = new System.Drawing.Point(430, 811);
+            this.buttomPanel.Margin = new System.Windows.Forms.Padding(0);
+            this.buttomPanel.Name = "buttomPanel";
+            this.buttomPanel.Size = new System.Drawing.Size(1074, 279);
+            this.buttomPanel.TabIndex = 4;
+            // 
+            // buttomTabControl
+            // 
+            this.buttomTabControl.Controls.Add(this.assetsTabPage);
+            this.buttomTabControl.Controls.Add(this.consoleTabPage);
+            this.buttomTabControl.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.buttomTabControl.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.125F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.buttomTabControl.Location = new System.Drawing.Point(0, 0);
+            this.buttomTabControl.Margin = new System.Windows.Forms.Padding(0);
+            this.buttomTabControl.Name = "buttomTabControl";
+            this.buttomTabControl.SelectedIndex = 0;
+            this.buttomTabControl.Size = new System.Drawing.Size(1074, 279);
+            this.buttomTabControl.TabIndex = 0;
+            // 
+            // assetsTabPage
+            // 
+            this.assetsTabPage.Location = new System.Drawing.Point(8, 45);
+            this.assetsTabPage.Name = "assetsTabPage";
+            this.assetsTabPage.Padding = new System.Windows.Forms.Padding(3);
+            this.assetsTabPage.Size = new System.Drawing.Size(1058, 226);
+            this.assetsTabPage.TabIndex = 0;
+            this.assetsTabPage.Text = "Assets";
+            this.assetsTabPage.UseVisualStyleBackColor = true;
+            // 
+            // consoleTabPage
+            // 
+            this.consoleTabPage.Location = new System.Drawing.Point(8, 45);
+            this.consoleTabPage.Name = "consoleTabPage";
+            this.consoleTabPage.Padding = new System.Windows.Forms.Padding(3);
+            this.consoleTabPage.Size = new System.Drawing.Size(1058, 226);
+            this.consoleTabPage.TabIndex = 1;
+            this.consoleTabPage.Text = "Console";
+            this.consoleTabPage.UseVisualStyleBackColor = true;
             // 
             // MainForm
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(12F, 25F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.SystemColors.Control;
-            this.ClientSize = new System.Drawing.Size(1152, 567);
+            this.ClientSize = new System.Drawing.Size(2304, 1090);
+            this.Controls.Add(this.buttomPanel);
             this.Controls.Add(this.leftPanel);
             this.Controls.Add(this.toolStrip);
             this.Controls.Add(this.inspectorPanel);
             this.Controls.Add(this.menuStrip);
             this.MainMenuStrip = this.menuStrip;
+            this.Margin = new System.Windows.Forms.Padding(6);
             this.Name = "MainForm";
             this.SizeGripStyle = System.Windows.Forms.SizeGripStyle.Hide;
-            this.Text = "RyzeEditor";
+            this.Text = "Ryze Studio";
             this.WindowState = System.Windows.Forms.FormWindowState.Maximized;
             this.inspectorPanel.ResumeLayout(false);
             this.inspectorPanel.PerformLayout();
@@ -310,6 +373,10 @@ namespace RyzeEditor
             this.menuStrip.PerformLayout();
             this.toolStrip.ResumeLayout(false);
             this.toolStrip.PerformLayout();
+            this.leftPanel.ResumeLayout(false);
+            this.leftPanel.PerformLayout();
+            this.buttomPanel.ResumeLayout(false);
+            this.buttomTabControl.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -341,6 +408,10 @@ namespace RyzeEditor
         private ToolStripButton tbPointLight;
         private ToolStripButton tbVehicle;
         private Panel leftPanel;
+        private Panel buttomPanel;
+        private TabControl buttomTabControl;
+        private TabPage assetsTabPage;
+        private TabPage consoleTabPage;
     }
 }
 
