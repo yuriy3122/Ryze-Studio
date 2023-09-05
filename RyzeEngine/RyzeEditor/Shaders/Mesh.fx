@@ -33,9 +33,6 @@ Texture2D shadowMapNear     : register( t1 );
 Texture2D shadowMapFar      : register( t2 );
 SamplerState textureSampler : register( s0 );
 
-static const float SMAP_SIZE = 2048.0f;
-static const float SMAP_DX = 1.0f / SMAP_SIZE;
-
 SamplerState depthSampler
 {
     Filter = MIN_MAG_MIP_POINT;
@@ -82,7 +79,7 @@ float4 PS(PS_IN input) : SV_Target
     if (input.light.a > 0.9f)
     {
         const float step = 50.0f;
-        const float dx = SMAP_DX;
+        const float dx = 1.0f / input.color.w;
         const float bias = 0.0001f;
         const float2 offsets[9] =
         {
