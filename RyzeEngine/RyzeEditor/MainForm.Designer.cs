@@ -71,10 +71,12 @@ namespace RyzeEditor
             // 
             // inspectorPanel
             // 
+            this.inspectorPanel.BackColor = System.Drawing.SystemColors.ControlLight;
+            this.inspectorPanel.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
             this.inspectorPanel.Controls.Add(this.Inspector);
             this.inspectorPanel.Dock = System.Windows.Forms.DockStyle.Right;
             this.inspectorPanel.Location = new System.Drawing.Point(1504, 40);
-            this.inspectorPanel.Margin = new System.Windows.Forms.Padding(6);
+            this.inspectorPanel.Margin = new System.Windows.Forms.Padding(0);
             this.inspectorPanel.Name = "inspectorPanel";
             this.inspectorPanel.Size = new System.Drawing.Size(800, 1050);
             this.inspectorPanel.TabIndex = 0;
@@ -177,6 +179,7 @@ namespace RyzeEditor
             // toolStrip
             // 
             this.toolStrip.BackColor = System.Drawing.SystemColors.ControlLight;
+            this.toolStrip.CanOverflow = false;
             this.toolStrip.GripMargin = new System.Windows.Forms.Padding(0);
             this.toolStrip.GripStyle = System.Windows.Forms.ToolStripGripStyle.Hidden;
             this.toolStrip.ImageScalingSize = new System.Drawing.Size(32, 32);
@@ -194,7 +197,7 @@ namespace RyzeEditor
             this.toolStrip.Location = new System.Drawing.Point(0, 40);
             this.toolStrip.Name = "toolStrip";
             this.toolStrip.Padding = new System.Windows.Forms.Padding(0);
-            this.toolStrip.RenderMode = System.Windows.Forms.ToolStripRenderMode.Professional;
+            this.toolStrip.RenderMode = System.Windows.Forms.ToolStripRenderMode.System;
             this.toolStrip.RightToLeft = System.Windows.Forms.RightToLeft.No;
             this.toolStrip.Size = new System.Drawing.Size(1504, 42);
             this.toolStrip.TabIndex = 2;
@@ -299,7 +302,7 @@ namespace RyzeEditor
             this.tbCollision.Image = ((System.Drawing.Image)(resources.GetObject("tbCollision.Image")));
             this.tbCollision.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.tbCollision.Name = "tbCollision";
-            this.tbCollision.Size = new System.Drawing.Size(46, 36);
+            this.tbCollision.Size = new System.Drawing.Size(46, 44);
             this.tbCollision.Tag = "";
             this.tbCollision.Text = "Collision";
             this.tbCollision.Click += new System.EventHandler(this.tbCollision_Click);
