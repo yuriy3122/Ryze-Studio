@@ -82,10 +82,12 @@ namespace RyzeEditor
             // Inspector
             // 
             this.Inspector.AutoSize = true;
+            this.Inspector.BackColor = System.Drawing.SystemColors.ControlLight;
             this.Inspector.Dock = System.Windows.Forms.DockStyle.Fill;
             this.Inspector.Location = new System.Drawing.Point(0, 0);
-            this.Inspector.Margin = new System.Windows.Forms.Padding(12);
+            this.Inspector.Margin = new System.Windows.Forms.Padding(0);
             this.Inspector.Name = "Inspector";
+            this.Inspector.Padding = new System.Windows.Forms.Padding(0, 74, 0, 0);
             this.Inspector.Selection = null;
             this.Inspector.Size = new System.Drawing.Size(800, 1050);
             this.Inspector.TabIndex = 0;
@@ -174,6 +176,9 @@ namespace RyzeEditor
             // 
             // toolStrip
             // 
+            this.toolStrip.BackColor = System.Drawing.SystemColors.ControlLight;
+            this.toolStrip.GripMargin = new System.Windows.Forms.Padding(0);
+            this.toolStrip.GripStyle = System.Windows.Forms.ToolStripGripStyle.Hidden;
             this.toolStrip.ImageScalingSize = new System.Drawing.Size(32, 32);
             this.toolStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.tbUndo,
@@ -188,7 +193,9 @@ namespace RyzeEditor
             this.tbCollision});
             this.toolStrip.Location = new System.Drawing.Point(0, 40);
             this.toolStrip.Name = "toolStrip";
-            this.toolStrip.Padding = new System.Windows.Forms.Padding(0, 0, 4, 0);
+            this.toolStrip.Padding = new System.Windows.Forms.Padding(0);
+            this.toolStrip.RenderMode = System.Windows.Forms.ToolStripRenderMode.Professional;
+            this.toolStrip.RightToLeft = System.Windows.Forms.RightToLeft.No;
             this.toolStrip.Size = new System.Drawing.Size(1504, 42);
             this.toolStrip.TabIndex = 2;
             this.toolStrip.Text = "toolStrip";
