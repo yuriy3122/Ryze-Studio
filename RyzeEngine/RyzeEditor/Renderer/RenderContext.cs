@@ -54,6 +54,8 @@ namespace RyzeEditor.Renderer
 
                 if (gameObject != null)
                 {
+                    //TODO: need to fix
+
                     //var boundingBox = GetGameObjectBoundingBox(gameObject);
 
                     //if (frustum.Contains(boundingBox) != ContainmentType.Disjoint)
@@ -121,11 +123,15 @@ namespace RyzeEditor.Renderer
                 }
             }
 
+            _renderMode.RenderShadows = true;
+
             RenderGameObjects(gameObjects);
 
             var objects = _entities.OfType<GameObject>().Where(x => objectIds.Contains(x.Id)).ToList();
 
             RenderGameObjectsWithOptions(objects, options);
+
+            _renderMode.RenderShadows = false;
 
             _renderer.ClearDepthStencilView();
 
@@ -375,12 +381,12 @@ namespace RyzeEditor.Renderer
 
         private void RenderTools()
 		{
-			foreach (var visualTool in from tool in _toolManager.Tools let visualTool = tool as IVisualElement
+            foreach (var visualTool in from tool in _toolManager.Tools let visualTool = tool as IVisualElement
                                        where visualTool != null && tool.IsActive select visualTool)
 			{
 				visualTool.Render3d(_renderer, _renderMode);
 			}
-		}
+        }
 
         private List<RenderOptions> GetRenderOptions()
         {

@@ -48,6 +48,7 @@ namespace RyzeEditor.Renderer
         public List<int> SubMeshIds { get; set; }
         public Vector4 Color { get; set; }
         public Vector3 DirectLightDir { get; set; }
+        public bool RenderShadows { get; set; }
     }
 
 	public interface IRenderer

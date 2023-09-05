@@ -79,39 +79,42 @@ float4 PS(PS_IN input) : SV_Target
 
 	float3 color = saturate(2.0 * (0.6 * ambientColor + 0.4f * lightColor * Kd * Kd));
     
-    const float step = 50.0f;
-    const float dx = SMAP_DX;
-    const float bias = 0.0001f;
-    const float2 offsets[9] =
+    if (input.light.a > 0.9f)
     {
-        float2(-dx, -dx), float2(0.0f, -dx), float2(dx, -dx),
-        float2(-dx, 0.0f), float2(0.0f, 0.0f), float2(dx, 0.0f),
-        float2(-dx, +dx), float2(0.0f, +dx), float2(dx, +dx)
-    };
-    
-    float dist = length(input.viewPos);
-    float4 shadowPos = (dist < step) ? input.shadowPosN : input.shadowPosF;
-    
-    float2 tc;
-    tc.x = shadowPos.x * 0.5f + 0.5f;
-    tc.y = shadowPos.y * -0.5f + 0.5f;
-    float percentLit = 9.0f;
-    
-    [unroll]
-    for (int i = 0; i < 9; ++i)
-    {
-        float2 tx = tc + offsets[i];
-        float depth = (dist < step) ? shadowMapNear.Sample(depthSampler, tx).r : shadowMapFar.Sample(depthSampler, tx).r;
-       
-        if ((depth + bias) < shadowPos.z)
+        const float step = 50.0f;
+        const float dx = SMAP_DX;
+        const float bias = 0.0001f;
+        const float2 offsets[9] =
         {
-            percentLit -= 0.3f;
+            float2(-dx, -dx), float2(0.0f, -dx), float2(dx, -dx),
+            float2(-dx, 0.0f), float2(0.0f, 0.0f), float2(dx, 0.0f),
+            float2(-dx, +dx), float2(0.0f, +dx), float2(dx, +dx)
+        };
+    
+        float dist = length(input.viewPos);
+        float4 shadowPos = (dist < step) ? input.shadowPosN : input.shadowPosF;
+    
+        float2 tc;
+        tc.x = shadowPos.x * 0.5f + 0.5f;
+        tc.y = shadowPos.y * -0.5f + 0.5f;
+        float percentLit = 9.0f;
+    
+        [unroll]
+        for (int i = 0; i < 9; ++i)
+        {
+            float2 tx = tc + offsets[i];
+            float depth = (dist < step) ? shadowMapNear.Sample(depthSampler, tx).r : shadowMapFar.Sample(depthSampler, tx).r;
+       
+            if ((depth + bias) < shadowPos.z)
+            {
+                percentLit -= 0.3f;
+            }
         }
+    
+        percentLit /= 9.0f;
+    
+        color *= percentLit;
     }
-    
-    percentLit /= 9.0f;
-    
-    color *= percentLit;
 
     return float4(color, 0.0);
 }

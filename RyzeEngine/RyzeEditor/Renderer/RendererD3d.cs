@@ -167,6 +167,9 @@ namespace RyzeEditor.Renderer
                     }
 
                     data.AddRange(diffuseColor.ToArray());
+
+                    lightDir.W = mode.RenderShadows ? 1.0f : 0.0f;
+
                     data.AddRange(lightDir.ToArray());
 
                     _context.UpdateSubresource(data.ToArray(), effect.ContantBuffer);
