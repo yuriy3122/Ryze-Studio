@@ -2,7 +2,6 @@
 using System.Windows.Forms;
 using SharpDX;
 using RyzeEditor.Extentions;
-using RyzeEditor.GameWorld;
 
 namespace RyzeEditor.Controls
 {
@@ -49,11 +48,11 @@ namespace RyzeEditor.Controls
             {
                 _angle = value;
 
-                numSpinWAxis.ValueChanged -= NumSpinXAxis_ValueChanged;
+                numSpinWAxis.ValueChanged -= NumSpinWAxis_ValueChanged;
 
                 numSpinWAxis.Value = _angle.ToDecimal();
 
-                numSpinWAxis.ValueChanged += NumSpinZAxis_ValueChanged;
+                numSpinWAxis.ValueChanged += NumSpinWAxis_ValueChanged;
             }
         }
 
