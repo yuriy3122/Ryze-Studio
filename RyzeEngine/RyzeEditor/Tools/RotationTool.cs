@@ -146,7 +146,9 @@ namespace RyzeEditor.Tools
 			}
 			else
 			{
-				if ((vec - _prevRotationVector.Value).Length() < 0.0000001f)
+                var delta = 0.0001f;
+
+                if ((vec - _prevRotationVector.Value).Length() < delta)
 				{
 					return true;
 				}
@@ -159,7 +161,7 @@ namespace RyzeEditor.Tools
 
                     var dir = Vector3.Cross(_prevRotationVector.Value, vec);
 
-                    if (angle < 0.000001f || angle > Math.PI / 4.0f)
+                    if (angle < delta || angle >= Math.PI / 2.0f)
                     {
                         return true;
                     }
