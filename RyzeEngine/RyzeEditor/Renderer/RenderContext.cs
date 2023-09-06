@@ -5,6 +5,7 @@ using RyzeEditor.GameWorld;
 using RyzeEditor.ResourceManagment;
 using RyzeEditor.Tools;
 using SharpDX;
+using RyzeEditor.Properties;
 
 namespace RyzeEditor.Renderer
 {
@@ -84,22 +85,26 @@ namespace RyzeEditor.Renderer
 				return;
 			}
 
-            _renderMode.ShadowMap = true;
-
             var gameObjects = _entities.OfType<GameObject>().Where(x => !x.IsHidden).ToList();
-            var sunLight = worldMap.Entities.OfType<SunLight>().FirstOrDefault();
 
-            _renderMode.DirectLightDir = sunLight != null ? sunLight.LightDir : new Vector3(1.0f, 1.0f, 1.0f);
-            _renderMode.DirectLightDir = Vector3.Normalize(_renderMode.DirectLightDir);
-
-            for (int i = 0; i < RenderMode.ShadowMapCascadeNumber; i++)
+            if (Settings.Default.RenderShadows)
             {
-                _renderer.PreRenderShadowMap(i);
-                _renderMode.ShadowMapCascadeIndex = i;
-                RenderGameObjects(gameObjects);
-            }
+                _renderMode.ShadowMap = true;
 
-            _renderMode.ShadowMap = false;
+                var sunLight = worldMap.Entities.OfType<SunLight>().FirstOrDefault();
+
+                _renderMode.DirectLightDir = sunLight != null ? sunLight.LightDir : new Vector3(1.0f, 1.0f, 1.0f);
+                _renderMode.DirectLightDir = Vector3.Normalize(_renderMode.DirectLightDir);
+
+                for (int i = 0; i < RenderMode.ShadowMapCascadeNumber; i++)
+                {
+                    _renderer.PreRenderShadowMap(i);
+                    _renderMode.ShadowMapCascadeIndex = i;
+                    RenderGameObjects(gameObjects);
+                }
+
+                _renderMode.ShadowMap = false;
+            }
 
             _renderer.PreRender();
 
@@ -123,7 +128,7 @@ namespace RyzeEditor.Renderer
                 }
             }
 
-            _renderMode.RenderShadows = true;
+            _renderMode.RenderShadows = Settings.Default.RenderShadows;
 
             RenderGameObjects(gameObjects);
 

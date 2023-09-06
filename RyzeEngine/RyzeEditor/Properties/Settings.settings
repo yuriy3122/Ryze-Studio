@@ -17,5 +17,8 @@
     <Setting Name="OutputFilePath" Type="System.String" Scope="Application">
       <Value Profile="(Default)">C:\Users\Yuriy\Documents\Ryze.bin</Value>
     </Setting>
+    <Setting Name="RenderShadows" Type="System.Boolean" Scope="Application">
+      <Value Profile="(Default)">True</Value>
+    </Setting>
   </Settings>
 </SettingsFile>
