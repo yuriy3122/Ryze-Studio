@@ -151,7 +151,7 @@ namespace RyzeEditor.Tools
 
             var plane = new Plane(Vector3.Zero, Vector3.UnitY);
 
-            if (_axisSelected[0] || _axisSelected[1])
+            if (_axisSelected[1])
             {
                 plane = new Plane(Vector3.Zero, Vector3.UnitZ);
             }
