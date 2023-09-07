@@ -150,13 +150,23 @@ namespace RyzeEditor.Tools
             }
 
             var plane = new Plane(Vector3.Zero, Vector3.UnitY);
+            var intersectPoint = Vector3.Zero;
 
             if (_axisSelected[1])
             {
                 plane = new Plane(Vector3.Zero, Vector3.UnitZ);
+
+                if (!ray.Intersects(ref plane, out intersectPoint))
+                {
+                    plane = new Plane(Vector3.Zero, -Vector3.UnitZ);
+
+                    if (!ray.Intersects(ref plane, out intersectPoint))
+                    {
+                        return true;
+                    }
+                }
             }
 
-            var intersectPoint = Vector3.Zero;
             if (!ray.Intersects(ref plane, out intersectPoint))
             {
                 return true;
