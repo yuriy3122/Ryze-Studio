@@ -150,7 +150,7 @@ namespace RyzeEditor.Tools
                 return true;
             }
 
-            var plane = new Plane(new Vector3(0.0f, 0.0f, ray.Position.Y + TranslationScale * ray.Direction.Y), Vector3.UnitY);
+            var plane = new Plane(new Vector3(0.0f, ray.Position.Y + TranslationScale * ray.Direction.Y, 0.0f), Vector3.UnitY);
             var intersectPoint = Vector3.Zero;
 
             if (_axisSelected[1])
