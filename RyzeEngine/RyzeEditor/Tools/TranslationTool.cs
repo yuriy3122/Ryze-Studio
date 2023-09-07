@@ -13,7 +13,8 @@ namespace RyzeEditor.Tools
 	{
 		private const float ScaleDist = 0.002f;
 		private const float ScalePos = 0.11f;
-		private const int MouseMoveDelta = 5;
+        private const float TranslationScale = 32.0f;
+        private const int MouseMoveDelta = 5;
 
 		private bool _leftMouseButtonPressed;
 		private readonly GameObject _arrowAxisGameObject;
@@ -149,21 +150,16 @@ namespace RyzeEditor.Tools
                 return true;
             }
 
-            var plane = new Plane(Vector3.Zero, Vector3.UnitY);
+            var plane = new Plane(new Vector3(0.0f, 0.0f, ray.Position.Y + TranslationScale * ray.Direction.Y), Vector3.UnitY);
             var intersectPoint = Vector3.Zero;
 
             if (_axisSelected[1])
             {
-                plane = new Plane(Vector3.Zero, Vector3.UnitZ);
+                plane = new Plane(new Vector3(0.0f, 0.0f, ray.Position.Z + TranslationScale * ray.Direction.Z), Vector3.UnitZ);
 
                 if (!ray.Intersects(ref plane, out intersectPoint))
                 {
-                    plane = new Plane(Vector3.Zero, -Vector3.UnitZ);
-
-                    if (!ray.Intersects(ref plane, out intersectPoint))
-                    {
-                        return true;
-                    }
+                    return true;
                 }
             }
 
