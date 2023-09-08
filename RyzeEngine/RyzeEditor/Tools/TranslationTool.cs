@@ -13,7 +13,6 @@ namespace RyzeEditor.Tools
 	{
 		private const float ScaleDist = 0.002f;
 		private const float ScalePos = 0.11f;
-        private const float TranslationScale = 32.0f;
         private const int MouseMoveDelta = 5;
 
 		private bool _leftMouseButtonPressed;
@@ -150,18 +149,8 @@ namespace RyzeEditor.Tools
                 return true;
             }
 
-            var plane = new Plane(new Vector3(0.0f, ray.Position.Y + TranslationScale * ray.Direction.Y, 0.0f), Vector3.UnitY);
+            var plane = new Plane(ray.Position + distance * ray.Direction, ray.Direction);
             var intersectPoint = Vector3.Zero;
-
-            if (_axisSelected[1])
-            {
-                plane = new Plane(new Vector3(0.0f, 0.0f, ray.Position.Z + TranslationScale * ray.Direction.Z), Vector3.UnitZ);
-
-                if (!ray.Intersects(ref plane, out intersectPoint))
-                {
-                    return true;
-                }
-            }
 
             if (!ray.Intersects(ref plane, out intersectPoint))
             {
