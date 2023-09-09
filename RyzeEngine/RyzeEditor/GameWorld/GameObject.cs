@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Collections.Generic;
 using SharpDX;
 using PropertyChanged;
@@ -104,6 +105,18 @@ namespace RyzeEditor.GameWorld
 
                 return _geometryMeshes;
             }
+        }
+
+        public override string ToString()
+        {
+            var name = $"{GetType().Name}";
+
+            if (_geometryMeshes != null)
+            {
+                name = $"{GetType().Name}, Mesh={_geometryMeshes.FirstOrDefault()?.Name}";
+            }
+
+            return name;
         }
 
         [DoNotNotify]

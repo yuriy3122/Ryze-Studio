@@ -3,6 +3,7 @@ using System.Linq;
 using System.Drawing;
 using System.IO;
 using System.Windows.Forms;
+using log4net;
 using SharpDX;
 using SharpDX.Multimedia;
 using SharpDX.RawInput;
@@ -43,8 +44,13 @@ namespace RyzeEditor
         [field: NonSerialized]
         private InspectorControl _inspectorControl;
 
+        [field: NonSerialized]
+        private static readonly ILog _log = LogManager.GetLogger("LOGGER");
+
         public void Run()
         {
+            log4net.Config.XmlConfigurator.Configure();
+
             var form = new MainForm();
 
             _userResized = true;
@@ -137,6 +143,8 @@ namespace RyzeEditor
             entities.Add(_worldMap.Camera);
 
             _objectHierarchyControl.UpdateHierarchy(entities);
+
+            _log.Info($"Added: {_worldMap.Entities.FirstOrDefault(x => x.Id == e.EntityId)}");
         }
 
         private void WorldMapEntityDeleted(object sender, EntityEventArgs e)
