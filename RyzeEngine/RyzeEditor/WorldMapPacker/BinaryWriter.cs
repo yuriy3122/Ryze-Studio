@@ -21,6 +21,7 @@ namespace RyzeEditor.Packer
         private WorldChunkWriter _worldChunkWriter;
 
         public event EventHandler<PackerEventArgs> NewMessage;
+        public event EventHandler<PackerEventArgs> OnComplete;
 
         private long _tmpPos;
 
@@ -58,6 +59,11 @@ namespace RyzeEditor.Packer
         protected virtual void OnNewMessage(PackerEventArgs e)
         {
             NewMessage?.Invoke(this, e);
+        }
+
+        protected virtual void Complete(PackerEventArgs e)
+        {
+            OnComplete?.Invoke(this, e);
         }
 
         public void WriteData(PackerOptions options)
@@ -123,6 +129,8 @@ namespace RyzeEditor.Packer
             _collisionWriter.Dispose();
 
             OnNewMessage(new PackerEventArgs($"{DateTime.UtcNow:mm:ss} === scene packing complete"));
+
+            Complete(new PackerEventArgs($"Complete"));
         }
 
         private void WriteAccelerationStructureData(FileStream stream)

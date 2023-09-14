@@ -18,6 +18,8 @@ namespace RyzeEditor.Packer
 
         public event EventHandler<PackerEventArgs> NewMessage;
 
+        public event EventHandler<PackerEventArgs> OnComplete;
+
         public WorldMapPacker(WorldMap worldMap, PackerOptions options)
         {
             _worldMap = worldMap;
@@ -30,6 +32,12 @@ namespace RyzeEditor.Packer
             _binaryWriter = new BinaryWriter(_worldMapData);
 
             _binaryWriter.NewMessage += BinaryWriterNewMessage;
+            _binaryWriter.OnComplete += BinaryWriterOnComplete;
+        }
+
+        private void BinaryWriterOnComplete(object sender, PackerEventArgs e)
+        {
+            OnComplete?.Invoke(this, e);
         }
 
         private void BinaryWriterNewMessage(object sender, PackerEventArgs e)

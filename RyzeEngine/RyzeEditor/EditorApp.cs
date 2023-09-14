@@ -15,7 +15,6 @@ using RyzeEditor.Serialization;
 using RyzeEditor.Tools;
 using RyzeEditor.Packer;
 using RyzeEditor.Controls;
-using static System.Net.Mime.MediaTypeNames;
 
 namespace RyzeEditor
 {
@@ -51,6 +50,9 @@ namespace RyzeEditor
 
         [field: NonSerialized]
         private static readonly ILog _log = LogManager.GetLogger("LOGGER");
+
+        [field: NonSerialized]
+        private long _locker;
 
         delegate void SetTextCallback(string text);
 
@@ -242,15 +244,31 @@ namespace RyzeEditor
 
             form.PackClicked += (sender, args) =>
             {
-                _consoleOutputControl.ClearAll();
+                if (Interlocked.Read(ref _locker) == 0)
+                {
+                    _locker = Interlocked.Increment(ref _locker);
 
-                var packer = new WorldMapPacker(_worldMap, new PackerOptions());
-                packer.NewMessage += WorldMapPackerNewMessage;
+                    _consoleOutputControl.ClearAll();
 
-                var thread = new Thread(() => { packer.Execute(); });
+                    var packer = new WorldMapPacker(_worldMap, new PackerOptions());
+                    packer.NewMessage += WorldMapPackerNewMessage;
+                    packer.OnComplete += WorldMapPackerOnComplete;
 
-                thread.Start();
+                    var thread = new Thread(() => { packer.Execute(); });
+
+                    thread.Start();
+                }
             };
+        }
+
+        private void WorldMapPackerNewMessage(object sender, PackerEventArgs e)
+        {
+            SetMessage(e.Message);
+        }
+
+        private void WorldMapPackerOnComplete(object sender, PackerEventArgs e)
+        {
+            _locker = Interlocked.Decrement(ref _locker);
         }
 
         private void SetMessage(string message)
@@ -264,11 +282,6 @@ namespace RyzeEditor
             {
                 _consoleOutputControl.AddMessage(message);
             }
-        }
-
-        private void WorldMapPackerNewMessage(object sender, PackerEventArgs e)
-        {
-            SetMessage(e.Message);
         }
 
         private void FormFileOpened(object sender, FileOpenEventArgs args)
