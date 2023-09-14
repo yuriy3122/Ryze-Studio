@@ -1,6 +1,6 @@
-﻿using RyzeEditor.GameWorld;
+﻿using System;
+using RyzeEditor.GameWorld;
 using RyzeEditor.Properties;
-using System;
 
 namespace RyzeEditor.Packer
 {

@@ -1,7 +1,8 @@
 ﻿using System;
+using System.IO;
 using System.Linq;
 using System.Drawing;
-using System.IO;
+using System.Threading;
 using System.Windows.Forms;
 using log4net;
 using SharpDX;
@@ -14,6 +15,7 @@ using RyzeEditor.Serialization;
 using RyzeEditor.Tools;
 using RyzeEditor.Packer;
 using RyzeEditor.Controls;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace RyzeEditor
 {
@@ -49,6 +51,8 @@ namespace RyzeEditor
 
         [field: NonSerialized]
         private static readonly ILog _log = LogManager.GetLogger("LOGGER");
+
+        delegate void SetTextCallback(string text);
 
         public void Run()
         {
@@ -241,11 +245,30 @@ namespace RyzeEditor
                 _consoleOutputControl.ClearAll();
 
                 var packer = new WorldMapPacker(_worldMap, new PackerOptions());
+                packer.NewMessage += WorldMapPackerNewMessage;
 
-                packer.NewMessage += (s, e) => { _consoleOutputControl.AddMessage(e.Message); };
+                var thread = new Thread(() => { packer.Execute(); });
 
-                packer.Execute();
+                thread.Start();
             };
+        }
+
+        private void SetMessage(string message)
+        {
+            if (_consoleOutputControl.InvokeRequired)
+            {
+                SetTextCallback d = new SetTextCallback(SetMessage);
+                _consoleOutputControl.Invoke(d, new object[] { message });
+            }
+            else
+            {
+                _consoleOutputControl.AddMessage(message);
+            }
+        }
+
+        private void WorldMapPackerNewMessage(object sender, PackerEventArgs e)
+        {
+            SetMessage(e.Message);
         }
 
         private void FormFileOpened(object sender, FileOpenEventArgs args)
