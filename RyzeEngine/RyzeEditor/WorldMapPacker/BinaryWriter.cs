@@ -14,11 +14,13 @@ namespace RyzeEditor.Packer
 {
     public class BinaryWriter
     {
-        private WorldMapData _worldMapData;
+        private readonly WorldMapData _worldMapData;
         private PackerOptions _options;
         private CollisionWriter _collisionWriter;
         private VehicleWriter _vehicleWriter;
         private WorldChunkWriter _worldChunkWriter;
+
+        public event EventHandler<PackerEventArgs> NewMessage;
 
         private long _tmpPos;
 
@@ -53,8 +55,15 @@ namespace RyzeEditor.Packer
             _worldMapData = worldMapData;
         }
 
+        protected virtual void OnNewMessage(PackerEventArgs e)
+        {
+            NewMessage?.Invoke(this, e);
+        }
+
         public void WriteData(PackerOptions options)
         {
+            OnNewMessage(new PackerEventArgs($"{DateTime.UtcNow:mm:ss} === scene packing started"));
+
             _options = options;
 
             _collisionWriter = new CollisionWriter(_worldMapData, _options);
@@ -75,18 +84,25 @@ namespace RyzeEditor.Packer
                 stream.Write(BitConverter.GetBytes(_worldMapData.Meshes.Count), 0, sizeof(int));
                 stream.Write(BitConverter.GetBytes(_worldMapData.GameObjects.Count), 0, sizeof(int));
 
+                OnNewMessage(new PackerEventArgs($"{DateTime.UtcNow:mm:ss} === writing material data...complete."));
                 WriteMaterialData(stream);
 
+                OnNewMessage(new PackerEventArgs($"{DateTime.UtcNow:mm:ss} === writing mesh data...complete."));
                 WriteMeshData(stream);
 
+                OnNewMessage(new PackerEventArgs($"{DateTime.UtcNow:mm:ss} === writing scene object data...complete."));
                 WriteGameObjectData(stream);
 
+                OnNewMessage(new PackerEventArgs($"{DateTime.UtcNow:mm:ss} === writing point light data...complete."));
                 WritePointLightData(stream);
 
+                OnNewMessage(new PackerEventArgs($"{DateTime.UtcNow:mm:ss} === writing collision data...complete."));
                 _collisionWriter.WriteData(stream);
 
+                OnNewMessage(new PackerEventArgs($"{DateTime.UtcNow:mm:ss} === writing vehicle data...complete."));
                 _vehicleWriter.WriteData(stream);
 
+                OnNewMessage(new PackerEventArgs($"{DateTime.UtcNow:mm:ss} === writing world map chunk data...complete."));
                 _worldChunkWriter.WriteData(stream);
 
                 WriteFontTextureAtlasData(stream);
@@ -95,14 +111,18 @@ namespace RyzeEditor.Packer
 
                 WriteSkyboxMeshData(stream);
 
+                OnNewMessage(new PackerEventArgs($"{DateTime.UtcNow:mm:ss} === writing acceleration structure data"));
                 WriteAccelerationStructureData(stream);
 
                 WriteHiddenObjectsData(stream);
 
+                OnNewMessage(new PackerEventArgs($"{DateTime.UtcNow:mm:ss} === writing texture data"));
                 WriteTextureData(stream);
             }
 
             _collisionWriter.Dispose();
+
+            OnNewMessage(new PackerEventArgs($"{DateTime.UtcNow:mm:ss} === scene packing complete"));
         }
 
         private void WriteAccelerationStructureData(FileStream stream)

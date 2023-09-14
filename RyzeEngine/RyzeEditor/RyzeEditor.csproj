@@ -86,6 +86,12 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Controls\ConsoleOutputControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Controls\ConsoleOutputControl.Designer.cs">
+      <DependentUpon>ConsoleOutputControl.cs</DependentUpon>
+    </Compile>
     <Compile Include="Controls\ObjectHierarchyControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -212,6 +218,9 @@
     <Compile Include="Tools\TranslationTool.cs" />
     <Compile Include="UndoRedo\Command.cs" />
     <Compile Include="UndoRedo\UndoRedoManager.cs" />
+    <EmbeddedResource Include="Controls\ConsoleOutputControl.resx">
+      <DependentUpon>ConsoleOutputControl.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Controls\InspectorControl.resx">
       <DependentUpon>InspectorControl.cs</DependentUpon>
     </EmbeddedResource>

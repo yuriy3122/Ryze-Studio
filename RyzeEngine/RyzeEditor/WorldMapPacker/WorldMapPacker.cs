@@ -1,5 +1,6 @@
 ﻿using RyzeEditor.GameWorld;
 using RyzeEditor.Properties;
+using System;
 
 namespace RyzeEditor.Packer
 {
@@ -15,6 +16,8 @@ namespace RyzeEditor.Packer
 
         private readonly BinaryWriter _binaryWriter;
 
+        public event EventHandler<PackerEventArgs> NewMessage;
+
         public WorldMapPacker(WorldMap worldMap, PackerOptions options)
         {
             _worldMap = worldMap;
@@ -25,6 +28,13 @@ namespace RyzeEditor.Packer
             _preProcessor = new PreProcessor(options);
             _worldMapData = new WorldMapData(_worldMap);
             _binaryWriter = new BinaryWriter(_worldMapData);
+
+            _binaryWriter.NewMessage += BinaryWriterNewMessage;
+        }
+
+        private void BinaryWriterNewMessage(object sender, PackerEventArgs e)
+        {
+            NewMessage?.Invoke(this, e);
         }
 
         public void Execute()
@@ -41,6 +51,16 @@ namespace RyzeEditor.Packer
             _options.TextureFormat = Settings.Default.TextureFormat;
             _options.OutputFilePath = Settings.Default.OutputFilePath;
             _options.PlatformAlignment = Settings.Default.PlatformAlignment;
+        }
+    }
+
+    public class PackerEventArgs
+    {
+        public string Message { get; set; }
+
+        public PackerEventArgs(string message)
+        {
+            Message = message;
         }
     }
 }

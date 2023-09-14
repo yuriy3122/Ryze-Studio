@@ -45,6 +45,9 @@ namespace RyzeEditor
         private InspectorControl _inspectorControl;
 
         [field: NonSerialized]
+        private ConsoleOutputControl _consoleOutputControl;
+
+        [field: NonSerialized]
         private static readonly ILog _log = LogManager.GetLogger("LOGGER");
 
         public void Run()
@@ -83,6 +86,8 @@ namespace RyzeEditor
             _objectHierarchyControl.UpdateHierarchy(entities);
 
             _inspectorControl = form.Inspector;
+
+            _consoleOutputControl = form.ConsoleOutputControl;
 
             InitToolManager(form);
 
@@ -233,7 +238,11 @@ namespace RyzeEditor
 
             form.PackClicked += (sender, args) =>
             {
+                _consoleOutputControl.ClearAll();
+
                 var packer = new WorldMapPacker(_worldMap, new PackerOptions());
+
+                packer.NewMessage += (s, e) => { _consoleOutputControl.AddMessage(e.Message); };
 
                 packer.Execute();
             };

@@ -36,6 +36,7 @@ namespace RyzeEditor
             this.inspectorPanel = new System.Windows.Forms.Panel();
             this.Inspector = new RyzeEditor.Controls.InspectorControl();
             this.ObjectHierarchyControl = new RyzeEditor.Controls.ObjectHierarchyControl();
+            this.ConsoleOutputControl = new Controls.ConsoleOutputControl();
             this.menuStrip = new System.Windows.Forms.MenuStrip();
             this.tsmiWorldMap = new System.Windows.Forms.ToolStripMenuItem();
             this.openToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -103,6 +104,16 @@ namespace RyzeEditor
             this.ObjectHierarchyControl.Name = "ObjectHierarchyControl";
             this.ObjectHierarchyControl.Size = new System.Drawing.Size(430, 1008);
             this.ObjectHierarchyControl.TabIndex = 0;
+            // 
+            // ConsoleOutputControl
+            // 
+            this.ConsoleOutputControl.AutoSize = true;
+            this.ConsoleOutputControl.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.ConsoleOutputControl.Location = new System.Drawing.Point(0, 0);
+            this.ConsoleOutputControl.Margin = new System.Windows.Forms.Padding(0);
+            this.ConsoleOutputControl.Name = "ConsoleOutputControl";
+            this.ConsoleOutputControl.Size = new System.Drawing.Size(600, 100);
+            this.ConsoleOutputControl.TabIndex = 5;
             // 
             // menuStrip
             // 
@@ -359,6 +370,7 @@ namespace RyzeEditor
             this.consoleTabPage.TabIndex = 1;
             this.consoleTabPage.Text = "Console";
             this.consoleTabPage.UseVisualStyleBackColor = true;
+            this.consoleTabPage.Controls.Add(this.ConsoleOutputControl);
             // 
             // MainForm
             // 
@@ -402,6 +414,7 @@ namespace RyzeEditor
         private ToolStrip toolStrip;
 		public Controls.InspectorControl Inspector;
         public Controls.ObjectHierarchyControl ObjectHierarchyControl;
+        public Controls.ConsoleOutputControl ConsoleOutputControl;
 		private ToolStripButton tbTranslate;
 		private ToolStripButton tbCustomSelect;
 		private ToolStripMenuItem openToolStripMenuItem;
