@@ -68,7 +68,7 @@ namespace RyzeEditor.Packer
 
         public void WriteData(PackerOptions options)
         {
-            OnNewMessage(new PackerEventArgs($"{DateTime.UtcNow:mm:ss} === scene packing started"));
+            OnNewMessage(new PackerEventArgs($"{DateTime.Now:HH:mm:ss} === scene packing started"));
 
             _options = options;
 
@@ -90,25 +90,25 @@ namespace RyzeEditor.Packer
                 stream.Write(BitConverter.GetBytes(_worldMapData.Meshes.Count), 0, sizeof(int));
                 stream.Write(BitConverter.GetBytes(_worldMapData.GameObjects.Count), 0, sizeof(int));
 
-                OnNewMessage(new PackerEventArgs($"{DateTime.UtcNow:mm:ss} === writing material data...complete."));
+                OnNewMessage(new PackerEventArgs($"{DateTime.Now:HH:mm:ss} === writing material data...complete."));
                 WriteMaterialData(stream);
 
-                OnNewMessage(new PackerEventArgs($"{DateTime.UtcNow:mm:ss} === writing mesh data...complete."));
+                OnNewMessage(new PackerEventArgs($"{DateTime.Now:HH:mm:ss} === writing mesh data...complete."));
                 WriteMeshData(stream);
 
-                OnNewMessage(new PackerEventArgs($"{DateTime.UtcNow:mm:ss} === writing scene object data...complete."));
+                OnNewMessage(new PackerEventArgs($"{DateTime.Now:HH:mm:ss} === writing scene object data...complete."));
                 WriteGameObjectData(stream);
 
-                OnNewMessage(new PackerEventArgs($"{DateTime.UtcNow:mm:ss} === writing point light data...complete."));
+                OnNewMessage(new PackerEventArgs($"{DateTime.Now:HH:mm:ss} === writing point light data...complete."));
                 WritePointLightData(stream);
 
-                OnNewMessage(new PackerEventArgs($"{DateTime.UtcNow:mm:ss} === writing collision data...complete."));
+                OnNewMessage(new PackerEventArgs($"{DateTime.Now:HH:mm:ss} === writing collision data...complete."));
                 _collisionWriter.WriteData(stream);
 
-                OnNewMessage(new PackerEventArgs($"{DateTime.UtcNow:mm:ss} === writing vehicle data...complete."));
+                OnNewMessage(new PackerEventArgs($"{DateTime.Now:HH:mm:ss} === writing vehicle data...complete."));
                 _vehicleWriter.WriteData(stream);
 
-                OnNewMessage(new PackerEventArgs($"{DateTime.UtcNow:mm:ss} === writing world map chunk data...complete."));
+                OnNewMessage(new PackerEventArgs($"{DateTime.Now:HH:mm:ss} === writing world map chunk data...complete."));
                 _worldChunkWriter.WriteData(stream);
 
                 WriteFontTextureAtlasData(stream);
@@ -117,18 +117,18 @@ namespace RyzeEditor.Packer
 
                 WriteSkyboxMeshData(stream);
 
-                OnNewMessage(new PackerEventArgs($"{DateTime.UtcNow:mm:ss} === writing acceleration structure data"));
+                OnNewMessage(new PackerEventArgs($"{DateTime.Now:HH:mm:ss} === writing acceleration structure data"));
                 WriteAccelerationStructureData(stream);
 
                 WriteHiddenObjectsData(stream);
 
-                OnNewMessage(new PackerEventArgs($"{DateTime.UtcNow:mm:ss} === writing texture data"));
+                OnNewMessage(new PackerEventArgs($"{DateTime.Now:HH:mm:ss} === writing texture data"));
                 WriteTextureData(stream);
             }
 
             _collisionWriter.Dispose();
 
-            OnNewMessage(new PackerEventArgs($"{DateTime.UtcNow:mm:ss} === scene packing complete"));
+            OnNewMessage(new PackerEventArgs($"{DateTime.Now:HH:mm:ss} === scene packing complete"));
 
             Complete(new PackerEventArgs($"Complete"));
         }
