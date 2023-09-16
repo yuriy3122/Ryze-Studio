@@ -45,9 +45,8 @@
             this.centerPanel.Controls.Add(this.tabControl);
             this.centerPanel.Dock = System.Windows.Forms.DockStyle.Fill;
             this.centerPanel.Location = new System.Drawing.Point(0, 0);
-            this.centerPanel.Margin = new System.Windows.Forms.Padding(8, 7, 8, 7);
             this.centerPanel.Name = "centerPanel";
-            this.centerPanel.Size = new System.Drawing.Size(669, 1061);
+            this.centerPanel.Size = new System.Drawing.Size(251, 445);
             this.centerPanel.TabIndex = 0;
             // 
             // tabControl
@@ -56,21 +55,19 @@
             this.tabControl.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tabControl.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
             this.tabControl.Location = new System.Drawing.Point(0, 0);
-            this.tabControl.Margin = new System.Windows.Forms.Padding(8, 7, 8, 7);
             this.tabControl.Name = "tabControl";
             this.tabControl.SelectedIndex = 0;
-            this.tabControl.Size = new System.Drawing.Size(669, 1061);
+            this.tabControl.Size = new System.Drawing.Size(251, 445);
             this.tabControl.TabIndex = 5;
             // 
             // objectHierarchyTab
             // 
             this.objectHierarchyTab.AutoScroll = true;
             this.objectHierarchyTab.Controls.Add(this.HierarchyTreeView);
-            this.objectHierarchyTab.Location = new System.Drawing.Point(10, 55);
-            this.objectHierarchyTab.Margin = new System.Windows.Forms.Padding(8, 7, 8, 7);
+            this.objectHierarchyTab.Location = new System.Drawing.Point(4, 25);
             this.objectHierarchyTab.Name = "objectHierarchyTab";
-            this.objectHierarchyTab.Padding = new System.Windows.Forms.Padding(8, 7, 8, 7);
-            this.objectHierarchyTab.Size = new System.Drawing.Size(649, 996);
+            this.objectHierarchyTab.Padding = new System.Windows.Forms.Padding(3, 3, 3, 3);
+            this.objectHierarchyTab.Size = new System.Drawing.Size(243, 416);
             this.objectHierarchyTab.TabIndex = 0;
             this.objectHierarchyTab.Text = "Hierarchy";
             this.objectHierarchyTab.UseVisualStyleBackColor = true;
@@ -81,11 +78,10 @@
             this.HierarchyTreeView.Dock = System.Windows.Forms.DockStyle.Fill;
             this.HierarchyTreeView.ImageIndex = 0;
             this.HierarchyTreeView.ImageList = this.imageList;
-            this.HierarchyTreeView.Location = new System.Drawing.Point(8, 7);
-            this.HierarchyTreeView.Margin = new System.Windows.Forms.Padding(8, 7, 8, 7);
+            this.HierarchyTreeView.Location = new System.Drawing.Point(3, 3);
             this.HierarchyTreeView.Name = "HierarchyTreeView";
             this.HierarchyTreeView.SelectedImageIndex = 0;
-            this.HierarchyTreeView.Size = new System.Drawing.Size(633, 982);
+            this.HierarchyTreeView.Size = new System.Drawing.Size(237, 410);
             this.HierarchyTreeView.TabIndex = 0;
             this.HierarchyTreeView.KeyDown += new System.Windows.Forms.KeyEventHandler(this.HierarchyTreeView_KeyDown);
             this.HierarchyTreeView.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.HierarchyTreeView_KeyPress);
@@ -98,15 +94,15 @@
             this.imageList.Images.SetKeyName(1, "gameObject.png");
             this.imageList.Images.SetKeyName(2, "vehicle.png");
             this.imageList.Images.SetKeyName(3, "camera.png");
+            this.imageList.Images.SetKeyName(4, "sun2.png");
             // 
             // ObjectHierarchyControl
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(16F, 31F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.Controls.Add(this.centerPanel);
-            this.Margin = new System.Windows.Forms.Padding(8, 7, 8, 7);
             this.Name = "ObjectHierarchyControl";
-            this.Size = new System.Drawing.Size(669, 1061);
+            this.Size = new System.Drawing.Size(251, 445);
             this.centerPanel.ResumeLayout(false);
             this.tabControl.ResumeLayout(false);
             this.objectHierarchyTab.ResumeLayout(false);

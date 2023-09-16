@@ -154,6 +154,9 @@ namespace RyzeEditor.Controls
                 case Camera _:
                     imageIndex = 3;
                     break;
+                case SunLight _:
+                    imageIndex = 4;
+                    break;
 
                 default:
                     imageIndex = 1;
