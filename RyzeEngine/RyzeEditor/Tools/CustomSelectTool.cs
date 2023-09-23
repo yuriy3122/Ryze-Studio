@@ -6,6 +6,7 @@ using RyzeEditor.Renderer;
 using SharpDX;
 using SharpDX.RawInput;
 
+//https://ameye.dev/notes/rendering-outlines/
 namespace RyzeEditor.Tools
 {
     public class CustomSelectTool : ToolBase, IVisualElement
