@@ -1,4 +1,5 @@
 ﻿using System;
+using log4net;
 using RyzeEditor.GameWorld;
 using RyzeEditor.Properties;
 
@@ -7,6 +8,8 @@ namespace RyzeEditor.Packer
     public class WorldMapPacker
     {
         private readonly WorldMap _worldMap;
+
+        private ILog _logger;
 
         private readonly PackerOptions _options;
 
@@ -24,6 +27,7 @@ namespace RyzeEditor.Packer
         {
             _worldMap = worldMap;
             _options = options;
+            _logger = options.Logger;
 
             CreateDefaultOptions();
 
@@ -47,11 +51,19 @@ namespace RyzeEditor.Packer
 
         public void Execute()
         {
-            _preProcessor.Run();
+            try
+            {
+                _preProcessor.Run();
 
-            _worldMapData.Prepare();
+                _worldMapData.Prepare();
 
-            _binaryWriter.WriteData(_options);
+                _binaryWriter.WriteData(_options);
+            }
+            catch (Exception ex)
+            {
+                _logger.Error(ex.Message);
+                BinaryWriterNewMessage(this, new PackerEventArgs($"ERROR: {ex.Message}"));
+            }
         }
 
         public void CreateDefaultOptions()

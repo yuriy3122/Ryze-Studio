@@ -250,7 +250,8 @@ namespace RyzeEditor
 
                     _consoleOutputControl.ClearAll();
 
-                    var packer = new WorldMapPacker(_worldMap, new PackerOptions());
+                    var options = new PackerOptions() { Logger = _log };
+                    var packer = new WorldMapPacker(_worldMap, options);
                     packer.NewMessage += WorldMapPackerNewMessage;
                     packer.OnComplete += WorldMapPackerOnComplete;
 
