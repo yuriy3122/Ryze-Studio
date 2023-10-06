@@ -90,7 +90,7 @@ namespace RyzeEditor.Tools
 
         public override bool OnMouseWheel(object sender, MouseEventArgs mouseEventArgs)
         {
-            _world.Camera.Zoom(mouseEventArgs.Delta / 100);
+            //_world.Camera.Zoom(mouseEventArgs.Delta / 100);
 
             return true;
         }
