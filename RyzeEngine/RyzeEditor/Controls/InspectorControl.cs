@@ -577,8 +577,8 @@ namespace RyzeEditor.Controls
 
             var label = new Label { AutoSize = true, Dock = DockStyle.Fill, Text = $@"{property.Name}"};
             var panel = new TableLayoutPanel() { Dock = DockStyle.Fill, Height = 30, ColumnCount = 2, RowCount = 1 };
-            panel.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 40F));
-            panel.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 60F));
+            panel.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50F));
+            panel.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50F));
             panel.RowStyles.Add(new RowStyle(SizeType.AutoSize));
             panel.Controls.Add(label, 0, 0);
             panel.Controls.Add(checkBoxControl, 1, 0);
@@ -632,8 +632,8 @@ namespace RyzeEditor.Controls
 
             var label = new Label { AutoSize = true, Dock = DockStyle.Fill, Text = $@"{property.Name}" };
             var panel = new TableLayoutPanel() { Dock = DockStyle.Fill, Height = 30, ColumnCount = 2, RowCount = 1 };
-            panel.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 40F));
-            panel.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 60F));
+            panel.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50F));
+            panel.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50F));
             panel.RowStyles.Add(new RowStyle(SizeType.AutoSize));
             panel.Controls.Add(label, 0, 0);
             panel.Controls.Add(numericControl, 1, 0);
