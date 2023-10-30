@@ -1,10 +1,10 @@
 ﻿using System.Linq;
 using System.Drawing;
 using System.Collections.Generic;
+using SharpDX;
 using RyzeEditor.GameWorld;
 using RyzeEditor.ResourceManagment;
 using RyzeEditor.Tools;
-using SharpDX;
 using RyzeEditor.Properties;
 
 namespace RyzeEditor.Renderer
@@ -55,13 +55,21 @@ namespace RyzeEditor.Renderer
 
                 if (gameObject != null)
                 {
-                    //TODO: need to fix
+                    var delta = new Vector3(0.1f, 0.1f, 0.1f);
+                    var smallBox = new BoundingBox(gameObject.Position - delta, gameObject.Position + delta);
 
-                    //var boundingBox = GetGameObjectBoundingBox(gameObject);
-
-                    //if (frustum.Contains(boundingBox) != ContainmentType.Disjoint)
+                    if (frustum.Contains(smallBox) == ContainmentType.Contains)
                     {
                         _entities.Add(entity);
+                    }
+                    else
+                    {
+                        var boundingBox = GetGameObjectBoundingBox(gameObject);
+
+                        if (frustum.Contains(boundingBox) != ContainmentType.Disjoint)
+                        {
+                            _entities.Add(entity);
+                        }
                     }
                 }
                 else
