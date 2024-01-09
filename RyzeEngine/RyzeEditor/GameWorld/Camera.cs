@@ -19,10 +19,11 @@ namespace RyzeEditor.GameWorld
 		/// </summary>
 		public Vector3 LookAtDir { get; set; }
 
-		/// <summary>
-		/// Up direction
-		/// </summary>
-		public Vector3 UpDir { get; set; }
+        /// <summary>
+        /// Up direction
+        /// </summary>
+        [InspectorVisible(false)]
+        public Vector3 UpDir { get; set; }
 
 		/// <summary>
 		/// Field of view
@@ -71,31 +72,31 @@ namespace RyzeEditor.GameWorld
 
 		public void RotateY(float delta)
 		{
-			var matrix = Matrix.RotationY(delta);
-			var posOrigin = Position;
+            var matrix = Matrix.RotationY(delta);
+			var rot = new Vector3(Position.X, 0.0f, Position.Z) - new Vector3(LookAtDir.X, 0.0f, LookAtDir.Z);
 
-            Vector3.TransformCoordinate(ref posOrigin, ref matrix, out Vector3 position);
+            Vector3.TransformCoordinate(ref rot, ref matrix, out Vector3 position);
 
-            Position = position;
-		}
+            Position = position + new Vector3(LookAtDir.X, Position.Y, LookAtDir.Z);
+        }
 
 		public void RotateX(float delta)
 		{
-			var matrix = Matrix.RotationX(delta);
-			var posOrigin = Position;
+            var matrix = Matrix.RotationX(delta);
+            var rot = new Vector3(0.0f, Position.Y, Position.Z) - new Vector3(0.0f, LookAtDir.Y, LookAtDir.Z);
 
-            Vector3.TransformCoordinate(ref posOrigin, ref matrix, out Vector3 position);
+            Vector3.TransformCoordinate(ref rot, ref matrix, out Vector3 position);
 
-            Position = position;
-		}
+            Position = position + new Vector3(Position.X, LookAtDir.Y, LookAtDir.Z);
+        }
 
 		public void Strafe(float delta)
 		{
 			var n = Vector3.Cross(UpDir, LookAtDir - Position);
 			n.Normalize();
 
-			Position = Position - delta * n;
-			LookAtDir = LookAtDir - delta * n;
+			Position -= delta * n;
+			LookAtDir -= delta * n;
 		}
 
 		public void Walk(float delta)
@@ -104,8 +105,8 @@ namespace RyzeEditor.GameWorld
 			var n = new Vector3(vec.X, 0.0f, vec.Z);
 			n.Normalize();
 
-			Position = Position + delta * n;
-			LookAtDir = LookAtDir + delta * n;			
+			Position += delta * n;
+			LookAtDir += delta * n;	
 		}
 
         public void Zoom(float delta)

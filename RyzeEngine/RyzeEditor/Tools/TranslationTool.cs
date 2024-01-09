@@ -52,7 +52,12 @@ namespace RyzeEditor.Tools
 
         public override bool OnMouseDown(object sender, MouseEventArgs mouseEventArgs)
 		{
-			_leftMouseButtonPressed = true;
+            if (mouseEventArgs.Button == MouseButtons.Right)
+            {
+                return false;
+            }
+
+            _leftMouseButtonPressed = true;
 			_dataChanged = false;
 
             return true;
@@ -60,7 +65,12 @@ namespace RyzeEditor.Tools
 
 		public override bool OnMouseUp(object sender, MouseEventArgs mouseEventArgs)
 		{
-			_leftMouseButtonPressed = false;
+            if (mouseEventArgs.Button == MouseButtons.Right)
+            {
+                return false;
+            }
+
+            _leftMouseButtonPressed = false;
 			_lastPoint = null;
 			_lastIntersectPoint = null;
 
@@ -77,6 +87,11 @@ namespace RyzeEditor.Tools
 
 		public override bool OnMouseMove(object sender, MouseEventArgs mouseEventArgs)
 		{
+            if (mouseEventArgs.Button == MouseButtons.Right)
+            {
+                return false;
+            }
+
             var gameObjects = _selection.Get().OfType<GameObject>().ToList();
 
             if (gameObjects == null || gameObjects.Count == 0)
@@ -180,7 +195,7 @@ namespace RyzeEditor.Tools
 
         public override bool OnMouseWheel(object sender, MouseEventArgs mouseEventArgs)
         {
-            return true;
+            return false;
         }
 
         public void Render3d(IRenderer renderer, RenderMode mode)

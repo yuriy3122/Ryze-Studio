@@ -1,15 +1,15 @@
 ﻿using System;
 using System.Windows.Forms;
-using RyzeEditor.GameWorld;
-using RyzeEditor.Renderer;
 using SharpDX;
 using SharpDX.RawInput;
+using RyzeEditor.GameWorld;
+using RyzeEditor.Renderer;
 
 namespace RyzeEditor.Tools
 {
 	public class CameraTool:  ToolBase, IVisualElement
 	{
-        private bool _leftMouseButtonPressed;
+        private bool _rightMouseButtonPressed;
         private Point? _lastPoint;
 
         private const int MouseMoveDelta = 2;
@@ -37,7 +37,7 @@ namespace RyzeEditor.Tools
 
         public override bool OnMouseUp(object sender, MouseEventArgs mouseEventArgs)
         {
-            _leftMouseButtonPressed = false;
+            _rightMouseButtonPressed = false;
             _lastPoint = null;
 
             return true;
@@ -45,14 +45,17 @@ namespace RyzeEditor.Tools
 
         public override bool OnMouseDown(object sender, MouseEventArgs mouseEventArgs)
         {
-            _leftMouseButtonPressed = true;
+            if (mouseEventArgs.Button == MouseButtons.Right)
+            {
+                _rightMouseButtonPressed = true;
+            }
 
             return true;
         }
 
         public override bool OnMouseMove(object sender, MouseEventArgs mouseEventArgs)
         {
-            if (_leftMouseButtonPressed == false)
+            if (_rightMouseButtonPressed == false)
             {
                 return true;
             }
@@ -90,7 +93,7 @@ namespace RyzeEditor.Tools
 
         public override bool OnMouseWheel(object sender, MouseEventArgs mouseEventArgs)
         {
-            //_world.Camera.Zoom(mouseEventArgs.Delta / 100);
+            _world.Camera.Zoom(mouseEventArgs.Delta / 100.0f);
 
             return true;
         }

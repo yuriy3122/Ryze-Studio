@@ -117,7 +117,17 @@ namespace RyzeEditor.Tools
 
         public override bool OnMouseDown(object sender, MouseEventArgs mouseEventArgs)
         {
+            if (mouseEventArgs.Button == MouseButtons.Right)
+            {
+                return false;
+            }
+
             var result = false;
+
+            if (mouseEventArgs.Button == MouseButtons.Right)
+            {
+                return result;
+            }
 
             if (_world == null)
             {
@@ -168,7 +178,7 @@ namespace RyzeEditor.Tools
 
         public override bool OnMouseWheel(object sender, MouseEventArgs mouseEventArgs)
         {
-            return true;
+            return false;
         }
 
         public override bool OnKeyboardInput(object sender, KeyboardInputEventArgs arg)

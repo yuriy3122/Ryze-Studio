@@ -70,7 +70,7 @@ namespace RyzeEditor.Tools
 
             if (!processed)
             {
-                var tools = Tools.Where(x => x.IsAlwaysActive());
+                var tools = Tools.Where(x => x.IsAlwaysActive()).ToList();
 
                 if (tools.Any())
                 {

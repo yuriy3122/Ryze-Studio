@@ -33,6 +33,11 @@ namespace RyzeEditor.Tools
         {
             var result = false;
 
+            if (mouseEventArgs.Button == MouseButtons.Right)
+            {
+                return result;
+            }
+
             if (_world == null)
             {
                 return result;

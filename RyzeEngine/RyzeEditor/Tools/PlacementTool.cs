@@ -31,7 +31,12 @@ namespace RyzeEditor.Tools
 		{
             var result = false;
 
-			_selection.Clear();
+            if (mouseEventArgs.Button == MouseButtons.Right)
+            {
+                return result;
+            }
+
+            _selection.Clear();
 
             if (_world == null || string.IsNullOrEmpty(SelectedMeshId))
             {

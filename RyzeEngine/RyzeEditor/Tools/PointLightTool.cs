@@ -29,6 +29,11 @@ namespace RyzeEditor.Tools
         {
             var result = false;
 
+            if (mouseEventArgs.Button == MouseButtons.Right)
+            {
+                return result;
+            }
+
             _selection.Clear();
 
             var ray = _world.Camera.GetPickRay(mouseEventArgs.X, mouseEventArgs.Y);
