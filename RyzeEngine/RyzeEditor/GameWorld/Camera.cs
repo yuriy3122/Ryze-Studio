@@ -82,12 +82,20 @@ namespace RyzeEditor.GameWorld
 
 		public void RotateX(float delta)
 		{
-            var matrix = Matrix.RotationX(delta);
-            var rot = new Vector3(0.0f, Position.Y, Position.Z) - new Vector3(0.0f, LookAtDir.Y, LookAtDir.Z);
+            var dir = Position - LookAtDir;
+            dir.Normalize();
+
+            var axis = Vector3.Cross(dir, UpDir);
+            axis.Normalize();
+
+            var rotation = Quaternion.RotationAxis(axis, delta);
+
+            var matrix = Matrix.RotationQuaternion(rotation);
+            var rot = new Vector3(Position.X, Position.Y, Position.Z) - new Vector3(LookAtDir.X, LookAtDir.Y, LookAtDir.Z);
 
             Vector3.TransformCoordinate(ref rot, ref matrix, out Vector3 position);
 
-            Position = position + new Vector3(Position.X, LookAtDir.Y, LookAtDir.Z);
+            Position = position + new Vector3(LookAtDir.X, LookAtDir.Y, LookAtDir.Z);
         }
 
 		public void Strafe(float delta)
