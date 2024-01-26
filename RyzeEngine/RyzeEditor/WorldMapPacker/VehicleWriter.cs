@@ -103,27 +103,19 @@ namespace RyzeEditor.Packer
                 stream.Write(BitConverter.GetBytes(int.Parse(subMeshId)), 0, sizeof(int));
             }
 
-            var matrix = vehicle.WorldMatrix;
-
             //Transform to World space
             var axleCS = wheel.AxleCS;
             axleCS.Normalize();
-            Vector3.TransformNormal(ref axleCS, ref matrix, out Vector3 axleT);
-            //Convert to right handed coordinate system
-            axleT.Z *= -1.0f;
+            axleCS.Z *= -1.0f;
 
             //Transform to World space
             var wheelDirectionCS = wheel.WheelDirectionCS;
             wheelDirectionCS.Normalize();
-            Vector3.TransformNormal(ref wheelDirectionCS, ref matrix, out Vector3 wheelDirectionT);
-            //Convert to right handed coordinate system
-            wheelDirectionT.Z *= -1.0f;
+            wheelDirectionCS.Z *= -1.0f;
 
             //Transform to World space
             var chassisConnectionPointCS = wheel.ChassisConnectionPointCS;
-            Vector3.TransformCoordinate(ref chassisConnectionPointCS, ref matrix, out Vector3 chassisConnectionPointT);
-            //Convert to right handed coordinate system
-            chassisConnectionPointT.Z *= -1.0f;
+            chassisConnectionPointCS.Z *= -1.0f;
 
             wheel.ComputeParams();
 
@@ -134,9 +126,9 @@ namespace RyzeEditor.Packer
             stream.Write(BitConverter.GetBytes(wheel.Radius), 0, sizeof(float));                //Radius
             stream.Write(BitConverter.GetBytes(wheel.Width), 0, sizeof(float));                 //Width
             stream.Write(BitConverter.GetBytes(wheel.SuspensionRestLength), 0, sizeof(float));  //SuspensionRestLength
-            stream.Write(axleT.GetBytes(), 0, 3 * sizeof(float));                               //AxleCS
-            stream.Write(wheelDirectionT.GetBytes(), 0, 3 * sizeof(float));                     //WheelDirectionCS
-            stream.Write(chassisConnectionPointT.GetBytes(), 0, 3 * sizeof(float));             //ChassicConnectionPoint
+            stream.Write(axleCS.GetBytes(), 0, 3 * sizeof(float));                              //AxleCS
+            stream.Write(wheelDirectionCS.GetBytes(), 0, 3 * sizeof(float));                    //WheelDirectionCS
+            stream.Write(chassisConnectionPointCS.GetBytes(), 0, 3 * sizeof(float));            //ChassicConnectionPoint
             stream.Write(wheel.Rotation.GetBytes(), 0, 4 * sizeof(float));                      //Rotation (Right-handed) in Model space
             stream.Write(BitConverter.GetBytes(wheel.SuspensionStiffness), 0, sizeof(float));
             stream.Write(BitConverter.GetBytes(wheel.SuspensionCompression), 0, sizeof(float));
