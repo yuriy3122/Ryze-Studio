@@ -2,7 +2,6 @@
 using System.IO;
 using RyzeEditor.GameWorld;
 using RyzeEditor.Extentions;
-using SharpDX;
 
 namespace RyzeEditor.Packer
 {
@@ -43,7 +42,7 @@ namespace RyzeEditor.Packer
                 {
                     if (wheel.IsFrontWheel && wheel.IsLeftSideWheel)
                     {
-                        WriteWheelData(stream, wheel, vehicle);
+                        WriteWheelData(stream, wheel);
                     }
                 }
 
@@ -52,7 +51,7 @@ namespace RyzeEditor.Packer
                 {
                     if (wheel.IsFrontWheel && !wheel.IsLeftSideWheel)
                     {
-                        WriteWheelData(stream, wheel, vehicle);
+                        WriteWheelData(stream, wheel);
                     }
                 }
 
@@ -61,7 +60,7 @@ namespace RyzeEditor.Packer
                 {
                     if (!wheel.IsFrontWheel && wheel.IsLeftSideWheel)
                     {
-                        WriteWheelData(stream, wheel, vehicle);
+                        WriteWheelData(stream, wheel);
                     }
                 }
 
@@ -70,7 +69,7 @@ namespace RyzeEditor.Packer
                 {
                     if (!wheel.IsFrontWheel && !wheel.IsLeftSideWheel)
                     {
-                        WriteWheelData(stream, wheel, vehicle);
+                        WriteWheelData(stream, wheel);
                     }
                 }
 
@@ -94,7 +93,7 @@ namespace RyzeEditor.Packer
             }
         }
 
-        private void WriteWheelData(Stream stream, Wheel wheel, Vehicle vehicle)
+        private void WriteWheelData(Stream stream, Wheel wheel)
         {
             stream.Write(BitConverter.GetBytes(wheel.SubMeshIds.Count), 0, sizeof(int));
 
