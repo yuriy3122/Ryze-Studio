@@ -120,6 +120,7 @@ namespace RyzeEditor.Renderer
             _cullDisabledRasterizerState = new RasterizerState(_device, rasterDesc);
 
             rasterDesc = RasterizerStateDescription.Default();
+            rasterDesc.CullMode = CullMode.Back;
             _rasterState = new RasterizerState(_device, rasterDesc);
 
             var depthRasterDesc = RasterizerStateDescription.Default();
