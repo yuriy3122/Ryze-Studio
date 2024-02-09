@@ -1,4 +1,5 @@
 #include "MaxExportPlugin.h"
+#include "decomp.h"
 
 static MeshExporter		g_meshExporter;
 static ofstream			g_outputFile;
@@ -160,32 +161,51 @@ void MeshExporter::ProcNode(INode* node)
 	g_outputFile.write((char*)&verts, sizeof(int));
 	g_outputFile.write((char*)&faces, sizeof(int));
 
+	Matrix3 offsetTM;
+	offsetTM.IdentityMatrix();
+	Point3 offsetPos = node->GetObjOffsetPos();
+	offsetTM.PreTranslate(offsetPos);
+	Quat offsetRot = node->GetObjOffsetRot();
+	PreRotateMatrix(offsetTM, offsetRot);
+	ScaleValue scaleValue = node->GetObjOffsetScale();
+	ApplyScaling(offsetTM, scaleValue);
+
 	Point3 pos = { 0.0f, 0.0f, 0.0f };
-	Quat quat = { 0.0f, 0.0f, 0.0f, 0.0f };
+	Quat rot = { 0.0f, 0.0f, 0.0f, 0.0f };
 	ScaleValue scale;
 	scale.s = { 1.0f, 1.0f, 1.0f };
+	Interval interval = NEVER;
 
-	if (pTMController != NULL)
+	Control* pPositionController = pTMController->GetPositionController();
+
+	if (pPositionController != NULL)
 	{
-		Interval interval = NEVER;
-		Control *pPositionController = pTMController->GetPositionController();
-		if (pPositionController != NULL)
-		{
-			pPositionController->GetValue(0, &pos, interval, CTRL_ABSOLUTE);
-		}
-
-		Control *pRotationController = pTMController->GetRotationController();
-		if (pRotationController != NULL)
-		{
-			pRotationController->GetValue(0, &quat, interval, CTRL_ABSOLUTE);
-		}
-
-		Control *pScaleController = pTMController->GetScaleController();
-		if (pScaleController != NULL)
-		{
-			pScaleController->GetValue(0, &scale, interval, CTRL_ABSOLUTE);
-		}
+		pPositionController->GetValue(0, &pos, interval, CTRL_ABSOLUTE);
 	}
+
+	Control* pRotationController = pTMController->GetRotationController();
+
+	if (pRotationController != NULL)
+	{
+		pRotationController->GetValue(0, &rot, interval, CTRL_ABSOLUTE);
+	}
+
+	Control* pScaleController = pTMController->GetScaleController();
+
+	if (pScaleController != NULL)
+	{
+		pScaleController->GetValue(0, &scale, interval, CTRL_ABSOLUTE);
+	}
+
+	Matrix3 localTM;
+	localTM.IdentityMatrix();
+	localTM.PreTranslate(pos);
+	PreRotateMatrix(localTM, rot);
+	ApplyScaling(localTM, scale);
+
+	Matrix3 objectTM = offsetTM * localTM;
+
+	DecomposeMatrix(objectTM, pos, rot, scale.s);
 
 	// Write scale param for current Node
 	g_outputFile.write((char*)&scale.s.x, sizeof(float));
@@ -194,7 +214,7 @@ void MeshExporter::ProcNode(INode* node)
 	
 	// Write rotation param for current Node (Transform to left-handed coordinate system)
 	float x, y, z = 0;
-	quat.GetEuler(&x, &y, &z);
+	rot.GetEuler(&x, &y, &z);
 	x = -x;
 	y = -y;
 	z = -z;
