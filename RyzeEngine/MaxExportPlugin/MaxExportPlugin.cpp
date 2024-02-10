@@ -161,15 +161,11 @@ void MeshExporter::ProcNode(INode* node)
 	g_outputFile.write((char*)&verts, sizeof(int));
 	g_outputFile.write((char*)&faces, sizeof(int));
 
-	Point3 offsetPos = node->GetObjOffsetPos();
-	Quat offsetRot = node->GetObjOffsetRot();
-	ScaleValue offsetScale = node->GetObjOffsetScale();
-
 	Matrix3 offsetTM;
 	offsetTM.IdentityMatrix();
-	offsetTM.PreTranslate(offsetPos);
-	PreRotateMatrix(offsetTM, offsetRot);
-	ApplyScaling(offsetTM, offsetScale);
+	offsetTM.PreTranslate(node->GetObjOffsetPos());
+	PreRotateMatrix(offsetTM, node->GetObjOffsetRot());
+	ApplyScaling(offsetTM, node->GetObjOffsetScale());
 
 	Point3 pos = { 0.0f, 0.0f, 0.0f };
 	Quat rot = { 0.0f, 0.0f, 0.0f, 0.0f };
