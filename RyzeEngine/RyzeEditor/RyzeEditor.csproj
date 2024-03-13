@@ -63,8 +63,8 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="BulletSharp, Version=0.11.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\BulletSharp.0.11.1\lib\net40-client\BulletSharp.dll</HintPath>
-      <Private>True</Private>
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>Redist\x64\BulletSharp.dll</HintPath>
     </Reference>
     <Reference Include="log4net, Version=2.0.15.0, Culture=neutral, PublicKeyToken=669e0ddf0bb1aa2a, processorArchitecture=MSIL">
       <HintPath>..\packages\log4net.2.0.15\lib\net45\log4net.dll</HintPath>
@@ -108,6 +108,7 @@
     <Compile Include="GameWorld\SunLight.cs" />
     <Compile Include="Helpers\PatchHelper.cs" />
     <Compile Include="Helpers\StringUtils.cs" />
+    <Compile Include="PhysicsEngine.cs" />
     <Compile Include="Tools\PointLightTool.cs" />
     <Compile Include="Tools\VehicleTool.cs" />
     <Compile Include="WorldMapPacker\CollisionWriter.cs" />
@@ -318,14 +319,12 @@
       <ErrorText>This project references NuGet package(s) that are missing on this computer. Enable NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
     </PropertyGroup>
     <Error Condition="!Exists('..\packages\Fody.1.29.4\build\portable-net+sl+win+wpa+wp\Fody.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Fody.1.29.4\build\portable-net+sl+win+wpa+wp\Fody.targets'))" />
-    <Error Condition="!Exists('..\packages\BulletSharp.0.11.1\build\net40-client\BulletSharp.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\BulletSharp.0.11.1\build\net40-client\BulletSharp.targets'))" />
   </Target>
   <Import Project="..\packages\Fody.1.29.4\build\portable-net+sl+win+wpa+wp\Fody.targets" Condition="Exists('..\packages\Fody.1.29.4\build\portable-net+sl+win+wpa+wp\Fody.targets')" />
   <PropertyGroup>
     <PostBuildEvent>copy "$(SolutionDir)\RyzeEditor\ExternalTools\*.*" "$(SolutionDir)\RyzeEditor\bin\$(Configuration)\*.*"
 copy "$(SolutionDir)\RyzeEditor\Redist\x86\*.*" "$(SolutionDir)\RyzeEditor\bin\$(Configuration)\*.*"</PostBuildEvent>
   </PropertyGroup>
-  <Import Project="..\packages\BulletSharp.0.11.1\build\net40-client\BulletSharp.targets" Condition="Exists('..\packages\BulletSharp.0.11.1\build\net40-client\BulletSharp.targets')" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">

@@ -180,7 +180,7 @@ namespace RyzeEditor.Tools
 
                     var convexHullMeshId = selectedVehicle.GetChassisConvexHullMesh();
                     var mesh = ResourceManager.Instance.GetMesh(convexHullMeshId);
-                    var vertices = new List<float>();
+                    var vertices = new List<BulletSharp.Vector3>();
 
                     foreach (var submesh in mesh.SubMeshes)
                     {
@@ -190,13 +190,11 @@ namespace RyzeEditor.Tools
                         {
                             Vector3 vertPosition = vertex.Pos;
                             Vector3.TransformCoordinate(ref vertPosition, ref matrix, out Vector3 position);
-                            vertices.Add(position.X);
-                            vertices.Add(position.Y);
-                            vertices.Add(position.Z);
+                            vertices.Add(new BulletSharp.Vector3(position.X, position.Y, position.Z));
                         }
                     }
 
-                    var convexHullShape = new ConvexHullShapeEx(vertices.ToArray());
+                    var convexHullShape = new ConvexHullShapeEx(vertices);
 
                     foreach (var point in convexHullShape.UnscaledPoints)
                     {

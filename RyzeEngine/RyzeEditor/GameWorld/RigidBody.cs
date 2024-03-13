@@ -51,7 +51,10 @@ namespace RyzeEditor.GameWorld
             }
             set
             {
-                SubMeshIds.Clear();
+                if (SubMeshIds != null)
+                {
+                    SubMeshIds.Clear();
+                }
 
                 uint? id = value;
 

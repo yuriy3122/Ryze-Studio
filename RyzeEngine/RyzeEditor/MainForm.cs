@@ -51,6 +51,8 @@ namespace RyzeEditor
 
         public event EventHandler<EventArgs> PackClicked;
 
+        public event EventHandler<EventArgs> SimulationSuspendedClicked;
+
         public Control Panel
 		{
 			get { return inspectorPanel; }
@@ -183,6 +185,18 @@ namespace RyzeEditor
         {
             RedoClicked?.Invoke(this, new EventArgs());
         }
+
+        private void simulateToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            EventHandler<EventArgs> simulateEvent = SimulationSuspendedClicked;
+
+            if (simulateEvent == null)
+            {
+                return;
+            }
+
+            simulateEvent(this, new EventArgs());
+        }
     }
 
     public class ToolChangedEventArgs : EventArgs
@@ -209,7 +223,7 @@ namespace RyzeEditor
 	{
 		public string FileName { get; private set; }
 
-		public FileSaveEventArgs(String fileName)
+		public FileSaveEventArgs(string fileName)
 		{
 			FileName = fileName;
 		}

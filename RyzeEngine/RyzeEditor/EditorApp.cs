@@ -40,6 +40,9 @@ namespace RyzeEditor
         private Size _clientSize;
 
         [field: NonSerialized]
+        private bool _suspendSimulation;
+
+        [field: NonSerialized]
         private ObjectHierarchyControl _objectHierarchyControl;
 
         [field: NonSerialized]
@@ -102,6 +105,8 @@ namespace RyzeEditor
             _renderer = new RendererD3d();
             _renderer.Initialize(form.Handle, _worldMap.Camera);
             var context = new RenderContext(_renderer, _toolManager);
+            var physicsEngine = new PhysicsEngine(_worldMap);
+            _suspendSimulation = true;
 
             _worldMap.EntityAdded += WorldMapEntityAdded;
             _worldMap.EntityDeleted += WorldMapEntityDeleted;
@@ -118,10 +123,17 @@ namespace RyzeEditor
                     context.ResizeWindow(new Size(form.ClientSize.Width, form.ClientSize.Height));
                     _userResized = false;
                 }
+
+                if (!_suspendSimulation)
+                {
+                    physicsEngine.StepSimulation(1.0f / 60.0f);
+                }
+
                 context.RenderWorld(_worldMap);
             });
 
             context.Dispose();
+            physicsEngine.Dispose();
         }
 
         private void ObjectHierarchyControlSelectionChanged(object sender, EntityEventArgs e)
@@ -260,6 +272,8 @@ namespace RyzeEditor
                     thread.Start();
                 }
             };
+
+            form.SimulationSuspendedClicked += (sender, args) => { _suspendSimulation = !_suspendSimulation; };
         }
 
         private void WorldMapPackerNewMessage(object sender, PackerEventArgs e)

@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using BulletSharp;
-using BulletSharp.Math;
 using RyzeEditor.GameWorld;
 using RyzeEditor.ResourceManagment;
 
@@ -43,96 +42,9 @@ namespace RyzeEditor.Packer
     {
         public Vector3 Center { get; set; }
 
-        public ConvexHullShapeEx(float[] points) :
+        public ConvexHullShapeEx(IEnumerable<Vector3> points) :
             base(points)
         {
-        }
-    }
-
-    public class HeightfieldTerrainShapeEx: HeightfieldTerrainShape
-    {
-        public GameWorld.RigidBody RigidBody { get; private set; }
-
-        public SharpDX.Vector3 Center { get; private set; }
-
-        public int HeightStickX { get; private set; } 
-            
-        public int HeightStickZ { get; private set; }
-
-        public float MinHeight { get; private set; }
-
-        public float MaxHeight { get; private set; }
-
-        public float GridSpacing { get; set; }
-
-        public float[] HeightfieldData { get; private set; }
-
-        public HeightfieldTerrainShapeEx(GameWorld.RigidBody rigidBody) : 
-            base(0, 0, IntPtr.Zero, 0, 0, 0, 0, PhyScalarType.Single, false)
-        {
-            RigidBody = rigidBody;
-
-            var max = rigidBody.BoundingBox.Maximum;
-            var min = rigidBody.BoundingBox.Minimum;
-
-            var center = (max + min) / 2.0f;
-
-            var point = center;
-            point.Z *= -1.0f;
-            Center = point;
-
-            MinHeight = min.Y;
-            MaxHeight = max.Y;
-
-            PrepareHeightfieldData();
-        }
-
-        private void PrepareHeightfieldData()
-        {
-            var mesh = RigidBody.Mesh;
-
-            var ray = new SharpDX.Ray
-            {
-                Position = new SharpDX.Vector3(0.0f, 1000.0f, 0.0f),
-                Direction = new SharpDX.Vector3(0.0f, -1.0f, 0.0f)
-            };
-
-            var max = RigidBody.BoundingBox.Maximum;
-            var min = RigidBody.BoundingBox.Minimum;
-
-            const float Eplison = 0.001f;
-            var dx = Math.Abs(max.X - min.X) - 2 * Eplison;
-            var dz = Math.Abs(max.Z - min.Z) - 2 * Eplison;
-
-            HeightStickX = (int)Math.Ceiling(dx / Math.Max(RigidBody.GridSpacing, Eplison));
-            HeightStickZ = (int)Math.Ceiling(dz / Math.Max(RigidBody.GridSpacing, Eplison));
-
-            var gridSpacingX = dx / HeightStickX;
-            var gridSpacingZ = dz / HeightStickZ;
-
-            var heightfieldData = new List<float>();
-
-            for (int i = -HeightStickX / 2; i < HeightStickX / 2; i++)
-            {
-                for (int j = -HeightStickZ / 2; j < HeightStickZ / 2; j++)
-                {
-                    ray.Position.X = i * gridSpacingX + Eplison;
-                    ray.Position.Z = j * gridSpacingZ + Eplison;
-
-                    RigidBody.GameObject.Intersects(ray, out RayPickData data);
-
-                    if (data != null)
-                    {
-                        heightfieldData.Add(data.Point.Y - RigidBody.GameObject.Position.Y);
-                    }
-                    else
-                    {
-                        heightfieldData.Add(-1000.0f);
-                    }
-                }
-            }
-
-            HeightfieldData = heightfieldData.ToArray();
         }
     }
 
@@ -270,9 +182,6 @@ namespace RyzeEditor.Packer
                 case BroadphaseNativeType.BoxShape:
                     WriteBoxShapeData(shape, stream);
                     break;
-                case BroadphaseNativeType.TerrainShape:
-                    WriteHeightfieldTerrainShapeData(shape, stream);
-                    break;
             }
         }
 
@@ -334,41 +243,6 @@ namespace RyzeEditor.Packer
             }
         }
 
-        private void WriteHeightfieldTerrainShapeData(CollisionShape shape, Stream stream)
-        {
-            if (shape is HeightfieldTerrainShapeEx heightfieldTerrainShape)
-            {
-                //Write Center
-                stream.Write(BitConverter.GetBytes(heightfieldTerrainShape.Center.X), 0, sizeof(float));
-                stream.Write(BitConverter.GetBytes(heightfieldTerrainShape.Center.Y), 0, sizeof(float));
-                stream.Write(BitConverter.GetBytes(heightfieldTerrainShape.Center.Z), 0, sizeof(float));
-
-                //HeightStick Wwdth
-                stream.Write(BitConverter.GetBytes(heightfieldTerrainShape.HeightStickX * 2), 0, sizeof(int));
-
-                //HeightStick length
-                stream.Write(BitConverter.GetBytes(heightfieldTerrainShape.HeightStickZ * 2), 0, sizeof(int));
-
-                //Grid spacing
-                stream.Write(BitConverter.GetBytes(heightfieldTerrainShape.GridSpacing), 0, sizeof(float));
-
-                //HeightfieldData length
-                stream.Write(BitConverter.GetBytes(heightfieldTerrainShape.HeightfieldData.Length), 0, sizeof(int));
-
-                //Alignment
-                int alignment = _options.PlatformAlignment;
-                int offset = (int)(alignment - (stream.Position + sizeof(int)) % alignment);
-                stream.Write(BitConverter.GetBytes(offset), 0, sizeof(int));
-
-                stream.Position += offset;
-
-                foreach (var point in heightfieldTerrainShape.HeightfieldData)
-                {
-                    stream.Write(BitConverter.GetBytes(point), 0, sizeof(float));
-                }
-            }
-        }
-
         private void UpdateDynamicsWorld()
         {
             _collisionIds.Clear();
@@ -423,10 +297,15 @@ namespace RyzeEditor.Packer
                                             SharpDX.Matrix.Translation(subMeshPosition);
 
                         mass += rigidBody.Mass;
-                        compoundShape.AddChildShape(new Matrix(subMeshMatrix.ToArray()), shape);
+
+                        var arr = subMeshMatrix.ToArray();
+
+
+
+                        compoundShape.AddChildShape(ConvertMatrix(subMeshMatrix), shape);
                     }
 
-                    var motionState = new DefaultMotionState(new Matrix(matrix.ToArray()));
+                    var motionState = new DefaultMotionState(ConvertMatrix(matrix));
                     var constructionInfo = new RigidBodyConstructionInfo(mass, motionState, compoundShape);
                     var newRigidBody = new BulletSharp.RigidBody(constructionInfo) { UserIndex = _worldMapData.GameObjects[group.Key] };
                     _dynamicsWorld.AddRigidBody(newRigidBody);
@@ -434,7 +313,7 @@ namespace RyzeEditor.Packer
                 else
                 {
                     var rigidBody = group.Value.FirstOrDefault();
-                    var motionState = new DefaultMotionState(new Matrix(matrix.ToArray()));
+                    var motionState = new DefaultMotionState(ConvertMatrix(matrix));
 
                     var key = new Tuple<string, uint?>(rigidBody.Mesh.Id, null);
                     CollisionShape shape;
@@ -468,25 +347,27 @@ namespace RyzeEditor.Packer
                     boxHalfExtends.Y = Math.Abs(boxHalfExtends.Y);
                     boxHalfExtends.Z = Math.Abs(boxHalfExtends.Z);
                     center.Z *= -1.0f;
-                    shape = new BoxShapeEx(new Vector3(boxHalfExtends.ToArray())) { Center = new Vector3(center.ToArray()) };
+                    shape = new BoxShapeEx(new Vector3(boxHalfExtends.X, boxHalfExtends.Y, boxHalfExtends.Z)) 
+                        { Center = new Vector3(center.X, center.Y, center.Z) };
                     break;
                 case CollisionShapeType.Sphere:
                     var shpereCenter = rigidBody.BoundingSphere.Center;
                     shpereCenter.Z *= -1.0f;
-                    shape = new SphereShapeEx(rigidBody.BoundingSphere.Radius) { Center = new Vector3(shpereCenter.ToArray()) };
+                    shape = new SphereShapeEx(rigidBody.BoundingSphere.Radius) 
+                        { Center = new Vector3(shpereCenter.X, shpereCenter.Y, shpereCenter.Z) };
                     break;
                 case CollisionShapeType.ConvexHull:
-                    var vertices = rigidBody.GetMeshVertices();
-                    var convexHullShape = new ConvexHullShapeEx(vertices) { Center = new Vector3(center.ToArray()) };
-                    shape = convexHullShape;
-                    break;
-                case CollisionShapeType.Heightfield:
-                    var heightFieldShape = new HeightfieldTerrainShapeEx(rigidBody)
-                    {
-                        GridSpacing = rigidBody.GridSpacing
-                    };
-                    shape = heightFieldShape;
+                    var meshVertices = rigidBody.GetMeshVertices();
+                    var primitiveCount = meshVertices.Length / 3;
+                    var vertices = new List<Vector3>();
 
+                    for (int i = 0; i < primitiveCount; i++)
+                    {
+                        vertices.Add(new Vector3(meshVertices[i], meshVertices[i + 1], meshVertices[i + 2]));
+                    }
+
+                    var convexHullShape = new ConvexHullShapeEx(vertices) { Center = new Vector3(center.X, center.Y, center.Z) };
+                    shape = convexHullShape;
                     break;
             }
 
@@ -494,6 +375,34 @@ namespace RyzeEditor.Packer
             shape.UserIndex = _collisionId++;
 
             return shape;
+        }
+
+        private Matrix ConvertMatrix(SharpDX.Matrix matrix)
+        {
+            var output = new Matrix
+            {
+                M11 = matrix.M11,
+                M12 = matrix.M12,
+                M13 = matrix.M13,
+                M14 = matrix.M14,
+
+                M21 = matrix.M21,
+                M22 = matrix.M22,
+                M23 = matrix.M23,
+                M24 = matrix.M24,
+
+                M31 = matrix.M31,
+                M32 = matrix.M32,
+                M33 = matrix.M33,
+                M34 = matrix.M34,
+
+                M41 = matrix.M41,
+                M42 = matrix.M42,
+                M43 = matrix.M43,
+                M44 = matrix.M44
+            };
+
+            return output;
         }
 
         public void Dispose()
