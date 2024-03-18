@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using BulletSharp;
 using RyzeEditor.GameWorld;
+using RyzeEditor.Helpers;
 using RyzeEditor.ResourceManagment;
 
 namespace RyzeEditor.Packer
@@ -289,23 +290,21 @@ namespace RyzeEditor.Packer
 
                         shape = collisionShapesCache[key];
 
+                        var subMeshPosition = rigidBody.Mesh.GetSubMesh(rigidBody.SubMeshId.Value).Position;
+                        subMeshPosition.Z *= -1.0f;
+
                         var subMeshScale = rigidBody.Mesh.GetSubMesh(rigidBody.SubMeshId.Value).Scale;
                         var subMeshRotation = rigidBody.Mesh.GetSubMesh(rigidBody.SubMeshId.Value).RotationRH;
-                        var subMeshPosition = rigidBody.Mesh.GetSubMesh(rigidBody.SubMeshId.Value).Position;
                         var subMeshMatrix = SharpDX.Matrix.Scaling(subMeshScale) *
                                             SharpDX.Matrix.RotationQuaternion(subMeshRotation) *
                                             SharpDX.Matrix.Translation(subMeshPosition);
 
                         mass += rigidBody.Mass;
 
-                        var arr = subMeshMatrix.ToArray();
-
-
-
-                        compoundShape.AddChildShape(ConvertMatrix(subMeshMatrix), shape);
+                        compoundShape.AddChildShape(MatrixHelper.ConvertMatrix(subMeshMatrix), shape);
                     }
 
-                    var motionState = new DefaultMotionState(ConvertMatrix(matrix));
+                    var motionState = new DefaultMotionState(MatrixHelper.ConvertMatrix(matrix));
                     var constructionInfo = new RigidBodyConstructionInfo(mass, motionState, compoundShape);
                     var newRigidBody = new BulletSharp.RigidBody(constructionInfo) { UserIndex = _worldMapData.GameObjects[group.Key] };
                     _dynamicsWorld.AddRigidBody(newRigidBody);
@@ -313,7 +312,7 @@ namespace RyzeEditor.Packer
                 else
                 {
                     var rigidBody = group.Value.FirstOrDefault();
-                    var motionState = new DefaultMotionState(ConvertMatrix(matrix));
+                    var motionState = new DefaultMotionState(MatrixHelper.ConvertMatrix(matrix));
 
                     var key = new Tuple<string, uint?>(rigidBody.Mesh.Id, null);
                     CollisionShape shape;
@@ -375,34 +374,6 @@ namespace RyzeEditor.Packer
             shape.UserIndex = _collisionId++;
 
             return shape;
-        }
-
-        private Matrix ConvertMatrix(SharpDX.Matrix matrix)
-        {
-            var output = new Matrix
-            {
-                M11 = matrix.M11,
-                M12 = matrix.M12,
-                M13 = matrix.M13,
-                M14 = matrix.M14,
-
-                M21 = matrix.M21,
-                M22 = matrix.M22,
-                M23 = matrix.M23,
-                M24 = matrix.M24,
-
-                M31 = matrix.M31,
-                M32 = matrix.M32,
-                M33 = matrix.M33,
-                M34 = matrix.M34,
-
-                M41 = matrix.M41,
-                M42 = matrix.M42,
-                M43 = matrix.M43,
-                M44 = matrix.M44
-            };
-
-            return output;
         }
 
         public void Dispose()

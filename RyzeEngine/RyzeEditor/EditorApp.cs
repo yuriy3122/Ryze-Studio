@@ -34,6 +34,9 @@ namespace RyzeEditor
         private RendererD3d _renderer;
 
         [field: NonSerialized]
+        private PhysicsEngine _physicsEngine;
+
+        [field: NonSerialized]
         private  bool _userResized;
 
         [field: NonSerialized]
@@ -105,7 +108,7 @@ namespace RyzeEditor
             _renderer = new RendererD3d();
             _renderer.Initialize(form.Handle, _worldMap.Camera);
             var context = new RenderContext(_renderer, _toolManager);
-            var physicsEngine = new PhysicsEngine(_worldMap);
+            _physicsEngine = new PhysicsEngine();
             _suspendSimulation = true;
 
             _worldMap.EntityAdded += WorldMapEntityAdded;
@@ -126,14 +129,14 @@ namespace RyzeEditor
 
                 if (!_suspendSimulation)
                 {
-                    physicsEngine.StepSimulation(1.0f / 60.0f);
+                    _physicsEngine.StepSimulation(_worldMap.Entities, 1.0f / 60.0f);
                 }
 
                 context.RenderWorld(_worldMap);
             });
 
             context.Dispose();
-            physicsEngine.Dispose();
+            _physicsEngine.Dispose();
         }
 
         private void ObjectHierarchyControlSelectionChanged(object sender, EntityEventArgs e)
@@ -167,6 +170,8 @@ namespace RyzeEditor
 
             _objectHierarchyControl.UpdateHierarchy(entities);
 
+            _physicsEngine.Update();
+
             _log.Info($"Added: {_worldMap.Entities.FirstOrDefault(x => x.Id == e.EntityId)}");
         }
 
@@ -181,6 +186,8 @@ namespace RyzeEditor
             entities.Add(_worldMap.Camera);
 
             _objectHierarchyControl.UpdateHierarchy(entities);
+
+            _physicsEngine.Update();
         }
 
         private void SaveWorldMap(string fileName)
