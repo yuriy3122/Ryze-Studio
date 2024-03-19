@@ -129,7 +129,7 @@ namespace RyzeEditor
                     switch (rigidBody.ShapeType)
                     {
                         case CollisionShapeType.Box:
-                            AddBoxRigidBody(rigidBody, ref i, startTransform);
+                            AddBoxShapeRigidBody(rigidBody, ref i, startTransform);
 
                             break;
                     }
@@ -137,7 +137,7 @@ namespace RyzeEditor
             }
         }
 
-        private void AddBoxRigidBody(GameWorld.RigidBody rigidBody, ref int i, SharpDX.Matrix startTransform)
+        private void AddBoxShapeRigidBody(GameWorld.RigidBody rigidBody, ref int i, SharpDX.Matrix startTransform)
         {
             var collisionShape = new CompoundShape();
 
