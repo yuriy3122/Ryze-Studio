@@ -129,45 +129,38 @@ namespace RyzeEditor
                     switch (rigidBody.ShapeType)
                     {
                         case CollisionShapeType.Box:
-                            var collisionShape = new CompoundShape();
+                            AddBoxRigidBody(rigidBody, ref i, startTransform);
 
-                            var max = rigidBody.BoundingBox.Maximum;
-                            var min = rigidBody.BoundingBox.Minimum;
-                            var center = (max + min) / 2.0f;
-
-                            var boxHalfExtends = max - center;
-                            boxHalfExtends.X = Math.Abs(boxHalfExtends.X);
-                            boxHalfExtends.Y = Math.Abs(boxHalfExtends.Y);
-                            boxHalfExtends.Z = Math.Abs(boxHalfExtends.Z);
-
-                            var boxShape = new BoxShape(boxHalfExtends.X, boxHalfExtends.Y, boxHalfExtends.Z);
-                            var localInertia = boxShape.CalculateLocalInertia(rigidBody.Mass);
-
-                            var id = rigidBody.SubMeshId ?? 0;
-
-                            var subMeshPosition = rigidBody.Mesh.GetSubMesh(id).Position + center;
-                            subMeshPosition.Z *= -1.0f;
-
-                            var subMeshScale = rigidBody.Mesh.GetSubMesh(id).Scale;
-                            var subMeshRotation = rigidBody.Mesh.GetSubMesh(id).RotationRH;
-                            var subMeshMatrix = SharpDX.Matrix.Scaling(subMeshScale) *
-                                                SharpDX.Matrix.RotationQuaternion(subMeshRotation) *
-                                                SharpDX.Matrix.Translation(subMeshPosition);
-
-                            collisionShape.AddChildShape(MatrixHelper.ConvertMatrix(subMeshMatrix), boxShape);
-
-                            var motionState = new DefaultMotionState(MatrixHelper.ConvertMatrix(startTransform));
-                            var rbInfo = new RigidBodyConstructionInfo(rigidBody.Mass, motionState, collisionShape, localInertia);
-                            var newRigidBody = new BulletSharp.RigidBody(rbInfo) { UserIndex = i++ };
-                            _discreteDynamicsWorld.AddRigidBody(newRigidBody);
-
-                            break;
-
-                        default:
                             break;
                     }
                 }
             }
+        }
+
+        private void AddBoxRigidBody(GameWorld.RigidBody rigidBody, ref int i, SharpDX.Matrix startTransform)
+        {
+            var collisionShape = new CompoundShape();
+
+            var max = rigidBody.BoundingBox.Maximum;
+            var min = rigidBody.BoundingBox.Minimum;
+            var center = (max + min) / 2.0f;
+
+            var boxHalfExtends = max - center;
+            boxHalfExtends.X = Math.Abs(boxHalfExtends.X);
+            boxHalfExtends.Y = Math.Abs(boxHalfExtends.Y);
+            boxHalfExtends.Z = Math.Abs(boxHalfExtends.Z);
+
+            var boxShape = new BoxShape(boxHalfExtends.X, boxHalfExtends.Y, boxHalfExtends.Z);
+            var localTransform = SharpDX.Matrix.Translation(center);
+
+            collisionShape.AddChildShape(MatrixHelper.ConvertMatrix(localTransform), boxShape);
+
+            var localInertia = boxShape.CalculateLocalInertia(rigidBody.Mass);
+            var motionState = new DefaultMotionState(MatrixHelper.ConvertMatrix(startTransform));
+            var rbInfo = new RigidBodyConstructionInfo(rigidBody.Mass, motionState, collisionShape, localInertia);
+            var newRigidBody = new BulletSharp.RigidBody(rbInfo) { UserIndex = i++ };
+
+            _discreteDynamicsWorld.AddRigidBody(newRigidBody);
         }
 
         public void Dispose()
