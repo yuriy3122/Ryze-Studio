@@ -1,5 +1,4 @@
-﻿using System;
-using System.Linq;
+﻿using System.Linq;
 using System.Windows.Forms;
 using RyzeEditor.GameWorld;
 using RyzeEditor.Renderer;
@@ -97,6 +96,18 @@ namespace RyzeEditor.Tools
             }
 
             return _controlKeyPressed;
+        }
+
+        public override bool OnMouseMove(object sender, MouseEventArgs mouseEventArgs)
+        {
+            if (mouseEventArgs.Button == MouseButtons.Right)
+            {
+                return false;
+            }
+
+
+
+            return true;
         }
 
         public void Render3d(IRenderer renderer, RenderMode mode)

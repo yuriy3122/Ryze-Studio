@@ -52,7 +52,7 @@ namespace RyzeEditor
                 _needUpdate = false;
             }
 
-            _discreteDynamicsWorld.StepSimulation(deltaTime, 10, 1.0f / 100.0f);
+            _discreteDynamicsWorld.StepSimulation(deltaTime, 10, 1.0f / 60.0f);
 
             for (int j = _discreteDynamicsWorld.NumCollisionObjects - 1; j >= 0; j--)
             {

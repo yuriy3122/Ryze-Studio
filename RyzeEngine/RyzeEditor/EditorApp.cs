@@ -280,7 +280,11 @@ namespace RyzeEditor
                 }
             };
 
-            form.SimulationSuspendedClicked += (sender, args) => { _suspendSimulation = !_suspendSimulation; };
+            form.SimulationSuspendedClicked += (sender, args) => 
+            {
+                _physicsEngine.Update();
+                _suspendSimulation = !_suspendSimulation;
+            };
         }
 
         private void WorldMapPackerNewMessage(object sender, PackerEventArgs e)
