@@ -146,10 +146,7 @@ namespace RyzeEditor.Tools
             {
                 _selectedWheel = wheel;
 
-                Options.ShapeType = ShapeType.WheelMesh;
-                Options.GameObjectId = wheel.ParentId;
-                Options.Color = new Vector4(1.0f, 0.0f, 0.0f, 0.0f);
-                Options.SubMeshIds = wheel.SubMeshIds.ConvertAll(int.Parse);
+                HighlightSelectedWheel(wheel);
 
                 if (_wheelPositions.ContainsKey(_selectedWheel.Id))
                 {
@@ -162,9 +159,22 @@ namespace RyzeEditor.Tools
             }
         }
 
+        private void HighlightSelectedWheel(Wheel wheel)
+        {
+            Options.ShapeType = ShapeType.WheelMesh;
+            Options.GameObjectId = wheel.ParentId;
+            Options.Color = new Vector4(1.0f, 0.0f, 0.0f, 0.0f);
+            Options.SubMeshIds = wheel.SubMeshIds.ConvertAll(int.Parse);
+        }
+
         private void OnSubmeshSelectionModeChanged(object sender, EventArgs e)
         {
             _wheelSelectionIsActive = (bool)sender;
+
+            if (!_wheelSelectionIsActive && _selectedWheel != null)
+            {
+                HighlightSelectedWheel(_selectedWheel);
+            }
         }
 
         public RenderOptions Options { get; set; }
@@ -200,10 +210,8 @@ namespace RyzeEditor.Tools
                 _selectedWheel.SubMeshIds.Clear();
                 _selectedWheel.SubMeshIds.Add(_subMeshIndex.Value.ToString());
 
-                Options.ShapeType = ShapeType.WheelMesh;
-                Options.GameObjectId = _selectedWheel.ParentId;
-                Options.Color = new Vector4(1.0f, 0.0f, 0.0f, 0.0f);
-                Options.SubMeshIds = _selectedWheel.SubMeshIds.ConvertAll(int.Parse);
+                HighlightSelectedWheel(_selectedWheel);
+
                 _wheelSelectionIsActive = false;
                 _selectedWheel.SubMeshIdsChanged.Invoke(_selectedWheel, new EventArgs());
             }
