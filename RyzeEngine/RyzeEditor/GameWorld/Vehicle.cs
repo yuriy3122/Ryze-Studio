@@ -22,6 +22,12 @@ namespace RyzeEditor.GameWorld
             SubMeshIds = new List<string>();
         }
 
+        [field: NonSerialized]
+        public EventHandler SubMeshIdsChanged;
+
+        [field: NonSerialized]
+        public EventHandler SubmeshSelectionModeChanged;
+
         public string Name { get; set; }
 
         public bool IsFrontWheel { get; set; }

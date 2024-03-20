@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using System.Reflection;
+using System.Windows.Forms;
 using System.Collections.Generic;
 using System.ComponentModel;
 using SharpDX;
@@ -29,6 +30,12 @@ namespace RyzeEditor.Tools
         [field: NonSerialized]
         private List<Vector3> _chassisPoints;
 
+        [field: NonSerialized]
+        private int? _subMeshIndex;
+
+        [field: NonSerialized]
+        private bool _wheelSelectionIsActive;
+
         public VehicleTool(WorldMap world, Selection selection) : base(world, selection)
         {
             Options = new RenderOptions();
@@ -51,6 +58,8 @@ namespace RyzeEditor.Tools
                 Position = new Vector3(0.0f, 0.0f, 0.0f),
                 Rotation = Quaternion.Identity
             };
+
+            _wheelSelectionIsActive = false;
         }
 
         public string SelectedMeshId
@@ -147,8 +156,15 @@ namespace RyzeEditor.Tools
                     _wheelPositions[_selectedWheel.Id] = null;
                 }
 
+                _selectedWheel.SubmeshSelectionModeChanged += OnSubmeshSelectionModeChanged;
+
                 _chassisPoints = null;
             }
+        }
+
+        private void OnSubmeshSelectionModeChanged(object sender, EventArgs e)
+        {
+            _wheelSelectionIsActive = (bool)sender;
         }
 
         public RenderOptions Options { get; set; }
@@ -161,6 +177,81 @@ namespace RyzeEditor.Tools
         public BoundingBox BoundingBox
         {
             get { return new BoundingBox(); }
+        }
+
+        public override bool OnMouseDown(object sender, MouseEventArgs mouseEventArgs)
+        {
+            var result = false;
+
+            if (mouseEventArgs.Button == MouseButtons.Right)
+            {
+                return result;
+            }
+
+            if (_subMeshIndex.HasValue)
+            {
+                if (_selectedWheel.SubMeshIds == null)
+                {
+                    _selectedWheel.SubMeshIds = new List<string>();
+                }
+
+                var selectedSubMeshId = _subMeshIndex.Value;
+
+                _selectedWheel.SubMeshIds.Clear();
+                _selectedWheel.SubMeshIds.Add(_subMeshIndex.Value.ToString());
+
+                Options.ShapeType = ShapeType.WheelMesh;
+                Options.GameObjectId = _selectedWheel.ParentId;
+                Options.Color = new Vector4(1.0f, 0.0f, 0.0f, 0.0f);
+                Options.SubMeshIds = _selectedWheel.SubMeshIds.ConvertAll(int.Parse);
+                _wheelSelectionIsActive = false;
+                _selectedWheel.SubMeshIdsChanged.Invoke(_selectedWheel, new EventArgs());
+            }
+
+            result = true;
+
+            return result;
+        }
+
+        public override bool OnMouseMove(object sender, MouseEventArgs mouseEventArgs)
+        {
+            if (mouseEventArgs.Button == MouseButtons.Right || !_wheelSelectionIsActive)
+            {
+                return false;
+            }
+
+            var ray = _world.Camera.GetPickRay(mouseEventArgs.X, mouseEventArgs.Y);
+
+            float distance = 100000.0f;
+            _subMeshIndex = null;
+
+            var intersects = GetGeometryIntersections(ray);
+
+            Options.SubMeshIds.Clear();
+
+            foreach (var intersect in intersects)
+            {
+                var dist = (intersect.Point - _world.Camera.Position).Length();
+
+                if (dist < distance)
+                {
+                    distance = dist;
+
+                    var selectedVehicle = _selection.Get().OfType<Vehicle>().FirstOrDefault();
+
+                    if (selectedVehicle.Id == intersect.GameObjectId)
+                    {
+                        _subMeshIndex = intersect.SubMeshIndex;
+
+                        Options.ShapeType = ShapeType.WheelMesh;
+                        Options.GameObjectId = _selectedWheel.ParentId;
+                        Options.Color = new Vector4(1.0f, 0.0f, 0.0f, 0.0f);
+                        Options.SubMeshIds = new List<int>() { _subMeshIndex.Value };
+                    }
+                }
+            }
+
+            return true;
         }
 
         public void Render3d(IRenderer renderer, RenderMode mode)

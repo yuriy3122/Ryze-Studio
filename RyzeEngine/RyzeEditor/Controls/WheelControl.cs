@@ -207,30 +207,6 @@ namespace RyzeEditor.Controls
             tableLayoutPanel.PerformLayout();
         }
 
-        private void AddSubMeshButton_Click(object sender, EventArgs e)
-        {
-            if (subMeshSelectComboBox.SelectedItem == null)
-            {
-                return;
-            }
-
-            var selectedSubMeshId = subMeshSelectComboBox.SelectedItem.ToString();
-
-            if (!string.IsNullOrEmpty(selectedSubMeshId))
-            {
-                if (_selectedWheel != null)
-                {
-                    if (!_selectedWheel.SubMeshIds.Contains(selectedSubMeshId))
-                    {
-                        _selectedWheel.SubMeshIds.Add(selectedSubMeshId);
-                        _selectedWheel.Name = Guid.NewGuid().ToString();//notify property changed
-                        selectedMeshesListBox.Items.Add(selectedSubMeshId);
-                        OnSelectedWheelChanged();
-                    }
-                }
-            }
-        }
-
         private void DeleteSelectedMeshButton_Click(object sender, EventArgs e)
         {
             if (selectedMeshesListBox.SelectedItem == null)
@@ -267,7 +243,7 @@ namespace RyzeEditor.Controls
 
                 if (wheel != null)
                 {
-                    subMeshSelectComboBox.Items.Clear();
+                    //subMeshSelectComboBox.Items.Clear();
 
                     var mesh = ResourceManagment.ResourceManager.Instance.GetMesh(wheel.MeshId);
 
@@ -286,7 +262,7 @@ namespace RyzeEditor.Controls
 
                     foreach (var subMeshId in subMeshIds)
                     {
-                        subMeshSelectComboBox.Items.Add(subMeshId);
+                        //subMeshSelectComboBox.Items.Add(subMeshId);
                     }
 
                     selectedMeshesListBox.Items.Clear();
@@ -298,8 +274,28 @@ namespace RyzeEditor.Controls
 
                     _selectedWheel = wheel;
                     _selectedWheel.Name = Guid.NewGuid().ToString();//Notify property changed
+                    _selectedWheel.SubMeshIdsChanged += OnSubMeshIdsChanged;
                     UpdateCustomControls();
                 }
+            }
+        }
+
+        private void OnSubMeshIdsChanged(object sender, EventArgs eventArgs)
+        {
+            Wheel wheel = sender as Wheel;
+
+            if (wheel != null)
+            {
+                foreach (var subMeshId in wheel.SubMeshIds)
+                {
+                    if (!selectedMeshesListBox.Items.Contains(subMeshId))
+                    {
+                        selectedMeshesListBox.Items.Add(subMeshId);
+                    }
+                }
+
+                subMeshSelectButton.FlatStyle = FlatStyle.Standard;
+                subMeshSelectButton.Text = "Select";
             }
         }
 
@@ -422,6 +418,29 @@ namespace RyzeEditor.Controls
             }
 
             return result;
+        }
+
+        private void SubMeshSelectButton_Click(object sender, EventArgs e)
+        {
+            bool isActive = false;
+
+            if (subMeshSelectButton.FlatStyle == FlatStyle.Flat)
+            {
+                subMeshSelectButton.FlatStyle = FlatStyle.Standard;
+                subMeshSelectButton.Text = "Select";
+                isActive = false;
+            }
+            else if (subMeshSelectButton.FlatStyle == FlatStyle.Standard)
+            {
+                subMeshSelectButton.FlatStyle = FlatStyle.Flat;
+                subMeshSelectButton.Text = "Cancel";
+                isActive = true;
+            }
+
+            if (_selectedWheel != null)
+            {
+                _selectedWheel.SubmeshSelectionModeChanged?.Invoke(isActive, new EventArgs());
+            }
         }
     }
 }
