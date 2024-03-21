@@ -113,31 +113,74 @@ namespace RyzeEditor
 
                 if (rigidBody != null)
                 {
-                    _gameObjectMap[i] = rigidBody.GameObject;
+                    AddRigidBody(rigidBody, ref i);
+                }
 
-                    var rotation = rigidBody.GameObject.Rotation;
-                    rotation.X = -rotation.X;
-                    rotation.Y = -rotation.Y;
+                var vehicle = entity as Vehicle;
 
-                    var position = rigidBody.GameObject.Position;
-                    position.Z *= -1.0f;
-
-                    var startTransform = SharpDX.Matrix.Scaling(rigidBody.GameObject.Scale) *
-                                         SharpDX.Matrix.RotationQuaternion(rotation) *
-                                         SharpDX.Matrix.Translation(position);
-
-                    switch (rigidBody.ShapeType)
-                    {
-                        case CollisionShapeType.Box:
-                            AddBoxShapeRigidBody(rigidBody, ref i, startTransform);
-
-                            break;
-                    }
+                if (vehicle != null)
+                {
+                    AddRaycastVehicle(rigidBody, ref i);
                 }
             }
         }
 
-        private void AddBoxShapeRigidBody(GameWorld.RigidBody rigidBody, ref int i, SharpDX.Matrix startTransform)
+        private void AddRaycastVehicle(GameWorld.RigidBody rigidBody, ref int i)
+        {
+        }
+
+        private void AddRigidBody(GameWorld.RigidBody rigidBody, ref int i)
+        {
+            _gameObjectMap[i] = rigidBody.GameObject;
+
+            var rotation = rigidBody.GameObject.Rotation;
+            rotation.X = -rotation.X;
+            rotation.Y = -rotation.Y;
+
+            var position = rigidBody.GameObject.Position;
+            position.Z *= -1.0f;
+
+            var startTransform = SharpDX.Matrix.Scaling(rigidBody.GameObject.Scale) *
+                                 SharpDX.Matrix.RotationQuaternion(rotation) *
+                                 SharpDX.Matrix.Translation(position);
+
+            CollisionShape collisionShape = null;
+
+            switch (rigidBody.ShapeType)
+            {
+                case CollisionShapeType.Box:
+                    collisionShape = CreateBoxCollisionShape(rigidBody);
+                    break;
+                case CollisionShapeType.ConvexHull:
+                    collisionShape = CreateConvexHullRigidBody(rigidBody);
+                    break;
+            }
+
+            var localInertia = collisionShape.CalculateLocalInertia(rigidBody.Mass);
+            var motionState = new DefaultMotionState(MatrixHelper.ConvertMatrix(startTransform));
+            var rbInfo = new RigidBodyConstructionInfo(rigidBody.Mass, motionState, collisionShape, localInertia);
+            var newRigidBody = new BulletSharp.RigidBody(rbInfo) { UserIndex = i++ };
+
+            _discreteDynamicsWorld.AddRigidBody(newRigidBody);
+        }
+
+        private ConvexHullShape CreateConvexHullRigidBody(GameWorld.RigidBody rigidBody)
+        {
+            var meshVertices = rigidBody.GetMeshVertices();
+            var primitiveCount = meshVertices.Length / 3;
+            var vertices = new List<Vector3>();
+
+            for (int j = 0; j < primitiveCount; j++)
+            {
+                vertices.Add(new Vector3(meshVertices[j], meshVertices[j + 1], meshVertices[j + 2]));
+            }
+
+            var convexShape = new ConvexHullShape(vertices);
+
+            return convexShape;
+        }
+
+        private CompoundShape CreateBoxCollisionShape(GameWorld.RigidBody rigidBody)
         {
             var collisionShape = new CompoundShape();
 
@@ -155,16 +198,13 @@ namespace RyzeEditor
 
             collisionShape.AddChildShape(MatrixHelper.ConvertMatrix(localTransform), boxShape);
 
-            var localInertia = boxShape.CalculateLocalInertia(rigidBody.Mass);
-            var motionState = new DefaultMotionState(MatrixHelper.ConvertMatrix(startTransform));
-            var rbInfo = new RigidBodyConstructionInfo(rigidBody.Mass, motionState, collisionShape, localInertia);
-            var newRigidBody = new BulletSharp.RigidBody(rbInfo) { UserIndex = i++ };
-
-            _discreteDynamicsWorld.AddRigidBody(newRigidBody);
+            return collisionShape;
         }
 
         public void Dispose()
         {
+            CleanUpDynamicsWorldData();
+
             if (_discreteDynamicsWorld != null && !_discreteDynamicsWorld.IsDisposed)
             {
                 _discreteDynamicsWorld.Dispose();

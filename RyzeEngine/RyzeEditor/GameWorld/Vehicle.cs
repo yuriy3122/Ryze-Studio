@@ -118,6 +118,12 @@ namespace RyzeEditor.GameWorld
         }
     }
 
+    /// <summary>
+    /// 1. Relaxing the steering angle to zero if the user does no hold down the left or right keys.
+    /// 2. Reducing the maximum steering angle with increasing vehicle speed.
+    /// 3. Setting engine force based on an analogue input, or alternatively based on the duration of the forward key being pressed down
+    /// </summary>
+
     [Serializable]
     [ImplementPropertyChanged]
     public class Vehicle : GameObject
