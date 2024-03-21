@@ -58,13 +58,25 @@ namespace RyzeEditor.GameWorld
         public Quaternion Rotation { get; set; }
 
         //The maximum length of the suspension (metres)
+        //Rest length is the length of a spring when no force is applied to it.
+        //If the suspension’s rest lengths are too large,
+        //the chassis will seem to be jacked up on stilts and the vehicle will be prone to tipping, even when not moving.
         public float SuspensionRestLength { get; set; }
 
         //The stiffness constant for the suspension. 10.0 - Offroad buggy, 50.0 - Sports car, 200.0 - F1 Car
+        //Stiffness is the force exerted by a spring divided by its change in length.
+        //If the suspension is too stiff, a small bump could cause the vehicle to bounce violently.
+        //If it isn’t stiff enough, a large bump could cause the chassis to "bottom out"
         public float SuspensionStiffness { get; set; }
 
         public float SuspensionCompression { get; set; }
 
+        //Each wheel has 2 suspension damping parameters, one for expansion and one for compression.
+        //The range of plausible values depends on the suspension stiffness, according to the formula:
+        //damping = 2f * k * FastMath.sqrt(stiffness);
+        //where k is the suspension’s damping ratio: k = 0: undamped and bouncy. k = 1: critically damped.
+        //Good values of k are between 0.1 and 0.3.
+        //The default damping parameters of 0.83 and 0.88 are suitable for a chassis with the default stiffness of 5.88 (k= 0.171 and 0.181, respectively).
         public float SuspensionDamping { get; set; }
 
         public float MaxSuspensionTravelCm { get; set; }
@@ -72,6 +84,11 @@ namespace RyzeEditor.GameWorld
         //The coefficient of friction between the tyre and the ground.
         //Should be about 0.8 for realistic cars, but can increased for better handling.
         //Set large (10000.0) for kart racers
+        //The friction slip parameter quantifies how much traction a tire has.
+        //Its effect is most noticeable when the vehicle is braking.
+        //Too much traction could cause a vehicle to flip over if it braked hard.
+        //Too little traction would make braking ineffective, as if the tires were bald or the supporting surface were icy.
+        //The default value for friction slip is 10.5
         public float FrictionSlip { get; set; }
 
         public float Offset { get; set; }
