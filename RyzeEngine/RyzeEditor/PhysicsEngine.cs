@@ -14,6 +14,7 @@ namespace RyzeEditor
         private readonly SequentialImpulseConstraintSolver _solver;
         private readonly DiscreteDynamicsWorld _discreteDynamicsWorld;
         private readonly Dictionary<int, GameObject> _gameObjectMap;
+        private readonly Dictionary<string, CollisionShape> _collisionShapeMap;
 
         private bool _needUpdate;
 
@@ -34,6 +35,7 @@ namespace RyzeEditor
             _discreteDynamicsWorld.Gravity = new Vector3(0.0f, -9.8f, 0.0f);
 
             _gameObjectMap = new Dictionary<int, GameObject>();
+            _collisionShapeMap = new Dictionary<string, CollisionShape>();
 
             _needUpdate = true;
         }
@@ -105,6 +107,11 @@ namespace RyzeEditor
                 _gameObjectMap.Clear();
             }
 
+            if (_collisionShapeMap != null)
+            {
+                _collisionShapeMap.Clear();
+            }
+
             int i = 0;
 
             foreach (var entity in entities)
@@ -166,18 +173,30 @@ namespace RyzeEditor
 
         private ConvexHullShape CreateConvexHullRigidBody(GameWorld.RigidBody rigidBody)
         {
-            var meshVertices = rigidBody.GetMeshVertices();
-            var primitiveCount = meshVertices.Length / 3;
-            var vertices = new List<Vector3>();
+            ConvexHullShape collisionShape = null;
 
-            for (int j = 0; j < primitiveCount; j++)
+            if (_collisionShapeMap.ContainsKey(rigidBody.Mesh.Id))
             {
-                vertices.Add(new Vector3(meshVertices[j], meshVertices[j + 1], meshVertices[j + 2]));
+                collisionShape = _collisionShapeMap[rigidBody.Mesh.Id] as ConvexHullShape;
             }
 
-            var convexShape = new ConvexHullShape(vertices);
+            if (collisionShape == null)
+            {
+                var meshVertices = rigidBody.GetMeshVertices();
+                var primitiveCount = meshVertices.Length / 3;
+                var vertices = new List<Vector3>();
 
-            return convexShape;
+                for (int j = 0; j < primitiveCount; j++)
+                {
+                    vertices.Add(new Vector3(meshVertices[j], meshVertices[j + 1], meshVertices[j + 2]));
+                }
+
+                collisionShape = new ConvexHullShape(vertices);
+
+                _collisionShapeMap[rigidBody.Mesh.Id] = collisionShape;
+            }
+
+            return collisionShape;
         }
 
         private CompoundShape CreateBoxCollisionShape(GameWorld.RigidBody rigidBody)
