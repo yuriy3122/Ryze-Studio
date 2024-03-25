@@ -5,6 +5,7 @@ using System.Windows.Forms;
 using System.Collections.Generic;
 using System.ComponentModel;
 using SharpDX;
+using SharpDX.RawInput;
 using RyzeEditor.GameWorld;
 using RyzeEditor.Renderer;
 using RyzeEditor.Helpers;
@@ -25,9 +26,6 @@ namespace RyzeEditor.Tools
         private readonly GameObject _arrowWeelAxleGameObject;
 
         [field: NonSerialized]
-        private readonly GameObject _arrowWeelDirectionCSGameObject;
-
-        [field: NonSerialized]
         private List<Vector3> _chassisPoints;
 
         [field: NonSerialized]
@@ -46,13 +44,6 @@ namespace RyzeEditor.Tools
             const float scale = 0.0125f;
 
             _arrowWeelAxleGameObject = new GameObject(arrowMesh, arrowMesh)
-            {
-                Scale = new Vector3(scale, scale, scale),
-                Position = new Vector3(0.0f, 0.0f, 0.0f),
-                Rotation = Quaternion.Identity
-            };
-
-            _arrowWeelDirectionCSGameObject = new GameObject(arrowMesh, arrowMesh)
             {
                 Scale = new Vector3(scale, scale, scale),
                 Position = new Vector3(0.0f, 0.0f, 0.0f),
@@ -136,6 +127,20 @@ namespace RyzeEditor.Tools
             {
                 _wheelPositions[_selectedWheel.Id] = null;
             }
+        }
+
+        public override bool OnKeyboardInput(object sender, KeyboardInputEventArgs arg)
+        {
+            var selectedVehicle = _selection.Get().OfType<Vehicle>().FirstOrDefault();
+
+            switch (arg.Key)
+            {
+                case Keys.Left:
+                    //
+                    break;
+            }
+
+            return true;
         }
 
         private void WheelPropertyChanged(object sender, PropertyChangedEventArgs e)
