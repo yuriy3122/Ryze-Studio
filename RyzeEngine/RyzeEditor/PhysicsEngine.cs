@@ -79,10 +79,6 @@ namespace RyzeEditor
                 gameObject.Position = position;
                 gameObject.Scale = scale;
             }
-
-            //Sync Vehicles (Game objects) params (Steering, BreakingForce, EngineForce) with Bullet Vehicles
-
-            //Get Bullet Vehicle chassic params to update game objects, wheel submeshes
         }
 
         private void CleanUpDynamicsWorldData()
@@ -174,14 +170,17 @@ namespace RyzeEditor
             var chassisShape = new CompoundShape();
             var convexShape = CreateConvexHullRigidBody(rigidBody);
 
-            var max = vehicle.BoundingBox.Maximum;
-            var min = vehicle.BoundingBox.Minimum;
+            var max = rigidBody.BoundingBox.Maximum;
+            var min = rigidBody.BoundingBox.Minimum;
             var center = (max + min) / 2.0f;
+
             var localTransform = SharpDX.Matrix.Translation(center);
 
             chassisShape.AddChildShape(MatrixHelper.ConvertMatrix(localTransform), convexShape);
 
-            var chassisLocalInertia = chassisShape.CalculateLocalInertia(rigidBody.Mass);
+            var chassisLocalInertia = Vector3.Zero;
+            chassisShape.CalculateLocalInertia(rigidBody.Mass, out chassisLocalInertia);
+            //chassisLocalInertia = new Vector3(4620.13f, 4969.85f, 1030.4995f);
             var chassisStartTransform = Matrix.Identity;
             var chassisMotionState = new DefaultMotionState(chassisStartTransform);
             var chassisRbInfo = new RigidBodyConstructionInfo(rigidBody.Mass, chassisMotionState, chassisShape, chassisLocalInertia);
@@ -223,6 +222,7 @@ namespace RyzeEditor
                 wheelInfo.SuspensionStiffness = vehicle.Wheels[j].SuspensionStiffness;
                 wheelInfo.WheelsDampingRelaxation = vehicle.Wheels[j].SuspensionDamping;
                 wheelInfo.WheelsDampingCompression = vehicle.Wheels[j].SuspensionCompression;
+                wheelInfo.SuspensionRestLength1 = vehicle.Wheels[j].SuspensionRestLength;
                 wheelInfo.FrictionSlip = wheelFriction;
                 wheelInfo.RollInfluence = rollInfluence;
             }
@@ -239,13 +239,24 @@ namespace RyzeEditor
 
         private void SetupWheel(Wheel wheel, RaycastVehicle raycastVehicle)
         {
+            var axleCS = wheel.AxleCS;
+            axleCS.Normalize();
+            axleCS.Z *= -1.0f;
+
+            var wheelDirectionCS = wheel.WheelDirectionCS;
+            wheelDirectionCS.Normalize();
+            wheelDirectionCS.Z *= -1.0f;
+
+            var connectionPointCS = wheel.ChassisConnectionPointCS;
+            connectionPointCS.Z *= -1.0f;
+
             wheel.ComputeParams();
 
-            var connectionPointCS0 = new Vector3(wheel.ChassisConnectionPointCS.X, wheel.ChassisConnectionPointCS.Y, wheel.ChassisConnectionPointCS.Z);
-            var wheelDirectionCS0 = new Vector3(wheel.WheelDirectionCS.X, wheel.WheelDirectionCS.Y, wheel.WheelDirectionCS.Z);
-            var wheelAxleCS0 = new Vector3(wheel.AxleCS.X, wheel.AxleCS.Y, wheel.AxleCS.Z);
+            var connectionPoint = new Vector3(connectionPointCS.X, connectionPointCS.Y, connectionPointCS.Z);
+            var wheelDirectionCS0 = new Vector3(wheelDirectionCS.X, wheelDirectionCS.Y, wheelDirectionCS.Z);
+            var wheelAxleCS0 = new Vector3(axleCS.X, axleCS.Y, axleCS.Z);
 
-            raycastVehicle.AddWheel(connectionPointCS0, wheelDirectionCS0, wheelAxleCS0, wheel.SuspensionRestLength,
+            raycastVehicle.AddWheel(connectionPoint, wheelDirectionCS0, wheelAxleCS0, wheel.SuspensionRestLength,
                 wheel.Radius, new RaycastVehicle.VehicleTuning(), wheel.IsFrontWheel);
         }
 
@@ -296,10 +307,10 @@ namespace RyzeEditor
             if (collisionShape == null)
             {
                 var meshVertices = rigidBody.GetMeshVertices();
-                var primitiveCount = meshVertices.Length / 3;
+                var vertexCount = meshVertices.Length / 3;
                 var vertices = new List<Vector3>();
 
-                for (int j = 0; j < primitiveCount; j++)
+                for (int j = 0; j < vertexCount; j++)
                 {
                     vertices.Add(new Vector3(meshVertices[j], meshVertices[j + 1], meshVertices[j + 2]));
                 }
