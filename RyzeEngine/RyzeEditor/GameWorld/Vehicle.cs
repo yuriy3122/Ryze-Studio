@@ -200,16 +200,5 @@ namespace RyzeEditor.GameWorld
         public float SteeringClamp { get; set; }
 
         public bool DrawChassisPoints { get; set; }
-
-        public bool HandlingUserInput { get; set; }
-
-        [InspectorVisible(false)]
-        public float Steering { get; set; }
-
-        [InspectorVisible(false)]
-        public float BreakingForce { get; set; }
-
-        [InspectorVisible(false)]
-        public float EngineForce { get; set; }
     }
 }

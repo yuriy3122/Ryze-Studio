@@ -129,20 +129,6 @@ namespace RyzeEditor.Tools
             }
         }
 
-        public override bool OnKeyboardInput(object sender, KeyboardInputEventArgs arg)
-        {
-            var selectedVehicle = _selection.Get().OfType<Vehicle>().FirstOrDefault();
-
-            switch (arg.Key)
-            {
-                case Keys.Left:
-                    //
-                    break;
-            }
-
-            return true;
-        }
-
         private void WheelPropertyChanged(object sender, PropertyChangedEventArgs e)
         {
             var wheel = sender as Wheel;
@@ -284,7 +270,7 @@ namespace RyzeEditor.Tools
 
                     var convexHullMeshId = selectedVehicle.GetChassisConvexHullMesh();
                     var mesh = ResourceManager.Instance.GetMesh(convexHullMeshId);
-                    var vertices = new List<BulletSharp.Vector3>();
+                    var vertices = new List<float>();
 
                     foreach (var submesh in mesh.SubMeshes)
                     {
@@ -294,11 +280,13 @@ namespace RyzeEditor.Tools
                         {
                             Vector3 vertPosition = vertex.Pos;
                             Vector3.TransformCoordinate(ref vertPosition, ref matrix, out Vector3 position);
-                            vertices.Add(new BulletSharp.Vector3(position.X, position.Y, position.Z));
+                            vertices.Add(position.X);
+                            vertices.Add(position.Y);
+                            vertices.Add(position.Z);
                         }
                     }
 
-                    var convexHullShape = new ConvexHullShapeEx(vertices);
+                    var convexHullShape = new ConvexHullShapeEx(vertices.ToArray());
 
                     foreach (var point in convexHullShape.UnscaledPoints)
                     {
