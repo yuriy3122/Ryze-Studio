@@ -178,9 +178,7 @@ namespace RyzeEditor
 
             chassisShape.AddChildShape(MatrixHelper.ConvertMatrix(localTransform), convexShape);
 
-            var chassisLocalInertia = Vector3.Zero;
-            chassisShape.CalculateLocalInertia(rigidBody.Mass, out chassisLocalInertia);
-            //chassisLocalInertia = new Vector3(4620.13f, 4969.85f, 1030.4995f);
+            var chassisLocalInertia = chassisShape.CalculateLocalInertia(rigidBody.Mass);
             var chassisStartTransform = Matrix.Identity;
             var chassisMotionState = new DefaultMotionState(chassisStartTransform);
             var chassisRbInfo = new RigidBodyConstructionInfo(rigidBody.Mass, chassisMotionState, chassisShape, chassisLocalInertia);
