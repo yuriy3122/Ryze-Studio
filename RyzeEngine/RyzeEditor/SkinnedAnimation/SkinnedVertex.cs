@@ -11,6 +11,9 @@ namespace RyzeEditor.SkinnedAnimation
         public Vector3 Tangent;
         public Vector3 Bitangent;
         public Vector2 Tex;
+        /// <summary>
+        /// JointIndices and JointWeights can be compressed in 16 bit floats (half): [1u, 0.364f] -> 1.364h
+        /// </summary>
         public ushort[] JointIndices;
         public float[] JointWeights;
 
