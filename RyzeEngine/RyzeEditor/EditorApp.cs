@@ -40,7 +40,7 @@ namespace RyzeEditor
         private Size _clientSize;
 
         [field: NonSerialized]
-        private bool _suspendSimulation;
+        private bool _simulationSuspended;
 
         [field: NonSerialized]
         private ObjectHierarchyControl _objectHierarchyControl;
@@ -50,6 +50,9 @@ namespace RyzeEditor
 
         [field: NonSerialized]
         private ConsoleOutputControl _consoleOutputControl;
+
+        [field: NonSerialized]
+        private PhysicsEngine _physicsEngine;
 
         [field: NonSerialized]
         private static readonly ILog _log = LogManager.GetLogger("LOGGER");
@@ -105,7 +108,8 @@ namespace RyzeEditor
             _renderer = new RendererD3d();
             _renderer.Initialize(form.Handle, _worldMap.Camera);
             var context = new RenderContext(_renderer, _toolManager);
-            _suspendSimulation = true;
+            _physicsEngine = new PhysicsEngine();
+            _simulationSuspended = true;
 
             _worldMap.EntityAdded += WorldMapEntityAdded;
             _worldMap.EntityDeleted += WorldMapEntityDeleted;
@@ -123,10 +127,16 @@ namespace RyzeEditor
                     _userResized = false;
                 }
 
+                if (!_simulationSuspended)
+                {
+                    _physicsEngine.StepSimulation(_worldMap.Entities);
+                }
+
                 context.RenderWorld(_worldMap);
             });
 
             context.Dispose();
+            _physicsEngine.Dispose();
         }
 
         private void ObjectHierarchyControlSelectionChanged(object sender, EntityEventArgs e)
@@ -160,6 +170,8 @@ namespace RyzeEditor
 
             _objectHierarchyControl.UpdateHierarchy(entities);
 
+            _physicsEngine.Update();
+
             _log.Info($"Added: {_worldMap.Entities.FirstOrDefault(x => x.Id == e.EntityId)}");
         }
 
@@ -172,6 +184,8 @@ namespace RyzeEditor
 
             var entities = _worldMap.Entities.ToList();
             entities.Add(_worldMap.Camera);
+
+            _physicsEngine.Update();
 
             _objectHierarchyControl.UpdateHierarchy(entities);
         }
@@ -268,7 +282,12 @@ namespace RyzeEditor
 
             form.SimulationSuspendedClicked += (sender, args) => 
             {
-                _suspendSimulation = !_suspendSimulation;
+                _simulationSuspended = !_simulationSuspended;
+
+                if (_simulationSuspended)
+                {
+                    _physicsEngine.SuspendSimulation();
+                }
             };
         }
 
