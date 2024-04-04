@@ -12,5 +12,9 @@ namespace RyzeEditor.Packer
         public string OutputFilePath { get; set; }
 
         public int PlatformAlignment { get; set; }
+
+        public bool PackTextures { get; set; }
+
+        public bool PackMaterials { get; set; }
     }
 }

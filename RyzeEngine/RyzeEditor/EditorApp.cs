@@ -269,7 +269,12 @@ namespace RyzeEditor
 
                     _consoleOutputControl.ClearAll();
 
-                    var options = new PackerOptions() { Logger = _log };
+                    var options = new PackerOptions() 
+                    { 
+                        Logger = _log, 
+                        PackTextures = true,
+                        PackMaterials = true
+                    };
                     var packer = new WorldMapPacker(_worldMap, options);
                     packer.NewMessage += WorldMapPackerNewMessage;
                     packer.OnComplete += WorldMapPackerOnComplete;

@@ -85,13 +85,19 @@ namespace RyzeEditor.Packer
                 _tmpPos = stream.Position;
                 stream.Write(BitConverter.GetBytes(0L), 0, sizeof(int));
 
-                stream.Write(BitConverter.GetBytes(_worldMapData.Textures.Count), 0, sizeof(int));
-                stream.Write(BitConverter.GetBytes(_worldMapData.Materials.Count), 0, sizeof(int));
+                int textureCount = options.PackTextures ? _worldMapData.Textures.Count : 0;
+                int materialCount = options.PackMaterials ? _worldMapData.Materials.Count : 0;
+
+                stream.Write(BitConverter.GetBytes(textureCount), 0, sizeof(int));
+                stream.Write(BitConverter.GetBytes(materialCount), 0, sizeof(int));
                 stream.Write(BitConverter.GetBytes(_worldMapData.Meshes.Count), 0, sizeof(int));
                 stream.Write(BitConverter.GetBytes(_worldMapData.GameObjects.Count), 0, sizeof(int));
 
-                OnNewMessage(new PackerEventArgs($"{DateTime.Now:HH:mm:ss} === writing material data...complete."));
-                WriteMaterialData(stream);
+                if (options.PackMaterials)
+                {
+                    OnNewMessage(new PackerEventArgs($"{DateTime.Now:HH:mm:ss} === writing material data...complete."));
+                    WriteMaterialData(stream);
+                }
 
                 OnNewMessage(new PackerEventArgs($"{DateTime.Now:HH:mm:ss} === writing mesh data...complete."));
                 WriteMeshData(stream);
@@ -111,9 +117,12 @@ namespace RyzeEditor.Packer
                 OnNewMessage(new PackerEventArgs($"{DateTime.Now:HH:mm:ss} === writing world map chunk data...complete."));
                 _worldChunkWriter.WriteData(stream);
 
-                WriteFontTextureAtlasData(stream);
+                if (options.PackTextures)
+                {
+                    WriteFontTextureAtlasData(stream);
 
-                WriteSkyboxCubeTextureData(stream);
+                    WriteSkyboxCubeTextureData(stream);
+                }
 
                 WriteSkyboxMeshData(stream);
 
@@ -122,8 +131,11 @@ namespace RyzeEditor.Packer
 
                 WriteHiddenObjectsData(stream);
 
-                OnNewMessage(new PackerEventArgs($"{DateTime.Now:HH:mm:ss} === writing texture data"));
-                WriteTextureData(stream);
+                if (options.PackTextures)
+                {
+                    OnNewMessage(new PackerEventArgs($"{DateTime.Now:HH:mm:ss} === writing texture data"));
+                    WriteTextureData(stream);
+                }
             }
 
             _collisionWriter.Dispose();
