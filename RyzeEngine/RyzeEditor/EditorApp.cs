@@ -40,7 +40,7 @@ namespace RyzeEditor
         private Size _clientSize;
 
         [field: NonSerialized]
-        private bool _simulationSuspended;
+        private bool _syncSuspended;
 
         [field: NonSerialized]
         private ObjectHierarchyControl _objectHierarchyControl;
@@ -52,7 +52,7 @@ namespace RyzeEditor
         private ConsoleOutputControl _consoleOutputControl;
 
         [field: NonSerialized]
-        private PhysicsEngine _physicsEngine;
+        private ServerClient _serverClient;
 
         [field: NonSerialized]
         private static readonly ILog _log = LogManager.GetLogger("LOGGER");
@@ -108,8 +108,8 @@ namespace RyzeEditor
             _renderer = new RendererD3d();
             _renderer.Initialize(form.Handle, _worldMap.Camera);
             var context = new RenderContext(_renderer, _toolManager);
-            _physicsEngine = new PhysicsEngine();
-            _simulationSuspended = true;
+            _serverClient = new ServerClient(_worldMap);
+            _syncSuspended = true;
 
             _worldMap.EntityAdded += WorldMapEntityAdded;
             _worldMap.EntityDeleted += WorldMapEntityDeleted;
@@ -127,16 +127,16 @@ namespace RyzeEditor
                     _userResized = false;
                 }
 
-                if (!_simulationSuspended)
+                if (!_syncSuspended)
                 {
-                    _physicsEngine.StepSimulation(_worldMap.Entities);
+                    _serverClient.UpdateState();
                 }
 
                 context.RenderWorld(_worldMap);
             });
 
             context.Dispose();
-            _physicsEngine.Dispose();
+            _serverClient.Dispose();
         }
 
         private void ObjectHierarchyControlSelectionChanged(object sender, EntityEventArgs e)
@@ -170,7 +170,7 @@ namespace RyzeEditor
 
             _objectHierarchyControl.UpdateHierarchy(entities);
 
-            _physicsEngine.Update();
+            _serverClient.Update();
 
             _log.Info($"Added: {_worldMap.Entities.FirstOrDefault(x => x.Id == e.EntityId)}");
         }
@@ -185,7 +185,7 @@ namespace RyzeEditor
             var entities = _worldMap.Entities.ToList();
             entities.Add(_worldMap.Camera);
 
-            _physicsEngine.Update();
+            _serverClient.Update();
 
             _objectHierarchyControl.UpdateHierarchy(entities);
         }
@@ -287,11 +287,11 @@ namespace RyzeEditor
 
             form.SimulationSuspendedClicked += (sender, args) => 
             {
-                _simulationSuspended = !_simulationSuspended;
+                _syncSuspended = !_syncSuspended;
 
-                if (_simulationSuspended)
+                if (_syncSuspended)
                 {
-                    _physicsEngine.SuspendSimulation();
+                    _serverClient.Suspend();
                 }
             };
         }

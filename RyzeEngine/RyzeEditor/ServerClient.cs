@@ -5,19 +5,22 @@ using System.Collections.Generic;
 using System.Net.Sockets;
 using System.Threading.Tasks;
 using RyzeEditor.GameWorld;
+using RyzeEditor.Packer;
 
 namespace RyzeEditor
 {
-    public class PhysicsEngine
+    public class ServerClient
     {
         private readonly Dictionary<int, GameObject> _gameObjectMap;
         private readonly ConcurrentStack<string> _stack;
         private const int UdpPort = 11000;
+        protected WorldMap _worldMap;
 
         private bool _needUpdate;
 
-        public PhysicsEngine()
+        public ServerClient(WorldMap world)
         {
+            _worldMap = world;
             _gameObjectMap = new Dictionary<int, GameObject>();
             _stack = new ConcurrentStack<string>();
 
@@ -31,7 +34,7 @@ namespace RyzeEditor
             _needUpdate = true;
         }
 
-        public void SuspendSimulation()
+        public void Suspend()
         {
             //Send command to the Server to suspend simulation
         }
@@ -58,12 +61,12 @@ namespace RyzeEditor
             });
         }
 
-        public void StepSimulation(IEnumerable<EntityBase> entities)
+        public void UpdateState()
         {
             if (_needUpdate)
             {
                 CleanUpDynamicsWorldData();
-                InitDynamicsWorldData(entities);
+                InitDynamicsWorldData();
                 _needUpdate = false;
             }
 
@@ -84,9 +87,13 @@ namespace RyzeEditor
         {
         }
 
-        private void InitDynamicsWorldData(IEnumerable<EntityBase> entities)
+        private void InitDynamicsWorldData()
         {
             _gameObjectMap?.Clear();
+
+            var options = new PackerOptions();
+            var packer = new WorldMapPacker(_worldMap, options);
+            packer.Execute();
         }
 
         public void Dispose()

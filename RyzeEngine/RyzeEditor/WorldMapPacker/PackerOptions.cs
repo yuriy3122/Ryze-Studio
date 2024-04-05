@@ -16,5 +16,7 @@ namespace RyzeEditor.Packer
         public bool PackTextures { get; set; }
 
         public bool PackMaterials { get; set; }
+
+        public bool ConsoleOutput { get; set; }
     }
 }

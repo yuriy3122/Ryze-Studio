@@ -107,7 +107,7 @@
     <Compile Include="GameWorld\SunLight.cs" />
     <Compile Include="Helpers\PatchHelper.cs" />
     <Compile Include="Helpers\StringUtils.cs" />
-    <Compile Include="PhysicsEngine.cs" />
+    <Compile Include="ServerClient.cs" />
     <Compile Include="SkinnedAnimation\SkinnedVertex.cs" />
     <Compile Include="Tools\PointLightTool.cs" />
     <Compile Include="Tools\VehicleTool.cs" />
