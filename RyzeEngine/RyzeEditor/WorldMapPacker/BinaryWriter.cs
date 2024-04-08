@@ -87,10 +87,11 @@ namespace RyzeEditor.Packer
 
                 int textureCount = options.PackTextures ? _worldMapData.Textures.Count : 0;
                 int materialCount = options.PackMaterials ? _worldMapData.Materials.Count : 0;
+                int meshCount = options.PackMaterials ? _worldMapData.Meshes.Count : 0;
 
                 stream.Write(BitConverter.GetBytes(textureCount), 0, sizeof(int));
                 stream.Write(BitConverter.GetBytes(materialCount), 0, sizeof(int));
-                stream.Write(BitConverter.GetBytes(_worldMapData.Meshes.Count), 0, sizeof(int));
+                stream.Write(BitConverter.GetBytes(meshCount), 0, sizeof(int));
                 stream.Write(BitConverter.GetBytes(_worldMapData.GameObjects.Count), 0, sizeof(int));
 
                 if (options.PackMaterials)
@@ -99,8 +100,11 @@ namespace RyzeEditor.Packer
                     WriteMaterialData(stream);
                 }
 
-                OnNewMessage(new PackerEventArgs($"{DateTime.Now:HH:mm:ss} === writing mesh data...complete."));
-                WriteMeshData(stream);
+                if (options.PackMeshData)
+                {
+                    OnNewMessage(new PackerEventArgs($"{DateTime.Now:HH:mm:ss} === writing mesh data...complete."));
+                    WriteMeshData(stream);
+                }
 
                 OnNewMessage(new PackerEventArgs($"{DateTime.Now:HH:mm:ss} === writing scene object data...complete."));
                 WriteGameObjectData(stream);
@@ -117,8 +121,11 @@ namespace RyzeEditor.Packer
                 OnNewMessage(new PackerEventArgs($"{DateTime.Now:HH:mm:ss} === writing vehicle data...complete."));
                 _vehicleWriter.WriteData(stream);
 
-                OnNewMessage(new PackerEventArgs($"{DateTime.Now:HH:mm:ss} === writing world map chunk data...complete."));
-                _worldChunkWriter.WriteData(stream);
+                if (options.PackWorldChunkData)
+                {
+                    OnNewMessage(new PackerEventArgs($"{DateTime.Now:HH:mm:ss} === writing world map chunk data...complete."));
+                    _worldChunkWriter.WriteData(stream);
+                }
 
                 if (options.PackTextures)
                 {

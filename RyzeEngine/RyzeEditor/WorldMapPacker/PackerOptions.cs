@@ -21,6 +21,10 @@ namespace RyzeEditor.Packer
 
         public bool PackAccelerationStructures { get; set; }
 
+        public bool PackMeshData { get; set; }
+
+        public bool PackWorldChunkData { get; set; }
+
         public bool ConsoleOutput { get; set; }
     }
 }

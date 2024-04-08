@@ -275,6 +275,8 @@ namespace RyzeEditor
                         PackTextures = true,
                         PackMaterials = true,
                         PackPointLights = true,
+                        PackMeshData = true,
+                        PackWorldChunkData = true,
                         PackAccelerationStructures = true
                     };
                     var packer = new WorldMapPacker(_worldMap, options);
