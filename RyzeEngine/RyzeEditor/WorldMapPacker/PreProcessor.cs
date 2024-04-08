@@ -14,7 +14,10 @@ namespace RyzeEditor.Packer
 
         public void Run()
         {
-            ProcessTextures();
+            if (_options.PackTextures)
+            {
+                ProcessTextures();
+            }
         }
 
         private void ProcessTextures()

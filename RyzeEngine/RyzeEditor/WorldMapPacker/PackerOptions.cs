@@ -17,6 +17,10 @@ namespace RyzeEditor.Packer
 
         public bool PackMaterials { get; set; }
 
+        public bool PackPointLights { get; set; }
+
+        public bool PackAccelerationStructures { get; set; }
+
         public bool ConsoleOutput { get; set; }
     }
 }

@@ -105,8 +105,11 @@ namespace RyzeEditor.Packer
                 OnNewMessage(new PackerEventArgs($"{DateTime.Now:HH:mm:ss} === writing scene object data...complete."));
                 WriteGameObjectData(stream);
 
-                OnNewMessage(new PackerEventArgs($"{DateTime.Now:HH:mm:ss} === writing point light data...complete."));
-                WritePointLightData(stream);
+                if (options.PackPointLights)
+                {
+                    OnNewMessage(new PackerEventArgs($"{DateTime.Now:HH:mm:ss} === writing point light data...complete."));
+                    WritePointLightData(stream);
+                }
 
                 OnNewMessage(new PackerEventArgs($"{DateTime.Now:HH:mm:ss} === writing collision data...complete."));
                 _collisionWriter.WriteData(stream);
@@ -122,12 +125,15 @@ namespace RyzeEditor.Packer
                     WriteFontTextureAtlasData(stream);
 
                     WriteSkyboxCubeTextureData(stream);
+
+                    WriteSkyboxMeshData(stream);
                 }
 
-                WriteSkyboxMeshData(stream);
-
-                OnNewMessage(new PackerEventArgs($"{DateTime.Now:HH:mm:ss} === writing acceleration structure data"));
-                WriteAccelerationStructureData(stream);
+                if (options.PackAccelerationStructures)
+                {
+                    OnNewMessage(new PackerEventArgs($"{DateTime.Now:HH:mm:ss} === writing acceleration structure data"));
+                    WriteAccelerationStructureData(stream);
+                }
 
                 WriteHiddenObjectsData(stream);
 
