@@ -347,6 +347,8 @@ namespace RyzeEditor
                     _objectHierarchyControl.UpdateHierarchy(entities);
                 }
 
+                _serverClient = new ServerClient(_worldMap);
+
                 _userResized = true;
             }
         }
