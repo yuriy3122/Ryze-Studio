@@ -134,8 +134,9 @@ namespace RyzeEditor.Packer
                 if (options.PackTextures)
                 {
                     OnNewMessage(new PackerEventArgs($"{DateTime.Now:HH:mm:ss} === writing texture data"));
-                    WriteTextureData(stream);
                 }
+
+                WriteTextureData(stream, options.PackTextures);
             }
 
             _collisionWriter.Dispose();
@@ -809,14 +810,19 @@ namespace RyzeEditor.Packer
             }
         }
 
-        private void WriteTextureData(Stream stream)
+        private void WriteTextureData(Stream stream, bool packTextures)
         {
             long pos = stream.Position;
             stream.Position = _tmpPos;
             stream.Write(BitConverter.GetBytes((int)pos), 0, sizeof(int));
             stream.Position = pos;
 
-            stream.Write(BitConverter.GetBytes(ID_TEXTURE_BLOCK_CHUNK), 0, sizeof(ushort));//Chunk Header   
+            stream.Write(BitConverter.GetBytes(ID_TEXTURE_BLOCK_CHUNK), 0, sizeof(ushort));//Chunk Header
+
+            if (!packTextures)
+            {
+                return;
+            }                                                                       
 
             foreach (var texture in _worldMapData.Textures)
             {
