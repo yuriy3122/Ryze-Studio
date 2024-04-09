@@ -25,6 +25,8 @@ namespace RyzeEditor.Packer
 
         public bool PackWorldChunkData { get; set; }
 
+        public bool PackHiddenObjects { get; set; }
+
         public bool ConsoleOutput { get; set; }
     }
 }

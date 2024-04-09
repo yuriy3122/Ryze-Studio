@@ -142,7 +142,10 @@ namespace RyzeEditor.Packer
                     WriteAccelerationStructureData(stream);
                 }
 
-                WriteHiddenObjectsData(stream);
+                if (options.PackHiddenObjects)
+                {
+                    WriteHiddenObjectsData(stream);
+                }
 
                 if (options.PackTextures)
                 {
