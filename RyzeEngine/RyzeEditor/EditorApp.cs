@@ -108,7 +108,7 @@ namespace RyzeEditor
             _renderer = new RendererD3d();
             _renderer.Initialize(form.Handle, _worldMap.Camera);
             var context = new RenderContext(_renderer, _toolManager);
-            _serverClient = new ServerClient(_worldMap);
+            _serverClient = new ServerClient();
             _syncSuspended = true;
 
             _worldMap.EntityAdded += WorldMapEntityAdded;
@@ -127,16 +127,10 @@ namespace RyzeEditor
                     _userResized = false;
                 }
 
-                if (!_syncSuspended)
-                {
-                    _serverClient.UpdateState();
-                }
-
                 context.RenderWorld(_worldMap);
             });
 
             context.Dispose();
-            _serverClient.Dispose();
         }
 
         private void ObjectHierarchyControlSelectionChanged(object sender, EntityEventArgs e)
@@ -170,8 +164,6 @@ namespace RyzeEditor
 
             _objectHierarchyControl.UpdateHierarchy(entities);
 
-            _serverClient.Update();
-
             _log.Info($"Added: {_worldMap.Entities.FirstOrDefault(x => x.Id == e.EntityId)}");
         }
 
@@ -184,8 +176,6 @@ namespace RyzeEditor
 
             var entities = _worldMap.Entities.ToList();
             entities.Add(_worldMap.Camera);
-
-            _serverClient.Update();
 
             _objectHierarchyControl.UpdateHierarchy(entities);
         }
@@ -298,6 +288,10 @@ namespace RyzeEditor
                 {
                     _serverClient.Suspend();
                 }
+                else
+                {
+                    _serverClient.ProcessMessages(_worldMap);
+                }
             };
         }
 
@@ -352,7 +346,7 @@ namespace RyzeEditor
                     _objectHierarchyControl.UpdateHierarchy(entities);
                 }
 
-                _serverClient = new ServerClient(_worldMap);
+                _serverClient = new ServerClient();
 
                 _userResized = true;
             }

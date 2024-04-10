@@ -1,9 +1,10 @@
 ﻿using System;
-using System.Text;
-using System.Collections.Concurrent;
-using System.Collections.Generic;
+using System.IO;
+using System.Linq;
 using System.Net.Sockets;
 using System.Threading.Tasks;
+using System.Collections.Generic;
+using SharpDX;
 using RyzeEditor.GameWorld;
 using RyzeEditor.Packer;
 
@@ -11,94 +12,85 @@ namespace RyzeEditor
 {
     public class ServerClient
     {
-        private readonly Dictionary<int, GameObject> _gameObjectMap;
-        private readonly ConcurrentStack<string> _stack;
         private const int UdpPort = 11000;
-        protected WorldMap _worldMap;
 
-        private bool _needUpdate;
-
-        public ServerClient(WorldMap world)
+        public ServerClient()
         {
-            _worldMap = world;
-            _gameObjectMap = new Dictionary<int, GameObject>();
-            _stack = new ConcurrentStack<string>();
-
-            ReceiveMessage();
-
-            _needUpdate = true;
-        }
-
-        public void Update()
-        {
-            _needUpdate = true;
         }
 
         public void Suspend()
         {
-            //Send command to the Server to suspend simulation
+            //TODO: Send command to Server to Suspend
         }
 
-        private void ReceiveMessage()
+        public void ProcessMessages(WorldMap worldMap)
         {
-            Task.Run(async () =>
+            var task = Task.Run(async () =>
             {
+                PackWorldData(worldMap);
+
+                //TODO: Run Server Process
+
+                var gameObjectMap = new Dictionary<int, GameObject>();
+                var gameObjects = worldMap.Entities.OfType<GameObject>().ToList();
+
+                foreach (var gameObject in gameObjects)
+                {
+                    gameObjectMap[(int)gameObject.UserData] = gameObject;
+                }
+
+                byte[] buffer = new byte[1024];
+
                 using (var udpClient = new UdpClient(UdpPort))
                 {
                     while (true)
                     {
-                        try
+                        var receivedData = await udpClient.ReceiveAsync();
+
+                        using (var memoryStream = new MemoryStream(receivedData.Buffer))
                         {
-                            var receivedResult = await udpClient.ReceiveAsync();
-                            _stack.Push(Encoding.ASCII.GetString(receivedResult.Buffer));
-                        }
-                        catch (Exception ex)
-                        {
-                            Console.WriteLine(ex.Message);
+                            memoryStream.Read(buffer, 0, sizeof(ushort));
+                            ushort header = BitConverter.ToUInt16(buffer, 0);
+
+                            if (header == 1)
+                            {
+                                memoryStream.Read(buffer, 0, 32);
+                                var objectId = BitConverter.ToInt32(buffer, 0);
+
+                                if (gameObjectMap.ContainsKey(objectId))
+                                {
+                                    float px = BitConverter.ToSingle(buffer, 4);
+                                    float py = BitConverter.ToSingle(buffer, 8);
+                                    float pz = -1.0f * BitConverter.ToSingle(buffer, 12);
+                                    gameObjectMap[objectId].Position = new Vector3(px, py, pz);
+
+                                    float rx = -1.0f * BitConverter.ToSingle(buffer, 16);
+                                    float ry = -1.0f * BitConverter.ToSingle(buffer, 20);
+                                    float rz = BitConverter.ToSingle(buffer, 24);
+                                    float rw = BitConverter.ToSingle(buffer, 28);
+                                    gameObjectMap[objectId].Rotation = new Quaternion(rx, ry, rz, rw);
+                                }
+                            }
                         }
                     }
                 }
             });
         }
 
-        public void UpdateState()
+        private void PackWorldData(WorldMap worldMap)
         {
-            if (_needUpdate)
-            {
-                CleanUpDynamicsWorldData();
-                InitDynamicsWorldData();
-                _needUpdate = false;
-            }
-
-            int count = Math.Min(1000, _stack.Count);
-
-            for (int i = 0; i < count; i++)
-            {
-                if (_stack.TryPeek(out string message))
-                {
-                    Console.WriteLine(message);
-                }
-            }
-
-            _stack.Clear();
-        }
-
-        private void CleanUpDynamicsWorldData()
-        {
-        }
-
-        private void InitDynamicsWorldData()
-        {
-            _gameObjectMap?.Clear();
-
             var options = new PackerOptions();
-            var packer = new WorldMapPacker(_worldMap, options);
+            var packer = new WorldMapPacker(worldMap, options);
             packer.Execute();
         }
+    }
 
-        public void Dispose()
-        {
-            CleanUpDynamicsWorldData();
-        }
+    public class GameObjectMessage
+    {
+        public int ObjectId { get; set; }
+
+        public Vector3 Position { get; set; }
+
+        public Quaternion Rotation { get; set; }
     }
 }
