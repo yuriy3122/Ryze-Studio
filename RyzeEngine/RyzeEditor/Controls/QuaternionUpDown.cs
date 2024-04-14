@@ -14,7 +14,9 @@ namespace RyzeEditor.Controls
 		[field: NonSerialized]
 		public EventHandler ValueChanged;
 
-		public Vector3 Axis
+        delegate void SetValuesCallback();
+
+        public Vector3 Axis
         {
 			get
 			{
@@ -24,19 +26,32 @@ namespace RyzeEditor.Controls
 			{
                 _axis = value;
 
-				numSpinXAxis.ValueChanged -= NumSpinXAxis_ValueChanged;
-				numSpinYAxis.ValueChanged -= NumSpinYAxis_ValueChanged;
-				numSpinZAxis.ValueChanged -= NumSpinZAxis_ValueChanged;
+                SetValues();
+			}
+		}
+
+        private void SetValues()
+        {
+            if (InvokeRequired)
+            {
+                SetValuesCallback d = new SetValuesCallback(SetValues);
+                Invoke(d);
+            }
+            else
+            {
+                numSpinXAxis.ValueChanged -= NumSpinXAxis_ValueChanged;
+                numSpinYAxis.ValueChanged -= NumSpinYAxis_ValueChanged;
+                numSpinZAxis.ValueChanged -= NumSpinZAxis_ValueChanged;
 
                 numSpinXAxis.Value = _axis.X.ToDecimal();
-				numSpinYAxis.Value = _axis.Y.ToDecimal();
+                numSpinYAxis.Value = _axis.Y.ToDecimal();
                 numSpinZAxis.Value = _axis.Z.ToDecimal();
 
                 numSpinXAxis.ValueChanged += NumSpinXAxis_ValueChanged;
-				numSpinYAxis.ValueChanged += NumSpinYAxis_ValueChanged;
-				numSpinZAxis.ValueChanged += NumSpinZAxis_ValueChanged;
-			}
-		}
+                numSpinYAxis.ValueChanged += NumSpinYAxis_ValueChanged;
+                numSpinZAxis.ValueChanged += NumSpinZAxis_ValueChanged;
+            }
+        }
 
         public float Angle
         {

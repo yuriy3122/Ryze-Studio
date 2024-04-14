@@ -2,6 +2,7 @@
 using System.Windows.Forms;
 using SharpDX;
 using RyzeEditor.Extentions;
+using SharpDX.Direct3D11;
 
 namespace RyzeEditor.Controls
 {
@@ -16,7 +17,9 @@ namespace RyzeEditor.Controls
 		[field: NonSerialized]
 		public EventHandler ValueChanged;
 
-		public Vector3 Vector
+        delegate void SetValuesCallback();
+
+        public Vector3 Vector
 		{
 			get
 			{
@@ -31,19 +34,32 @@ namespace RyzeEditor.Controls
 
 				_vector = value;
 
-				numSpinXAxis.ValueChanged -= NumSpinXAxis_ValueChanged;
-				numSpinYAxis.ValueChanged -= NumSpinYAxis_ValueChanged;
-				numSpinZAxis.ValueChanged -= NumSpinZAxis_ValueChanged;
+                SetValues();
+            }
+		}
 
-				numSpinXAxis.Value = _vector.X.ToDecimal();
-				numSpinYAxis.Value = _vector.Y.ToDecimal();
+        private void SetValues()
+        {
+            if (InvokeRequired)
+            {
+                SetValuesCallback d = new SetValuesCallback(SetValues);
+                Invoke(d);
+            }
+            else
+            {
+                numSpinXAxis.ValueChanged -= NumSpinXAxis_ValueChanged;
+                numSpinYAxis.ValueChanged -= NumSpinYAxis_ValueChanged;
+                numSpinZAxis.ValueChanged -= NumSpinZAxis_ValueChanged;
+
+                numSpinXAxis.Value = _vector.X.ToDecimal();
+                numSpinYAxis.Value = _vector.Y.ToDecimal();
                 numSpinZAxis.Value = _vector.Z.ToDecimal();
 
                 numSpinXAxis.ValueChanged += NumSpinXAxis_ValueChanged;
-				numSpinYAxis.ValueChanged += NumSpinYAxis_ValueChanged;
-				numSpinZAxis.ValueChanged += NumSpinZAxis_ValueChanged;
-			}
-		}
+                numSpinYAxis.ValueChanged += NumSpinYAxis_ValueChanged;
+                numSpinZAxis.ValueChanged += NumSpinZAxis_ValueChanged;
+            }
+        }
 
 		public VectorUpDown()
 		{

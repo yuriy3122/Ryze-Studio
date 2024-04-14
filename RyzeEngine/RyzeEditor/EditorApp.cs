@@ -40,9 +40,6 @@ namespace RyzeEditor
         private Size _clientSize;
 
         [field: NonSerialized]
-        private bool _syncSuspended;
-
-        [field: NonSerialized]
         private ObjectHierarchyControl _objectHierarchyControl;
 
         [field: NonSerialized]
@@ -72,7 +69,7 @@ namespace RyzeEditor
             bool userMinimized = false;
 
             var camera = CreateDefaultCamera(form);
-            _worldMap = new WorldMap(camera);
+            _worldMap = new WorldMap(camera) { Name = Guid.NewGuid().ToString() };
             _worldMap.AddEntity(new SunLight());
 
             form.UserResized += (sender, args) =>
@@ -108,8 +105,8 @@ namespace RyzeEditor
             _renderer = new RendererD3d();
             _renderer.Initialize(form.Handle, _worldMap.Camera);
             var context = new RenderContext(_renderer, _toolManager);
-            _serverClient = new ServerClient();
-            _syncSuspended = true;
+            _serverClient = new ServerClient { WorldMap = _worldMap };
+            _serverClient.ProcessMessages();
 
             _worldMap.EntityAdded += WorldMapEntityAdded;
             _worldMap.EntityDeleted += WorldMapEntityDeleted;
@@ -211,6 +208,7 @@ namespace RyzeEditor
 
             form.ToolChanged += (sender, args) =>
             {
+                _serverClient.IsSuspended = true;
                 _toolManager.SetActiveTool(args.Tool);
                 form.Inspector.UpdateControls(_toolManager.GetFirstActiveTool());
             };
@@ -262,6 +260,7 @@ namespace RyzeEditor
                     var options = new PackerOptions()
                     {
                         Logger = _log,
+                        InvokeEvents = true,
                         PackTextures = true,
                         PackMaterials = true,
                         PackPointLights = true,
@@ -280,18 +279,9 @@ namespace RyzeEditor
                 }
             };
 
-            form.SimulationSuspendedClicked += (sender, args) => 
+            form.SimulationSuspendedClicked += (sender, args) =>
             {
-                _syncSuspended = !_syncSuspended;
-
-                if (_syncSuspended)
-                {
-                    _serverClient.Suspend();
-                }
-                else
-                {
-                    _serverClient.ProcessMessages(_worldMap);
-                }
+                _serverClient.IsSuspended = !_serverClient.IsSuspended;
             };
         }
 
@@ -330,6 +320,7 @@ namespace RyzeEditor
                     return;
                 }
 
+                _worldMap.Name = Guid.NewGuid().ToString();
                 _worldMap.Camera.AspectRatio = (float)_clientSize.Width / _clientSize.Height;
                 _worldMap.Camera.ClientWndSize = _clientSize;
                 _toolManager.WorldMap = _worldMap;
@@ -346,7 +337,8 @@ namespace RyzeEditor
                     _objectHierarchyControl.UpdateHierarchy(entities);
                 }
 
-                _serverClient = new ServerClient();
+                _serverClient.IsSuspended = true;
+                _serverClient.WorldMap = _worldMap;
 
                 _userResized = true;
             }

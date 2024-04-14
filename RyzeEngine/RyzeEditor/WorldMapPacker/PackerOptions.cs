@@ -28,5 +28,7 @@ namespace RyzeEditor.Packer
         public bool PackHiddenObjects { get; set; }
 
         public bool ConsoleOutput { get; set; }
+
+        public bool InvokeEvents { get; set; }
     }
 }

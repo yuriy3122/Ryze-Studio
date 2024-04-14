@@ -42,6 +42,8 @@ namespace RyzeEditor.Controls
         [field: NonSerialized]
         private NumericUpDown _suspensionDampingNumericUpDown;
 
+        delegate void SetValuesCallback();
+
         public string ChassisMeshId
         {
             get
@@ -301,35 +303,43 @@ namespace RyzeEditor.Controls
 
         private void UpdateCustomControls()
         {
-            if (_selectedWheel != null)
+            if (InvokeRequired)
             {
-                _wheelAxleVectorUpDown.ValueChanged -= WheelAxleValueChanged;
-                _wheelAxleVectorUpDown.Vector = _selectedWheel.AxleCS;
-                _wheelAxleVectorUpDown.ValueChanged += WheelAxleValueChanged;
+                SetValuesCallback d = new SetValuesCallback(UpdateCustomControls);
+                Invoke(d);
+            }
+            else
+            {
+                if (_selectedWheel != null)
+                {
+                    _wheelAxleVectorUpDown.ValueChanged -= WheelAxleValueChanged;
+                    _wheelAxleVectorUpDown.Vector = _selectedWheel.AxleCS;
+                    _wheelAxleVectorUpDown.ValueChanged += WheelAxleValueChanged;
 
-                _wheelDirectionCSVectorUpDown.ValueChanged -= WheelDirectionCSVectorValueChanged;
-                _wheelDirectionCSVectorUpDown.Vector = _selectedWheel.WheelDirectionCS;
-                _wheelDirectionCSVectorUpDown.ValueChanged += WheelDirectionCSVectorValueChanged;
+                    _wheelDirectionCSVectorUpDown.ValueChanged -= WheelDirectionCSVectorValueChanged;
+                    _wheelDirectionCSVectorUpDown.Vector = _selectedWheel.WheelDirectionCS;
+                    _wheelDirectionCSVectorUpDown.ValueChanged += WheelDirectionCSVectorValueChanged;
 
-                _chassisConnectionPointCSVectorUpDown.ValueChanged -= ChassisConnectionPointCSValueChanged;
-                _chassisConnectionPointCSVectorUpDown.Vector = _selectedWheel.ChassisConnectionPointCS;
-                _chassisConnectionPointCSVectorUpDown.ValueChanged += ChassisConnectionPointCSValueChanged;
+                    _chassisConnectionPointCSVectorUpDown.ValueChanged -= ChassisConnectionPointCSValueChanged;
+                    _chassisConnectionPointCSVectorUpDown.Vector = _selectedWheel.ChassisConnectionPointCS;
+                    _chassisConnectionPointCSVectorUpDown.ValueChanged += ChassisConnectionPointCSValueChanged;
 
-                _suspensionRestLengthNumericUpDown.ValueChanged -= SuspensionRestLengthValueChanged;
-                _suspensionRestLengthNumericUpDown.Value = Convert.ToDecimal(_selectedWheel.SuspensionRestLength);
-                _suspensionRestLengthNumericUpDown.ValueChanged += SuspensionRestLengthValueChanged;
+                    _suspensionRestLengthNumericUpDown.ValueChanged -= SuspensionRestLengthValueChanged;
+                    _suspensionRestLengthNumericUpDown.Value = Convert.ToDecimal(_selectedWheel.SuspensionRestLength);
+                    _suspensionRestLengthNumericUpDown.ValueChanged += SuspensionRestLengthValueChanged;
 
-                _suspensionStiffnessNumericUpDown.ValueChanged -= SuspensionStiffnessValueChanged;
-                _suspensionStiffnessNumericUpDown.Value = Convert.ToDecimal(_selectedWheel.SuspensionStiffness);
-                _suspensionStiffnessNumericUpDown.ValueChanged += SuspensionStiffnessValueChanged;
+                    _suspensionStiffnessNumericUpDown.ValueChanged -= SuspensionStiffnessValueChanged;
+                    _suspensionStiffnessNumericUpDown.Value = Convert.ToDecimal(_selectedWheel.SuspensionStiffness);
+                    _suspensionStiffnessNumericUpDown.ValueChanged += SuspensionStiffnessValueChanged;
 
-                _suspensionCompressionNumericUpDown.ValueChanged -= SuspensionCompressionValueChanged;
-                _suspensionCompressionNumericUpDown.Value = Convert.ToDecimal(_selectedWheel.SuspensionCompression);
-                _suspensionCompressionNumericUpDown.ValueChanged += SuspensionCompressionValueChanged;
+                    _suspensionCompressionNumericUpDown.ValueChanged -= SuspensionCompressionValueChanged;
+                    _suspensionCompressionNumericUpDown.Value = Convert.ToDecimal(_selectedWheel.SuspensionCompression);
+                    _suspensionCompressionNumericUpDown.ValueChanged += SuspensionCompressionValueChanged;
 
-                _suspensionDampingNumericUpDown.ValueChanged -= SuspensionDampingValueChanged;
-                _suspensionDampingNumericUpDown.Value = Convert.ToDecimal(_selectedWheel.SuspensionDamping);
-                _suspensionDampingNumericUpDown.ValueChanged += SuspensionDampingValueChanged;
+                    _suspensionDampingNumericUpDown.ValueChanged -= SuspensionDampingValueChanged;
+                    _suspensionDampingNumericUpDown.Value = Convert.ToDecimal(_selectedWheel.SuspensionDamping);
+                    _suspensionDampingNumericUpDown.ValueChanged += SuspensionDampingValueChanged;
+                }
             }
         }
 

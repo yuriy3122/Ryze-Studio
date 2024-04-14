@@ -23,7 +23,10 @@ namespace RyzeEditor.GameWorld
         [field: NonSerialized]
         public event EventHandler<EntityEventArgs> EntityDeleted;
 
-		public Camera Camera { get; private set; }
+        [field: NonSerialized]
+        public string Name;
+
+        public Camera Camera { get; private set; }
 
 		public IEnumerable<EntityBase> Entities
 		{

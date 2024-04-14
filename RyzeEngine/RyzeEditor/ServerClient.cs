@@ -9,80 +9,126 @@ using RyzeEditor.GameWorld;
 using RyzeEditor.Packer;
 using System.Diagnostics;
 using System.Reflection;
+using System.Threading;
 
 namespace RyzeEditor
 {
     public class ServerClient
     {
         private const int UdpPort = 11000;
+        
+        public WorldMap WorldMap { get; set; }
+
+        private volatile int _isSuspended = 1;
 
         public ServerClient()
         {
         }
 
-        public void Suspend()
-        {
-            //TODO: Send command to Server to Suspend
+        public bool IsSuspended
+        { 
+            get
+            {
+                return Interlocked.CompareExchange(ref _isSuspended, 0, 0) > 0;
+            }
+
+            set
+            {
+                if (value)
+                {
+                    if (Interlocked.CompareExchange(ref _isSuspended, 0, 0) == 0)
+                    {
+                        Interlocked.Increment(ref _isSuspended);
+                    }
+                }
+                else
+                {
+                    Interlocked.Decrement(ref _isSuspended);
+                }
+            }
         }
 
-        public void ProcessMessages(WorldMap worldMap)
+        public void ProcessMessages()
         {
             var task = Task.Run(async () =>
             {
-                PackWorldData(worldMap);
+                string gameWordName = string.Empty;
+                Dictionary<int, GameObject> gameObjectMap = null;
 
-                RestartServerProcess();
-
-                var gameObjectMap = new Dictionary<int, GameObject>();
-                var gameObjects = worldMap.Entities.OfType<GameObject>().ToList();
-
-                foreach (var gameObject in gameObjects)
-                {
-                    gameObjectMap[(int)gameObject.UserData] = gameObject;
-                }
-
+                UdpClient udpClient = null;
                 byte[] buffer = new byte[1024];
 
-                using (var udpClient = new UdpClient(UdpPort))
+                while (true)
                 {
-                    while (true)
+                    if (!IsSuspended)
                     {
-                        var receivedData = await udpClient.ReceiveAsync();
-
-                        using (var memoryStream = new MemoryStream(receivedData.Buffer))
+                        try
                         {
-                            memoryStream.Read(buffer, 0, sizeof(ushort));
-                            ushort header = BitConverter.ToUInt16(buffer, 0);
-
-                            if (header == 1)
+                            if (gameWordName != WorldMap.Name)
                             {
-                                memoryStream.Read(buffer, 0, 32);
-                                var objectId = BitConverter.ToInt32(buffer, 0);
+                                udpClient?.Close();
 
-                                if (gameObjectMap.ContainsKey(objectId))
+                                PackWorldData();
+
+                                RestartServerProcess();
+
+                                gameObjectMap = new Dictionary<int, GameObject>();
+                                var gameObjects = WorldMap.Entities.OfType<GameObject>().ToList();
+
+                                foreach (var gameObject in gameObjects)
                                 {
-                                    float px = BitConverter.ToSingle(buffer, 4);
-                                    float py = BitConverter.ToSingle(buffer, 8);
-                                    float pz = -1.0f * BitConverter.ToSingle(buffer, 12);
-                                    gameObjectMap[objectId].Position = new Vector3(px, py, pz);
+                                    if (gameObject.UserData != null)
+                                    {
+                                        gameObjectMap[(int)gameObject.UserData] = gameObject;
+                                    }
+                                }
 
-                                    float rx = -1.0f * BitConverter.ToSingle(buffer, 16);
-                                    float ry = -1.0f * BitConverter.ToSingle(buffer, 20);
-                                    float rz = BitConverter.ToSingle(buffer, 24);
-                                    float rw = BitConverter.ToSingle(buffer, 28);
-                                    gameObjectMap[objectId].Rotation = new Quaternion(rx, ry, rz, rw);
+                                gameWordName = WorldMap.Name;
+
+                                udpClient = new UdpClient(UdpPort);
+                            }
+
+                            var receivedData = await udpClient.ReceiveAsync();
+
+                            using (var memoryStream = new MemoryStream(receivedData.Buffer))
+                            {
+                                memoryStream.Read(buffer, 0, sizeof(ushort));
+                                ushort header = BitConverter.ToUInt16(buffer, 0);
+
+                                if (header == 1)
+                                {
+                                    memoryStream.Read(buffer, 0, 32);
+                                    var objectId = BitConverter.ToInt32(buffer, 0);
+
+                                    if (gameObjectMap.ContainsKey(objectId))
+                                    {
+                                        float px = BitConverter.ToSingle(buffer, 4);
+                                        float py = BitConverter.ToSingle(buffer, 8);
+                                        float pz = -1.0f * BitConverter.ToSingle(buffer, 12);
+                                        gameObjectMap[objectId].Position = new Vector3(px, py, pz);
+
+                                        float rx = -1.0f * BitConverter.ToSingle(buffer, 16);
+                                        float ry = -1.0f * BitConverter.ToSingle(buffer, 20);
+                                        float rz = BitConverter.ToSingle(buffer, 24);
+                                        float rw = BitConverter.ToSingle(buffer, 28);
+                                        gameObjectMap[objectId].Rotation = new Quaternion(rx, ry, rz, rw);
+                                    }
                                 }
                             }
+                        }
+                        catch (Exception ex)
+                        {
+                            Console.WriteLine(ex.Message);
                         }
                     }
                 }
             });
         }
 
-        private void PackWorldData(WorldMap worldMap)
+        private void PackWorldData()
         {
             var options = new PackerOptions();
-            var packer = new WorldMapPacker(worldMap, options);
+            var packer = new WorldMapPacker(WorldMap, options);
             packer.Execute();
         }
 
@@ -92,9 +138,8 @@ namespace RyzeEditor
 
             try
             {
-                var allProcesses = Process.GetProcesses();
-
                 var processes = Process.GetProcessesByName(app);
+
                 foreach (Process proc in processes)
                 {
                     proc.Kill();
