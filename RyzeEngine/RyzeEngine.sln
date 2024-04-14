@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.28010.2019
+# Visual Studio Version 17
+VisualStudioVersion = 17.9.34723.18
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{681C11C5-C2CD-45A7-BAA8-BC0C9136361C}"
 	ProjectSection(SolutionItems) = preProject
@@ -25,6 +25,8 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SharpDX.Mathematics", "SharpDX.Mathematics\SharpDX.Mathematics.csproj", "{137C9ABE-4109-4344-A9E6-651CB79B3D90}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SharpDX.RawInput", "SharpDX.RawInput\SharpDX.RawInput.csproj", "{F9D27B7C-0825-4AB7-83DE-133E00FD0A68}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "GameServer", "GameServer\GameServer.vcxproj", "{A74CF7F6-4D69-4631-B6C6-C673D1EAAED4}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -83,6 +85,7 @@ Global
 		{6671F0BA-6FB8-4F35-8392-0676D05113A8}.Hybrid|x64.ActiveCfg = Hybrid|x64
 		{6671F0BA-6FB8-4F35-8392-0676D05113A8}.Hybrid|x64.Build.0 = Hybrid|x64
 		{6671F0BA-6FB8-4F35-8392-0676D05113A8}.Release|Any CPU.ActiveCfg = Release|x64
+		{6671F0BA-6FB8-4F35-8392-0676D05113A8}.Release|Any CPU.Build.0 = Release|x64
 		{6671F0BA-6FB8-4F35-8392-0676D05113A8}.Release|ARM.ActiveCfg = Release|x64
 		{6671F0BA-6FB8-4F35-8392-0676D05113A8}.Release|Mixed Platforms.ActiveCfg = Debug|x64
 		{6671F0BA-6FB8-4F35-8392-0676D05113A8}.Release|Mixed Platforms.Build.0 = Debug|x64
@@ -299,6 +302,36 @@ Global
 		{F9D27B7C-0825-4AB7-83DE-133E00FD0A68}.Release|Win32.Build.0 = Release|Any CPU
 		{F9D27B7C-0825-4AB7-83DE-133E00FD0A68}.Release|x64.ActiveCfg = Release|Any CPU
 		{F9D27B7C-0825-4AB7-83DE-133E00FD0A68}.Release|x64.Build.0 = Release|Any CPU
+		{A74CF7F6-4D69-4631-B6C6-C673D1EAAED4}.Debug|Any CPU.ActiveCfg = Debug|x64
+		{A74CF7F6-4D69-4631-B6C6-C673D1EAAED4}.Debug|Any CPU.Build.0 = Debug|x64
+		{A74CF7F6-4D69-4631-B6C6-C673D1EAAED4}.Debug|ARM.ActiveCfg = Debug|x64
+		{A74CF7F6-4D69-4631-B6C6-C673D1EAAED4}.Debug|ARM.Build.0 = Debug|x64
+		{A74CF7F6-4D69-4631-B6C6-C673D1EAAED4}.Debug|Mixed Platforms.ActiveCfg = Debug|x64
+		{A74CF7F6-4D69-4631-B6C6-C673D1EAAED4}.Debug|Mixed Platforms.Build.0 = Debug|x64
+		{A74CF7F6-4D69-4631-B6C6-C673D1EAAED4}.Debug|Win32.ActiveCfg = Debug|Win32
+		{A74CF7F6-4D69-4631-B6C6-C673D1EAAED4}.Debug|Win32.Build.0 = Debug|Win32
+		{A74CF7F6-4D69-4631-B6C6-C673D1EAAED4}.Debug|x64.ActiveCfg = Debug|x64
+		{A74CF7F6-4D69-4631-B6C6-C673D1EAAED4}.Debug|x64.Build.0 = Debug|x64
+		{A74CF7F6-4D69-4631-B6C6-C673D1EAAED4}.Hybrid|Any CPU.ActiveCfg = Debug|x64
+		{A74CF7F6-4D69-4631-B6C6-C673D1EAAED4}.Hybrid|Any CPU.Build.0 = Debug|x64
+		{A74CF7F6-4D69-4631-B6C6-C673D1EAAED4}.Hybrid|ARM.ActiveCfg = Debug|x64
+		{A74CF7F6-4D69-4631-B6C6-C673D1EAAED4}.Hybrid|ARM.Build.0 = Debug|x64
+		{A74CF7F6-4D69-4631-B6C6-C673D1EAAED4}.Hybrid|Mixed Platforms.ActiveCfg = Debug|x64
+		{A74CF7F6-4D69-4631-B6C6-C673D1EAAED4}.Hybrid|Mixed Platforms.Build.0 = Debug|x64
+		{A74CF7F6-4D69-4631-B6C6-C673D1EAAED4}.Hybrid|Win32.ActiveCfg = Debug|Win32
+		{A74CF7F6-4D69-4631-B6C6-C673D1EAAED4}.Hybrid|Win32.Build.0 = Debug|Win32
+		{A74CF7F6-4D69-4631-B6C6-C673D1EAAED4}.Hybrid|x64.ActiveCfg = Debug|x64
+		{A74CF7F6-4D69-4631-B6C6-C673D1EAAED4}.Hybrid|x64.Build.0 = Debug|x64
+		{A74CF7F6-4D69-4631-B6C6-C673D1EAAED4}.Release|Any CPU.ActiveCfg = Release|x64
+		{A74CF7F6-4D69-4631-B6C6-C673D1EAAED4}.Release|Any CPU.Build.0 = Release|x64
+		{A74CF7F6-4D69-4631-B6C6-C673D1EAAED4}.Release|ARM.ActiveCfg = Release|x64
+		{A74CF7F6-4D69-4631-B6C6-C673D1EAAED4}.Release|ARM.Build.0 = Release|x64
+		{A74CF7F6-4D69-4631-B6C6-C673D1EAAED4}.Release|Mixed Platforms.ActiveCfg = Release|x64
+		{A74CF7F6-4D69-4631-B6C6-C673D1EAAED4}.Release|Mixed Platforms.Build.0 = Release|x64
+		{A74CF7F6-4D69-4631-B6C6-C673D1EAAED4}.Release|Win32.ActiveCfg = Release|Win32
+		{A74CF7F6-4D69-4631-B6C6-C673D1EAAED4}.Release|Win32.Build.0 = Release|Win32
+		{A74CF7F6-4D69-4631-B6C6-C673D1EAAED4}.Release|x64.ActiveCfg = Release|x64
+		{A74CF7F6-4D69-4631-B6C6-C673D1EAAED4}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

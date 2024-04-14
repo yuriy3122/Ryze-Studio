@@ -7,6 +7,8 @@ using System.Collections.Generic;
 using SharpDX;
 using RyzeEditor.GameWorld;
 using RyzeEditor.Packer;
+using System.Diagnostics;
+using System.Reflection;
 
 namespace RyzeEditor
 {
@@ -29,7 +31,7 @@ namespace RyzeEditor
             {
                 PackWorldData(worldMap);
 
-                //TODO: Run Server Process
+                RestartServerProcess();
 
                 var gameObjectMap = new Dictionary<int, GameObject>();
                 var gameObjects = worldMap.Entities.OfType<GameObject>().ToList();
@@ -82,6 +84,39 @@ namespace RyzeEditor
             var options = new PackerOptions();
             var packer = new WorldMapPacker(worldMap, options);
             packer.Execute();
+        }
+
+        private void RestartServerProcess()
+        {
+            const string app = "GameServer";
+
+            try
+            {
+                var allProcesses = Process.GetProcesses();
+
+                var processes = Process.GetProcessesByName(app);
+                foreach (Process proc in processes)
+                {
+                    proc.Kill();
+                    proc.WaitForExit(1000);
+                }
+            }
+            catch (NullReferenceException) {/* no instance running */}
+
+            try
+            {
+                var proc = new ProcessStartInfo($"{app}.exe")
+                {
+                    Arguments = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location),
+                    WindowStyle = ProcessWindowStyle.Hidden
+                };
+
+                Process.Start(proc);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(app + " shutdown exception: " + ex.Message);
+            }
         }
     }
 

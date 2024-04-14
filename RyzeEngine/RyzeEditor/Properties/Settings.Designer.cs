@@ -12,7 +12,7 @@ namespace RyzeEditor.Properties {
     
     
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.Editors.SettingsDesigner.SettingsSingleFileGenerator", "17.7.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.Editors.SettingsDesigner.SettingsSingleFileGenerator", "17.9.0.0")]
     internal sealed partial class Settings : global::System.Configuration.ApplicationSettingsBase {
         
         private static Settings defaultInstance = ((Settings)(global::System.Configuration.ApplicationSettingsBase.Synchronized(new Settings())));
@@ -61,19 +61,19 @@ namespace RyzeEditor.Properties {
         
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("C:\\Users\\Yuriy\\Documents\\Ryze.bin")]
-        public string OutputFilePath {
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool RenderShadows {
             get {
-                return ((string)(this["OutputFilePath"]));
+                return ((bool)(this["RenderShadows"]));
             }
         }
         
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("True")]
-        public bool RenderShadows {
+        [global::System.Configuration.DefaultSettingValueAttribute("C:\\Projects\\Ryze.bin")]
+        public string OutputFilePath {
             get {
-                return ((bool)(this["RenderShadows"]));
+                return ((string)(this["OutputFilePath"]));
             }
         }
     }
