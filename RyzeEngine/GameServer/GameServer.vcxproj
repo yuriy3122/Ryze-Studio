@@ -522,12 +522,6 @@
     <ClCompile Include="PhysicsEngine.cpp" />
     <ClCompile Include="ResourceManager.cpp" />
   </ItemGroup>
-  <ItemGroup>
-    <Text Include="..\..\Bullet3\src\LinearMath\CMakeLists.txt" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="..\..\Bullet3\src\LinearMath\premake4.lua" />
-  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

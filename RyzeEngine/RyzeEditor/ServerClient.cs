@@ -2,14 +2,15 @@
 using System.IO;
 using System.Linq;
 using System.Net.Sockets;
+using System.Diagnostics;
+using System.Reflection;
+using System.Threading;
+using System.Windows.Forms;
 using System.Threading.Tasks;
 using System.Collections.Generic;
 using SharpDX;
 using RyzeEditor.GameWorld;
 using RyzeEditor.Packer;
-using System.Diagnostics;
-using System.Reflection;
-using System.Threading;
 
 namespace RyzeEditor
 {
@@ -19,10 +20,14 @@ namespace RyzeEditor
         
         public WorldMap WorldMap { get; set; }
 
-        private volatile int _isSuspended = 1;
+        private int _isSuspended = 1;
+
+        private readonly string _outputFile;
 
         public ServerClient()
         {
+            var dir = Path.GetDirectoryName(Application.ExecutablePath); ;
+            _outputFile = Path.Combine(dir, "collision_data.bin");
         }
 
         public bool IsSuspended
@@ -127,7 +132,7 @@ namespace RyzeEditor
 
         private void PackWorldData()
         {
-            var options = new PackerOptions();
+            var options = new PackerOptions() { OutputFilePath = _outputFile };
             var packer = new WorldMapPacker(WorldMap, options);
             packer.Execute();
         }
@@ -152,7 +157,7 @@ namespace RyzeEditor
             {
                 var proc = new ProcessStartInfo($"{app}.exe")
                 {
-                    Arguments = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location),
+                    Arguments = $"{Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location)} {_outputFile}",
                     WindowStyle = ProcessWindowStyle.Hidden
                 };
 

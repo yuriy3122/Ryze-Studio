@@ -1179,10 +1179,4 @@
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
-  <ItemGroup>
-    <Text Include="..\..\Bullet3\src\LinearMath\CMakeLists.txt" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="..\..\Bullet3\src\LinearMath\premake4.lua" />
-  </ItemGroup>
 </Project>

@@ -9,7 +9,7 @@ namespace RyzeEditor.Packer
     {
         private readonly WorldMap _worldMap;
 
-        private ILog _logger;
+        private readonly ILog _logger;
 
         private readonly PackerOptions _options;
 
@@ -68,8 +68,12 @@ namespace RyzeEditor.Packer
 
         public void CreateDefaultOptions()
         {
+            if (string.IsNullOrEmpty(_options.OutputFilePath))
+            {
+                _options.OutputFilePath = Settings.Default.OutputFilePath;
+            }
+
             _options.TextureFormat = Settings.Default.TextureFormat;
-            _options.OutputFilePath = Settings.Default.OutputFilePath;
             _options.PlatformAlignment = Settings.Default.PlatformAlignment;
         }
     }

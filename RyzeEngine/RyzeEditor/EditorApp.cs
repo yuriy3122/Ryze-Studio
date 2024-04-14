@@ -208,7 +208,6 @@ namespace RyzeEditor
 
             form.ToolChanged += (sender, args) =>
             {
-                _serverClient.IsSuspended = true;
                 _toolManager.SetActiveTool(args.Tool);
                 form.Inspector.UpdateControls(_toolManager.GetFirstActiveTool());
             };
@@ -260,7 +259,6 @@ namespace RyzeEditor
                     var options = new PackerOptions()
                     {
                         Logger = _log,
-                        InvokeEvents = true,
                         PackTextures = true,
                         PackMaterials = true,
                         PackPointLights = true,

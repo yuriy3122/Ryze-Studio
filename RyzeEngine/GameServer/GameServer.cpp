@@ -77,12 +77,22 @@ static void pack_object_data(char* data, game_object_t* object)
 	memcpy(data + offset, (void*)&rw, sizeof(float));
 }
 
+static string ExePath()
+{
+	CHAR buffer[MAX_PATH] = { 0 };
+	GetModuleFileNameA(NULL, buffer, MAX_PATH);
+	std::string::size_type pos = std::string(buffer).find_last_of("\\/");
+	return std::string(buffer).substr(0, pos);
+}
+
 int main()
 {
 	using namespace std::chrono_literals;
 
+	string path = ExePath() + "\\" + "collision_data.bin";
+
 	auto resourceManager = new ResourceManager();
-	resourceManager->LoadResourcesFromFile("C:\\Projects\\Ryze.bin");
+	resourceManager->LoadResourcesFromFile(path);
 
 	auto physicsEngine = new PhysicsEngine(resourceManager);
 	physicsEngine->Initialize();
