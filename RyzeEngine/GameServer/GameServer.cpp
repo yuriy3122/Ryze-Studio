@@ -6,6 +6,8 @@
 #include "winsock2.h"
 #include "ResourceManager.h";
 #include "PhysicsEngine.h";
+#include "Wheel.h"
+#include "Vehicle.h"
 #pragma comment(lib,"WS2_32")
 
 using namespace std;
@@ -87,6 +89,9 @@ static string ExePath()
 
 int main()
 {
+	size_t s1 = sizeof(vehicle_t);
+	size_t s2 = sizeof(wheel_t);
+
 	using namespace std::chrono_literals;
 
 	string path = ExePath() + "\\" + "collision_data.bin";

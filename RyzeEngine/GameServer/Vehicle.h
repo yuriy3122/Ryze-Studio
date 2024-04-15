@@ -1,10 +1,13 @@
 #include "Wheel.h"
+#include "GameObject.h"
 
 #ifndef Vehicle_h
 #define Vehicle_h
 
 typedef struct Vehicle
 {
+	game_object_t* gameObject;
+
     int vehicleId;
     
     int gameObjectId;

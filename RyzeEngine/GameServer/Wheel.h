@@ -1,7 +1,7 @@
 #ifndef Wheel_h
 #define Wheel_h
 
-#include "btBulletDynamicsCommon.h"
+#include "Vector.h"
 
 typedef struct Wheel
 {
@@ -17,14 +17,14 @@ typedef struct Wheel
     
     float suspensionRestLength;
     
-	btVector3 axleCS;
+	vector3_t axleCS;
 
-	btVector3 wheelDirectionCS;
+	vector3_t wheelDirectionCS;
 
-	btVector3 chassisConnectionPointCS;
+	vector3_t chassisConnectionPointCS;
     
     //rotation in model space
-    btQuaternion rotation;
+	quaternion_t rotation;
     
     float suspensionStiffness;
 

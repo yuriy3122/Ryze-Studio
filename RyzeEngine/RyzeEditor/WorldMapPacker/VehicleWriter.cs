@@ -73,7 +73,7 @@ namespace RyzeEditor.Packer
                     }
                 }
 
-                //Write Vehicle data struct (56 bytes)
+                //Write Vehicle data struct (72 bytes)
                 stream.Write(BitConverter.GetBytes(0L), 0, sizeof(long));                           //Reserve for 64-bit pointer
                 stream.Write(BitConverter.GetBytes(_vehicleId++), 0, sizeof(int));                  //Vehicle Id
                 stream.Write(BitConverter.GetBytes((int)vehicle.UserData), 0, sizeof(int));         //GameObject Id
