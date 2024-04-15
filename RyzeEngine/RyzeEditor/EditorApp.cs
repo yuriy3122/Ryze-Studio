@@ -69,7 +69,7 @@ namespace RyzeEditor
             bool userMinimized = false;
 
             var camera = CreateDefaultCamera(form);
-            _worldMap = new WorldMap(camera) { Name = Guid.NewGuid().ToString() };
+            _worldMap = new WorldMap(camera);
             _worldMap.AddEntity(new SunLight());
 
             form.UserResized += (sender, args) =>
@@ -166,10 +166,7 @@ namespace RyzeEditor
 
         private void WorldMapEntityDeleted(object sender, EntityEventArgs e)
         {
-            if (_selection != null)
-            {
-                _selection.RemoveEntity(e.EntityId);
-            }
+            _selection?.RemoveEntity(e.EntityId);
 
             var entities = _worldMap.Entities.ToList();
             entities.Add(_worldMap.Camera);
@@ -279,7 +276,14 @@ namespace RyzeEditor
 
             form.SimulationSuspendedClicked += (sender, args) =>
             {
-                _serverClient.IsSuspended = !_serverClient.IsSuspended;
+                bool suspended = !_serverClient.IsSuspended;
+
+                if (suspended)
+                {
+                    _worldMap.SetModified();
+                }
+
+                _serverClient.IsSuspended = suspended;
             };
         }
 
@@ -310,7 +314,9 @@ namespace RyzeEditor
         {
             using (var fileStream = new FileStream(args.FileName, FileMode.Open))
             {
+                _serverClient.IsSuspended = true;
                 _selection.Clear();
+
                 _worldMap = WorldMapSerializer.Deserialize(fileStream);
 
                 if (_worldMap == null)
@@ -318,7 +324,6 @@ namespace RyzeEditor
                     return;
                 }
 
-                _worldMap.Name = Guid.NewGuid().ToString();
                 _worldMap.Camera.AspectRatio = (float)_clientSize.Width / _clientSize.Height;
                 _worldMap.Camera.ClientWndSize = _clientSize;
                 _toolManager.WorldMap = _worldMap;
@@ -335,7 +340,6 @@ namespace RyzeEditor
                     _objectHierarchyControl.UpdateHierarchy(entities);
                 }
 
-                _serverClient.IsSuspended = true;
                 _serverClient.WorldMap = _worldMap;
 
                 _userResized = true;

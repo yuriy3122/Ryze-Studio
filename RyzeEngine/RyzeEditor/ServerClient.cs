@@ -57,7 +57,7 @@ namespace RyzeEditor
         {
             var task = Task.Run(async () =>
             {
-                string gameWordName = string.Empty;
+                string gameWordId = string.Empty;
                 Dictionary<int, GameObject> gameObjectMap = null;
 
                 UdpClient udpClient = null;
@@ -69,7 +69,7 @@ namespace RyzeEditor
                     {
                         try
                         {
-                            if (gameWordName != WorldMap.Name)
+                            if (gameWordId != WorldMap.Id)
                             {
                                 udpClient?.Close();
 
@@ -88,7 +88,7 @@ namespace RyzeEditor
                                     }
                                 }
 
-                                gameWordName = WorldMap.Name;
+                                gameWordId = WorldMap.Id;
 
                                 udpClient = new UdpClient(UdpPort);
                             }

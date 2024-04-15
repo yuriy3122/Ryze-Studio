@@ -24,18 +24,37 @@ namespace RyzeEditor.GameWorld
         public event EventHandler<EntityEventArgs> EntityDeleted;
 
         [field: NonSerialized]
-        public string Name;
+        public string _id;
 
-        public Camera Camera { get; private set; }
+        public void SetModified()
+        {
+            Id = Guid.NewGuid().ToString().Replace("-", "");
+        }
+
+        public string Id
+        {
+            private set
+            {
+                _id = value;
+            }
+            get
+            {
+                return _id;
+            }
+        }
+
+        public Camera Camera { get; set; }
 
 		public IEnumerable<EntityBase> Entities
 		{
 			get { return _entities; }
 		}
 
-		public WorldMap(Camera camera)
+        public WorldMap(Camera camera)
 		{
 			_undoRedoManager = new UndoRedoManager(this);
+
+            _id = Guid.NewGuid().ToString();
 
             Camera = camera;
         }
@@ -56,7 +75,9 @@ namespace RyzeEditor.GameWorld
 
 			_undoRedoManager.RegisterEntity(entity);
 
-			OnEntityAdded(new EntityEventArgs(entity.Id));
+            Id = Guid.NewGuid().ToString();
+
+            OnEntityAdded(new EntityEventArgs(entity.Id));
 		}
 
 		public void RemoveEntity(EntityBase entity)
@@ -70,7 +91,9 @@ namespace RyzeEditor.GameWorld
 
 			_undoRedoManager.UnRegisterEntity(entity);
 
-			OnEntityDeleted(new EntityEventArgs(entity.Id));
+            Id = Guid.NewGuid().ToString();
+
+            OnEntityDeleted(new EntityEventArgs(entity.Id));
 		}
 
 		public EntityBase FindEntity(Guid id)
