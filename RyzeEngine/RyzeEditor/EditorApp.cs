@@ -340,6 +340,7 @@ namespace RyzeEditor
                     _objectHierarchyControl.UpdateHierarchy(entities);
                 }
 
+                _worldMap.SetModified();
                 _serverClient.WorldMap = _worldMap;
 
                 _userResized = true;
