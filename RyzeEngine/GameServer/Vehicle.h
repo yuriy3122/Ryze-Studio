@@ -34,4 +34,12 @@ typedef struct Vehicle
     
 } vehicle_t;//72 bytes
 
+typedef struct VehicleList
+{
+	vehicle_t** data;
+
+	int count;
+
+} VehicleList;
+
 #endif /* Vehicle_h */

@@ -11,6 +11,7 @@ ResourceManager::ResourceManager()
 	m_gameObjects.count = 0;
 	m_collisionShapeList.count = 0;
 	m_rigidBodyList.count = 0;
+	m_vehicleList.count = 0;
 	m_data = NULL;
 }
 
@@ -131,6 +132,59 @@ DWORD ResourceManager::ReadCollisionData(const char* buffer, DWORD pos)
 	return offset;
 }
 
+wheel_t* ResourceManager::ReadWheelData(const char* buffer, DWORD pos)
+{
+	int offset = 0;
+	int subMeshIdCount = *((int*)((char*)buffer + pos + offset));
+	offset += sizeof(int);
+	int* subMeshIds = (int*)((char*)buffer + pos + offset);
+	offset += subMeshIdCount * sizeof(int);
+	wheel_t* wheelPtr = (wheel_t*)((char*)buffer + pos + offset);
+	wheelPtr->subMeshIds = subMeshIds;
+	wheelPtr->subMeshIdCount = subMeshIdCount;
+
+	return wheelPtr;
+}
+
+DWORD ResourceManager::ReadVehicleData(const char* buffer, DWORD pos)
+{
+	int offset = 0;
+	wheel_t* frontLeftWheelPtr = ReadWheelData(buffer, pos + offset);
+	offset += sizeof(int) + frontLeftWheelPtr->subMeshIdCount * sizeof(int) + sizeof(wheel_t);
+
+	wheel_t* frontRightWheelPtr = ReadWheelData(buffer, pos + offset);
+	offset += sizeof(int) + frontRightWheelPtr->subMeshIdCount * sizeof(int) + sizeof(wheel_t);
+
+	wheel_t* rearLeftWheelPtr = ReadWheelData(buffer, pos + offset);
+	offset += sizeof(int) + rearLeftWheelPtr->subMeshIdCount * sizeof(int) + sizeof(wheel_t);
+
+	wheel_t* rearRightWheelPtr = ReadWheelData(buffer, pos + offset);
+	offset += sizeof(int) + rearRightWheelPtr->subMeshIdCount * sizeof(int) + sizeof(wheel_t);
+
+	vehicle_t* vehicle = (vehicle_t*)((char*)buffer + pos + offset);
+	vehicle->frontLeftSideWheel = frontLeftWheelPtr;
+	vehicle->frontRightSideWheel = frontRightWheelPtr;
+	vehicle->rearLeftSideWheel = rearLeftWheelPtr;
+	vehicle->rearRightSideWheel = rearRightWheelPtr;
+
+	for (int i = 0; i < m_gameObjects.count; i++)
+	{
+		game_object_t* gameObject = m_gameObjects.data[i];
+
+		if (gameObject != NULL && gameObject->objectId == vehicle->gameObjectId)
+		{
+			vehicle->gameObject = gameObject;
+			break;
+		}
+	}
+
+	m_vehicleList.data[m_vehicleList.count++] = vehicle;
+
+	offset += sizeof(vehicle_t);
+
+	return offset;
+}
+
 int ResourceManager::LoadResourcesFromFile(std::string filePath)
 {
 	void* handle = CreateFileA(filePath.c_str(), GENERIC_READ, FILE_SHARE_READ, NULL, OPEN_EXISTING, 0, NULL);
@@ -175,6 +229,9 @@ int ResourceManager::LoadResourcesFromFile(std::string filePath)
 		{
 			m_gameObjects.data = (game_object_t**)malloc(gameObjectsCount * sizeof(game_object_t*));
 		}
+
+		m_vehicleList.data = (vehicle_t**)malloc(64 * sizeof(vehicle_t*));
+
 		pos += sizeof(int);
 
 		while (pos < nRead)
@@ -192,7 +249,7 @@ int ResourceManager::LoadResourcesFromFile(std::string filePath)
 					pos += ReadCollisionData(m_data, pos);
 					break;
 				case ID_VEHICLE_BLOCK_CHUNK:
-					pos += 4;
+					pos += ReadVehicleData(m_data, pos);
 					break;
 				default:
 					break;
@@ -220,15 +277,13 @@ const RigidBodyList& ResourceManager::GetRigidBodies() const
 	return m_rigidBodyList;
 }
 
+const VehicleList& ResourceManager::GetVehicles() const
+{
+	return m_vehicleList;
+}
+
 ResourceManager::~ResourceManager()
 {
-	free(m_data);
-
-	if (m_gameObjects.count > 0)
-	{
-		free(m_gameObjects.data);
-	}
-
 	if (m_collisionShapeList.count > 0)
 	{
 		for (int i = 0; i < m_collisionShapeList.count; i++)
@@ -247,4 +302,14 @@ ResourceManager::~ResourceManager()
 	{
 		free(m_rigidBodyList.data);
 	}
+	if (m_gameObjects.count > 0)
+	{
+		free(m_gameObjects.data);
+	}
+	if (m_vehicleList.count > 0)
+	{
+		free(m_vehicleList.data);
+	}
+
+	free(m_data);
 }
