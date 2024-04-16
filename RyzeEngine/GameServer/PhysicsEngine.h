@@ -5,6 +5,8 @@
 #include "btBulletDynamicsCommon.h"
 #include <map>
 
+using namespace std;
+
 class PhysicsEngine
 {
 public:
@@ -18,7 +20,14 @@ public:
 
 private:
 	btCollisionShape* CreateBoxShape(collision_shape_t* shape);
+	btCollisionShape* CreateConvexHullShape(collision_shape_t* shape);
+
 	btRigidBody* CreateRigidBody(rigid_body_t* rigidBody, btCollisionShape* collisionShape);
+
+	void InitializeRigidBodies();
+	void InitializeVehicles();
+
+	btCollisionShape* GetBulletCollisionShape(collision_shape_t* shape);
 
 	ResourceManager* m_resourceManager;
 
@@ -28,5 +37,6 @@ private:
 	btSequentialImpulseConstraintSolver* m_solver;
 	btDiscreteDynamicsWorld* m_dynamicsWorld;
 
-	std::map<int, btCollisionShape*> m_collisionShapes;
+	map<int, btCollisionShape*> m_collisionShapes;
+	map<int, btRaycastVehicle*> m_vehicles;
 };
