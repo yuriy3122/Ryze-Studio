@@ -1,6 +1,7 @@
 #include "GameObject.h"
 #include "CollisionShape.h"
 #include "RigidBody.h"
+#include "SubMeshTransform.h"
 #include "ResourceManager.h"
 #include "btBulletDynamicsCommon.h"
 #include <map>
@@ -16,18 +17,21 @@ public:
 
 	void StepSimulation(float deltaTime);
 
+	const SubMeshTransformList& GetSubMeshTransforms(int objectId);
+
 	~PhysicsEngine();
 
 private:
-	btCollisionShape* CreateBoxShape(collision_shape_t* shape);
-	btCollisionShape* CreateConvexHullShape(collision_shape_t* shape);
+	btCollisionShape* CreateBoxShape(const collision_shape_t* shape);
+	btCollisionShape* CreateConvexHullShape(const collision_shape_t* shape);
 
-	btRigidBody* CreateRigidBody(rigid_body_t* rigidBody, btCollisionShape* collisionShape);
+	btRigidBody* CreateRigidBody(const rigid_body_t* rigidBody, btCollisionShape* collisionShape);
 
 	void InitializeRigidBodies();
 	void InitializeVehicles();
 
 	btCollisionShape* GetBulletCollisionShape(collision_shape_t* shape);
+	void SetWheelTransform(submesh_transform_t* transform, const btRaycastVehicle* vehicle, const wheel_t* wheel, int index);
 
 	ResourceManager* m_resourceManager;
 
@@ -39,4 +43,5 @@ private:
 
 	map<int, btCollisionShape*> m_collisionShapes;
 	map<int, btRaycastVehicle*> m_vehicles;
+	map<int, SubMeshTransformList> m_subMeshTransforms;
 };

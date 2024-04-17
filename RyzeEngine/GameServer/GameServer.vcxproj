@@ -371,6 +371,7 @@
     <ClInclude Include="ResourceManager.h" />
     <ClInclude Include="RigidBody.h" />
     <ClInclude Include="SharedStructures.h" />
+    <ClInclude Include="SubMeshTransform.h" />
     <ClInclude Include="Vector.h" />
     <ClInclude Include="Vehicle.h" />
     <ClInclude Include="Wheel.h" />

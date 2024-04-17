@@ -115,6 +115,13 @@ int main()
 				pack_object_data(buffer, gameObject);
 
 				send_data(buffer, size);
+
+				SubMeshTransformList transforms = physicsEngine->GetSubMeshTransforms(gameObject->objectId);
+
+				for (int j = 0; j < transforms.count; j++)
+				{
+					auto transform = transforms.data[j];
+				}
 			}
 		}
 

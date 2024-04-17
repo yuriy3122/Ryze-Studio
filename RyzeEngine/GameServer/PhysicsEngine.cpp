@@ -1,6 +1,8 @@
 #include "PhysicsEngine.h"
 #include <iostream>
 
+#pragma warning(disable:6011)
+
 const float wheelFriction = 1000.0f;
 const float suspensionStiffness = 200.0f;
 const float suspensionDamping = 2.3f;
@@ -10,6 +12,7 @@ const float rollInfluence = 0.1f;
 PhysicsEngine::PhysicsEngine(ResourceManager* resourceManager)
 {
 	m_resourceManager = resourceManager;
+	m_subMeshTransforms = map<int, SubMeshTransformList>{};
 
 	m_collisionConfiguration = new btDefaultCollisionConfiguration();
 	m_dispatcher = new btCollisionDispatcher(m_collisionConfiguration);
@@ -221,7 +224,7 @@ void PhysicsEngine::InitializeVehicles()
 			wheel.m_rollInfluence = rollInfluence;
 		}
 
-		m_vehicles[vehicle->vehicleId] = raycastVehicle;
+		m_vehicles[vehicle->gameObjectId] = raycastVehicle;
 
 		m_dynamicsWorld->getBroadphase()->getOverlappingPairCache()->cleanProxyFromPairs(chassis->getBroadphaseHandle(), m_dynamicsWorld->getDispatcher());
 
@@ -277,7 +280,7 @@ void PhysicsEngine::StepSimulation(float deltaTime)
 	}
 }
 
-btCollisionShape* PhysicsEngine::CreateBoxShape(collision_shape_t* shape)
+btCollisionShape* PhysicsEngine::CreateBoxShape(const collision_shape_t* shape)
 {
 	btCompoundShape* collisionShape = new btCompoundShape();
 
@@ -292,7 +295,7 @@ btCollisionShape* PhysicsEngine::CreateBoxShape(collision_shape_t* shape)
 	return collisionShape;
 }
 
-btCollisionShape* PhysicsEngine::CreateConvexHullShape(collision_shape_t* shape)
+btCollisionShape* PhysicsEngine::CreateConvexHullShape(const collision_shape_t* shape)
 {
 	btCompoundShape* collisionShape = new btCompoundShape();
 
@@ -307,7 +310,7 @@ btCollisionShape* PhysicsEngine::CreateConvexHullShape(collision_shape_t* shape)
 	return collisionShape;
 }
 
-btRigidBody* PhysicsEngine::CreateRigidBody(rigid_body_t* rigidBody, btCollisionShape* collisionShape)
+btRigidBody* PhysicsEngine::CreateRigidBody(const rigid_body_t* rigidBody, btCollisionShape* collisionShape)
 {
 	game_object_t* gameObject = NULL;
 
@@ -341,6 +344,103 @@ btRigidBody* PhysicsEngine::CreateRigidBody(rigid_body_t* rigidBody, btCollision
 	return body;
 }
 
+void PhysicsEngine::SetWheelTransform(submesh_transform_t* transform, 
+									  const btRaycastVehicle* vehicle, const wheel_t* wheel, int index)
+{
+	transform->subMeshId = wheel->subMeshIds[0];
+
+	btTransform chassisTransform = vehicle->getChassisWorldTransform();
+	game_object_t* gameObject = (game_object_t*)vehicle->getRigidBody()->getUserPointer();
+	vector3_t position = gameObject->position;
+	btVector3 pos = { position.x, position.y, position.z };
+	chassisTransform.setOrigin(pos);
+
+	btWheelInfo wheelInfo = vehicle->getWheelInfo(index);
+	btVector3 origin = vehicle->getWheelTransformWS(index).getOrigin();
+	btTransform chassisTransformInv = chassisTransform.inverse();
+	btVector3 originT = chassisTransformInv * origin;
+	btVector3 axle = wheelInfo.m_wheelAxleCS;
+	btVector3 posT = originT - axle * wheel->offset;
+
+	transform->position.x = posT.getX();
+	transform->position.y = posT.getY();
+	transform->position.z = posT.getZ();
+
+	btQuaternion originRotation = { wheel->rotation.x, wheel->rotation.y, wheel->rotation.z, wheel->rotation.w };
+	btQuaternion axleRotation = { 0, 0, 0, 0 };
+	axleRotation.setRotation(wheelInfo.m_wheelAxleCS, -1.0 * wheelInfo.m_rotation);
+
+	btQuaternion steering = { 0, 0, 0, 0 };
+	btVector3 axis = { 0, 1, 0 };
+	steering.setRotation(axis, wheelInfo.m_steering);
+
+	btQuaternion rotation = steering * axleRotation * originRotation;
+
+	quaternion_t quat = { 0, 0, 0, 0 };
+	quat.x = rotation.getX();
+	quat.y = rotation.getY();
+	quat.z = rotation.getZ();
+	quat.w = rotation.getW();
+
+	transform->rotation = quat;
+}
+
+const SubMeshTransformList& PhysicsEngine::GetSubMeshTransforms(int objectId)
+{
+	SubMeshTransformList transforms{0};
+
+	auto vi = m_vehicles.find(objectId);
+
+	if (vi == m_vehicles.end())
+	{
+		return transforms;
+	}
+
+	btRaycastVehicle* raycastVehicle = vi->second;
+
+	if (raycastVehicle == NULL)
+	{
+		return transforms;
+	}
+
+	vehicle_t* vehicle = NULL;
+
+	for (int i = 0; i < m_resourceManager->GetVehicles().count; i++)
+	{
+		vehicle_t* ptr = m_resourceManager->GetVehicles().data[i];
+
+		if (ptr != NULL && ptr->gameObjectId == objectId)
+		{
+			vehicle = ptr;
+		}
+	}
+
+	if (vehicle == NULL)
+	{
+		return transforms;
+	}
+
+	auto ti = m_subMeshTransforms.find(objectId);
+
+	if (ti == m_subMeshTransforms.end())
+	{
+		transforms.count = 4;
+		transforms.data = (submesh_transform_t *)malloc(sizeof(submesh_transform_t) * transforms.count);
+		m_subMeshTransforms[objectId] = transforms;
+	}
+	else
+	{
+		transforms = m_subMeshTransforms[objectId];
+	}
+
+	SetWheelTransform(&transforms.data[0], raycastVehicle, vehicle->frontLeftSideWheel,  0);
+	SetWheelTransform(&transforms.data[1], raycastVehicle, vehicle->frontRightSideWheel, 1);
+	SetWheelTransform(&transforms.data[2], raycastVehicle, vehicle->rearLeftSideWheel,   2);
+	SetWheelTransform(&transforms.data[3], raycastVehicle, vehicle->rearRightSideWheel,  3);
+
+	return transforms;
+}
+
 PhysicsEngine::~PhysicsEngine()
 {
 	delete m_collisionConfiguration;
@@ -348,4 +448,14 @@ PhysicsEngine::~PhysicsEngine()
 	delete m_overlappingPairCache;
 	delete m_solver;
 	delete m_dynamicsWorld;
+
+	map<int, SubMeshTransformList>::iterator iter;
+
+	for (iter = m_subMeshTransforms.begin(); iter != m_subMeshTransforms.end(); iter++)
+	{
+		if (iter->second.data != NULL)
+		{
+			delete iter->second.data;
+		}
+	}
 }
