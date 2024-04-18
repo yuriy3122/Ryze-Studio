@@ -51,6 +51,10 @@ namespace RyzeEditor
 
         public event EventHandler<EventArgs> PackClicked;
 
+        public event EventHandler<EventArgs> RunSimulation;
+
+        public event EventHandler<EventArgs> StopSimulation;
+
         public event EventHandler<EventArgs> SimulationSuspendedClicked;
 
         public Control Panel
@@ -184,6 +188,20 @@ namespace RyzeEditor
         private void tbRedo_Click(object sender, EventArgs e)
         {
             RedoClicked?.Invoke(this, new EventArgs());
+        }
+
+        private void tbRunSimulation_Click(object sender, EventArgs e)
+        {
+            tbRunSimulation.Visible = false;
+            tbStopSimulation.Visible = true;
+            RunSimulation?.Invoke(this, new EventArgs());
+        }
+
+        private void tbStopSimulation_Click(object sender, EventArgs e)
+        {
+            tbRunSimulation.Visible = true;
+            tbStopSimulation.Visible = false;
+            StopSimulation?.Invoke(this, new EventArgs());
         }
 
         private void simulateToolStripMenuItem_Click(object sender, EventArgs e)

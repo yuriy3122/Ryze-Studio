@@ -245,6 +245,16 @@ namespace RyzeEditor
                 form.Inspector.UpdateControls(_toolManager.GetFirstActiveTool());
             };
 
+            form.RunSimulation += (sender, args) =>
+            {
+                RunSimulation();
+            };
+
+            form.StopSimulation += (sender, args) =>
+            {
+                RunSimulation();
+            };
+
             form.PackClicked += (sender, args) =>
             {
                 if (Interlocked.Read(ref _locker) == 0)
@@ -276,15 +286,20 @@ namespace RyzeEditor
 
             form.SimulationSuspendedClicked += (sender, args) =>
             {
-                bool suspended = !_serverClient.IsSuspended;
-
-                if (suspended)
-                {
-                    _worldMap.SetModified();
-                }
-
-                _serverClient.IsSuspended = suspended;
+                RunSimulation();
             };
+        }
+
+        private void RunSimulation()
+        {
+            bool suspended = !_serverClient.IsSuspended;
+
+            if (suspended)
+            {
+                _worldMap.SetModified();
+            }
+
+            _serverClient.IsSuspended = suspended;
         }
 
         private void WorldMapPackerNewMessage(object sender, PackerEventArgs e)

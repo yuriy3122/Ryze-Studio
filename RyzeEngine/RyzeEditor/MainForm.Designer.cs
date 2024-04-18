@@ -35,15 +35,12 @@ namespace RyzeEditor
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainForm));
             this.inspectorPanel = new System.Windows.Forms.Panel();
             this.Inspector = new RyzeEditor.Controls.InspectorControl();
-            this.ObjectHierarchyControl = new RyzeEditor.Controls.ObjectHierarchyControl();
-            this.ConsoleOutputControl = new RyzeEditor.Controls.ConsoleOutputControl();
             this.menuStrip = new System.Windows.Forms.MenuStrip();
             this.tsmiWorldMap = new System.Windows.Forms.ToolStripMenuItem();
             this.openToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.saveAsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.tsmiLevel = new System.Windows.Forms.ToolStripMenuItem();
             this.compileStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.simulateToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.tsmiSettings = new System.Windows.Forms.ToolStripMenuItem();
             this.settingStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.selectToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -58,11 +55,15 @@ namespace RyzeEditor
             this.tbPointLight = new System.Windows.Forms.ToolStripButton();
             this.tbVehicle = new System.Windows.Forms.ToolStripButton();
             this.tbCollision = new System.Windows.Forms.ToolStripButton();
+            this.tbRunSimulation = new System.Windows.Forms.ToolStripButton();
+            this.tbStopSimulation = new System.Windows.Forms.ToolStripButton();
             this.leftPanel = new System.Windows.Forms.Panel();
+            this.ObjectHierarchyControl = new RyzeEditor.Controls.ObjectHierarchyControl();
             this.buttomPanel = new System.Windows.Forms.Panel();
             this.buttomTabControl = new System.Windows.Forms.TabControl();
             this.assetsTabPage = new System.Windows.Forms.TabPage();
             this.consoleTabPage = new System.Windows.Forms.TabPage();
+            this.ConsoleOutputControl = new RyzeEditor.Controls.ConsoleOutputControl();
             this.inspectorPanel.SuspendLayout();
             this.menuStrip.SuspendLayout();
             this.toolStrip.SuspendLayout();
@@ -96,26 +97,6 @@ namespace RyzeEditor
             this.Inspector.Selection = null;
             this.Inspector.Size = new System.Drawing.Size(400, 365);
             this.Inspector.TabIndex = 0;
-            // 
-            // ObjectHierarchyControl
-            // 
-            this.ObjectHierarchyControl.AutoSize = true;
-            this.ObjectHierarchyControl.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.ObjectHierarchyControl.Location = new System.Drawing.Point(0, 0);
-            this.ObjectHierarchyControl.Margin = new System.Windows.Forms.Padding(6);
-            this.ObjectHierarchyControl.Name = "ObjectHierarchyControl";
-            this.ObjectHierarchyControl.Size = new System.Drawing.Size(215, 326);
-            this.ObjectHierarchyControl.TabIndex = 0;
-            // 
-            // ConsoleOutputControl
-            // 
-            this.ConsoleOutputControl.AutoSize = true;
-            this.ConsoleOutputControl.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.ConsoleOutputControl.Location = new System.Drawing.Point(2, 2);
-            this.ConsoleOutputControl.Margin = new System.Windows.Forms.Padding(0);
-            this.ConsoleOutputControl.Name = "ConsoleOutputControl";
-            this.ConsoleOutputControl.Size = new System.Drawing.Size(58, 112);
-            this.ConsoleOutputControl.TabIndex = 5;
             // 
             // menuStrip
             // 
@@ -158,8 +139,7 @@ namespace RyzeEditor
             // tsmiLevel
             // 
             this.tsmiLevel.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.compileStripMenuItem,
-            this.simulateToolStripMenuItem});
+            this.compileStripMenuItem});
             this.tsmiLevel.Name = "tsmiLevel";
             this.tsmiLevel.Size = new System.Drawing.Size(54, 22);
             this.tsmiLevel.Text = "SCENE";
@@ -170,13 +150,6 @@ namespace RyzeEditor
             this.compileStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.compileStripMenuItem.Text = "Pack";
             this.compileStripMenuItem.Click += new System.EventHandler(this.compileStripMenuItem_Click);
-            // 
-            // simulateToolStripMenuItem
-            // 
-            this.simulateToolStripMenuItem.Name = "simulateToolStripMenuItem";
-            this.simulateToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
-            this.simulateToolStripMenuItem.Text = "Simulate/Stop";
-            this.simulateToolStripMenuItem.Click += new System.EventHandler(this.simulateToolStripMenuItem_Click);
             // 
             // tsmiSettings
             // 
@@ -214,7 +187,9 @@ namespace RyzeEditor
             this.tbRotate,
             this.tbPointLight,
             this.tbVehicle,
-            this.tbCollision});
+            this.tbCollision,
+            this.tbRunSimulation,
+            this.tbStopSimulation});
             this.toolStrip.Location = new System.Drawing.Point(0, 24);
             this.toolStrip.Name = "toolStrip";
             this.toolStrip.Padding = new System.Windows.Forms.Padding(0);
@@ -328,6 +303,27 @@ namespace RyzeEditor
             this.tbCollision.Text = "Collision";
             this.tbCollision.Click += new System.EventHandler(this.tbCollision_Click);
             // 
+            // tbRunSimulation
+            // 
+            this.tbRunSimulation.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.tbRunSimulation.Image = ((System.Drawing.Image)(resources.GetObject("tbRunSimulation.Image")));
+            this.tbRunSimulation.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.tbRunSimulation.Name = "tbRunSimulation";
+            this.tbRunSimulation.Size = new System.Drawing.Size(36, 36);
+            this.tbRunSimulation.Text = "Run Simulation";
+            this.tbRunSimulation.Click += new System.EventHandler(this.tbRunSimulation_Click);
+            // 
+            // tbStopSimulation
+            // 
+            this.tbStopSimulation.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.tbStopSimulation.Image = ((System.Drawing.Image)(resources.GetObject("tbStopSimulation.Image")));
+            this.tbStopSimulation.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.tbStopSimulation.Name = "tbStopSimulation";
+            this.tbStopSimulation.Size = new System.Drawing.Size(36, 36);
+            this.tbStopSimulation.Text = "Stop simulation";
+            this.tbStopSimulation.Visible = false;
+            this.tbStopSimulation.Click += new System.EventHandler(this.tbStopSimulation_Click);
+            // 
             // leftPanel
             // 
             this.leftPanel.Controls.Add(this.ObjectHierarchyControl);
@@ -336,6 +332,16 @@ namespace RyzeEditor
             this.leftPanel.Name = "leftPanel";
             this.leftPanel.Size = new System.Drawing.Size(215, 326);
             this.leftPanel.TabIndex = 3;
+            // 
+            // ObjectHierarchyControl
+            // 
+            this.ObjectHierarchyControl.AutoSize = true;
+            this.ObjectHierarchyControl.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.ObjectHierarchyControl.Location = new System.Drawing.Point(0, 0);
+            this.ObjectHierarchyControl.Margin = new System.Windows.Forms.Padding(6);
+            this.ObjectHierarchyControl.Name = "ObjectHierarchyControl";
+            this.ObjectHierarchyControl.Size = new System.Drawing.Size(215, 326);
+            this.ObjectHierarchyControl.TabIndex = 0;
             // 
             // buttomPanel
             // 
@@ -382,6 +388,16 @@ namespace RyzeEditor
             this.consoleTabPage.TabIndex = 1;
             this.consoleTabPage.Text = "Console";
             this.consoleTabPage.UseVisualStyleBackColor = true;
+            // 
+            // ConsoleOutputControl
+            // 
+            this.ConsoleOutputControl.AutoSize = true;
+            this.ConsoleOutputControl.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.ConsoleOutputControl.Location = new System.Drawing.Point(2, 2);
+            this.ConsoleOutputControl.Margin = new System.Windows.Forms.Padding(0);
+            this.ConsoleOutputControl.Name = "ConsoleOutputControl";
+            this.ConsoleOutputControl.Size = new System.Drawing.Size(58, 112);
+            this.ConsoleOutputControl.TabIndex = 5;
             // 
             // MainForm
             // 
@@ -447,7 +463,8 @@ namespace RyzeEditor
         private TabControl buttomTabControl;
         private TabPage assetsTabPage;
         private TabPage consoleTabPage;
-        private ToolStripMenuItem simulateToolStripMenuItem;
+        private ToolStripButton tbRunSimulation;
+        private ToolStripButton tbStopSimulation;
     }
 }
 
