@@ -71,6 +71,6 @@ namespace RyzeEditor.Renderer
 
 		void DrawLineStrip(IEnumerable<Point3> points, RenderMode mode);
 
-		void DrawMeshInstanced(IMesh mesh, Matrix[] matrices, RenderMode mode);
+		void DrawMeshInstanced(IMesh mesh, GameObject[] gameObjects, RenderMode mode);
 	}
 }

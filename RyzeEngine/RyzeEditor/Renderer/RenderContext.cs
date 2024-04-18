@@ -17,7 +17,7 @@ namespace RyzeEditor.Renderer
 
 		private readonly RenderMode _renderMode;
 
-		private readonly Dictionary<string, List<Matrix>> _meshGroup;
+		private readonly Dictionary<string, List<GameObject>> _meshGroup;
 
 		private readonly List<EntityBase> _entities;
 
@@ -26,7 +26,7 @@ namespace RyzeEditor.Renderer
 			_renderer = renderer;
 			_toolManager = toolManager;
 			_renderMode = new RenderMode();
-			_meshGroup = new Dictionary<string, List<Matrix>>();
+			_meshGroup = new Dictionary<string, List<GameObject>>();
 			_entities = new List<EntityBase>();
 		}
 
@@ -205,8 +205,7 @@ namespace RyzeEditor.Renderer
 
                     if (mesh != null)
                     {
-                        var matrices = new List<Matrix> { obj.WorldMatrix };
-                        _renderer.DrawMeshInstanced(mesh, matrices.ToArray(), renderMode);
+                        _renderer.DrawMeshInstanced(mesh, new[] { obj }, renderMode);
                     }
                 }
             }
@@ -234,10 +233,10 @@ namespace RyzeEditor.Renderer
             {
                 if (!_meshGroup.ContainsKey(gameObject.GeometryMeshes[0].Id))
                 {
-                    _meshGroup.Add(gameObject.GeometryMeshes[0].Id, new List<Matrix>());
+                    _meshGroup.Add(gameObject.GeometryMeshes[0].Id, new List<GameObject>());
                 }
 
-                _meshGroup[gameObject.GeometryMeshes[0].Id].Add(gameObject.WorldMatrix);
+                _meshGroup[gameObject.GeometryMeshes[0].Id].Add(gameObject);
             }
 
             foreach (var item in _meshGroup)

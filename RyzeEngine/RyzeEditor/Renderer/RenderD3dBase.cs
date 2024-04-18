@@ -261,7 +261,7 @@ namespace RyzeEditor.Renderer
 		{
 		}
 
-		public virtual void DrawMeshInstanced(IMesh mesh, Matrix[] matrices, RenderMode mode)
+		public virtual void DrawMeshInstanced(IMesh mesh, GameObject[] gameObjects, RenderMode mode)
 		{
 		}
 

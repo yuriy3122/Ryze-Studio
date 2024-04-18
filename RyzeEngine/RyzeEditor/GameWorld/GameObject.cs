@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using System.Collections.Generic;
+using System.Collections.Concurrent;
 using SharpDX;
 using PropertyChanged;
 using RyzeEditor.Renderer;
@@ -54,6 +55,9 @@ namespace RyzeEditor.GameWorld
 
         [field: NonSerialized]
         private List<IMesh> _geometryMeshes;
+
+        [InspectorVisible(false)]
+        public ConcurrentDictionary<uint, SubMeshTransform> SubMeshTransforms { get; set; }
 
         [RelativeChangeable(true)]
         public Vector3 Position { get; set; }
@@ -131,7 +135,7 @@ namespace RyzeEditor.GameWorld
 		{
 			if (GeometryMeshes != null && GeometryMeshes.Count > 0)
 			{
-				renderer.DrawMeshInstanced(GeometryMeshes[0], new[] { WorldMatrix }, mode);
+				renderer.DrawMeshInstanced(GeometryMeshes[0], new[] { this }, mode);
 			}
 		}
 

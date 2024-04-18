@@ -349,18 +349,10 @@ void PhysicsEngine::SetWheelTransform(submesh_transform_t* transform,
 {
 	transform->subMeshId = wheel->subMeshIds[0];
 
-	btTransform chassisTransform = vehicle->getChassisWorldTransform();
-	game_object_t* gameObject = (game_object_t*)vehicle->getRigidBody()->getUserPointer();
-	vector3_t position = gameObject->position;
-	btVector3 pos = { position.x, position.y, position.z };
-	chassisTransform.setOrigin(pos);
-
 	btWheelInfo wheelInfo = vehicle->getWheelInfo(index);
 	btVector3 origin = vehicle->getWheelTransformWS(index).getOrigin();
-	btTransform chassisTransformInv = chassisTransform.inverse();
-	btVector3 originT = chassisTransformInv * origin;
 	btVector3 axle = wheelInfo.m_wheelAxleCS;
-	btVector3 posT = originT - axle * wheel->offset;
+	btVector3 posT = origin - axle * wheel->offset;
 
 	transform->position.x = posT.getX();
 	transform->position.y = posT.getY();

@@ -79,6 +79,49 @@ static void pack_object_data(char* data, game_object_t* object)
 	memcpy(data + offset, (void*)&rw, sizeof(float));
 }
 
+static void pack_submesh_data(char* data, const game_object_t* object, const submesh_transform_t* transform)
+{
+	uint32_t offset = 0;
+	uint16_t header = 2;
+	memcpy(data + offset, (void*)&header, sizeof(uint16_t));
+	offset += sizeof(uint16_t);
+
+	int32_t objectId = object->objectId;
+	memcpy(data + offset, (void*)&objectId, sizeof(int32_t));
+	offset += sizeof(int32_t);
+
+	int32_t submeshId = transform->subMeshId;
+	memcpy(data + offset, (void*)&submeshId, sizeof(int32_t));
+	offset += sizeof(int32_t);
+
+	float px = transform->position.x;
+	memcpy(data + offset, (void*)&px, sizeof(float));
+	offset += sizeof(float);
+
+	float py = transform->position.y;
+	memcpy(data + offset, (void*)&py, sizeof(float));
+	offset += sizeof(float);
+
+	float pz = transform->position.z;
+	memcpy(data + offset, (void*)&pz, sizeof(float));
+	offset += sizeof(float);
+
+	float rx = transform->rotation.x;
+	memcpy(data + offset, (void*)&rx, sizeof(float));
+	offset += sizeof(float);
+
+	float ry = transform->rotation.y;
+	memcpy(data + offset, (void*)&ry, sizeof(float));
+	offset += sizeof(float);
+
+	float rz = transform->rotation.z;
+	memcpy(data + offset, (void*)&rz, sizeof(float));
+	offset += sizeof(float);
+
+	float rw = transform->rotation.w;
+	memcpy(data + offset, (void*)&rw, sizeof(float));
+}
+
 static string ExePath()
 {
 	CHAR buffer[MAX_PATH] = { 0 };
@@ -99,7 +142,7 @@ int main()
 	auto physicsEngine = new PhysicsEngine(resourceManager);
 	physicsEngine->Initialize();
 
-	const size_t size = 36;
+	size_t size = 38;
 	char* buffer = (char*)malloc(size);
 
 	do
@@ -114,13 +157,17 @@ int main()
 			{
 				pack_object_data(buffer, gameObject);
 
-				send_data(buffer, size);
+				send_data(buffer, 34);
 
 				SubMeshTransformList transforms = physicsEngine->GetSubMeshTransforms(gameObject->objectId);
 
 				for (int j = 0; j < transforms.count; j++)
 				{
-					auto transform = transforms.data[j];
+					auto transform = &transforms.data[j];
+
+					pack_submesh_data(buffer, gameObject, transform);
+
+					send_data(buffer, 38);
 				}
 			}
 		}

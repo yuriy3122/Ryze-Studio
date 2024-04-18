@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using RyzeEditor.Extentions;
+using RyzeEditor.GameWorld;
 using RyzeEditor.ResourceManagment;
 using SharpDX;
 using SharpDX.Direct3D;
@@ -51,7 +52,7 @@ namespace RyzeEditor.Renderer
 			_context.Draw(pointList.Count, 0);
 		}
 
-		public override void DrawMeshInstanced(IMesh mesh, Matrix[] matrices, RenderMode mode)
+		public override void DrawMeshInstanced(IMesh mesh, GameObject[] gameObjects, RenderMode mode)
 		{
 			var effect = _effectManager.GetEffect("Mesh");
 
@@ -69,10 +70,6 @@ namespace RyzeEditor.Renderer
                 _context.PixelShader.Set(effect.PixelShader);
             }
 
-            _context.MapSubresource(_instanceBuffer, MapMode.WriteDiscard, MapFlags.None, out DataStream stream);
-            stream.WriteRange(matrices.ToArray());
-			_context.UnmapSubresource(_instanceBuffer, 0);
-
 			var instanceBufferBinding = new VertexBufferBinding(_instanceBuffer, Utilities.SizeOf<Matrix>(), 0);
 
 			foreach (var subMesh in mesh.SubMeshes)
@@ -81,6 +78,42 @@ namespace RyzeEditor.Renderer
                 {
                     continue;
                 }
+
+                _context.MapSubresource(_instanceBuffer, MapMode.WriteDiscard, MapFlags.None, out DataStream stream);
+
+                var matrices = new List<Matrix>();
+
+                foreach (var gameObject in gameObjects)
+                {
+                    SubMeshTransform subMeshTransform = null;
+
+                    if (gameObject.SubMeshTransforms != null && gameObject.SubMeshTransforms.ContainsKey(subMesh.Id))
+                    {
+                        subMeshTransform = gameObject.SubMeshTransforms[subMesh.Id];
+                    }
+
+                    if (subMeshTransform == null)
+                    {
+                        matrices.Add(gameObject.WorldMatrix);
+                    }
+                    else
+                    {
+                        var scaleMatrix = subMesh.GetScaleMatrix(mesh);
+                        var scale = scaleMatrix.ScaleVector;
+
+                        var subMeshMatrix = subMesh.GetMatrix(mesh);
+                        var subMeshMatrixInv = Matrix.Invert(subMeshMatrix);
+
+                        var subMeshWS = Matrix.Scaling(scale) *
+                                        Matrix.RotationQuaternion(subMeshTransform.Rotation) *
+                                        Matrix.Translation(subMeshTransform.Position);
+
+                        matrices.Add(subMeshMatrixInv * subMeshWS);
+                    }
+                }
+
+                stream.WriteRange(matrices.ToArray());
+                _context.UnmapSubresource(_instanceBuffer, 0);
 
                 _context.MapSubresource(_vertBuffer, MapMode.WriteDiscard, MapFlags.None, out stream);
 				stream.WriteRange(subMesh.VertexData.ToArray());
@@ -175,7 +208,7 @@ namespace RyzeEditor.Renderer
 
                     _context.UpdateSubresource(data.ToArray(), effect.ContantBuffer);
 					_context.InputAssembler.SetIndexBuffer(_indexBuffer, Format.R32_UInt, 0);
-					_context.DrawIndexedInstanced(subMesh.Indices[i].Count, matrices.Count(), 0, 0, 0);
+					_context.DrawIndexedInstanced(subMesh.Indices[i].Count, gameObjects.Count(), 0, 0, 0);
 				}
 			}
 		}

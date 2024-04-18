@@ -8,9 +8,11 @@ using System.Threading;
 using System.Windows.Forms;
 using System.Threading.Tasks;
 using System.Collections.Generic;
+using System.Collections.Concurrent;
 using SharpDX;
 using RyzeEditor.GameWorld;
 using RyzeEditor.Packer;
+using RyzeEditor.ResourceManagment;
 
 namespace RyzeEditor
 {
@@ -100,24 +102,16 @@ namespace RyzeEditor
                                 memoryStream.Read(buffer, 0, sizeof(ushort));
                                 ushort header = BitConverter.ToUInt16(buffer, 0);
 
-                                if (header == 1)
+                                switch (header)
                                 {
-                                    memoryStream.Read(buffer, 0, 32);
-                                    var objectId = BitConverter.ToInt32(buffer, 0);
-
-                                    if (gameObjectMap.ContainsKey(objectId))
-                                    {
-                                        float px = BitConverter.ToSingle(buffer, 4);
-                                        float py = BitConverter.ToSingle(buffer, 8);
-                                        float pz = -1.0f * BitConverter.ToSingle(buffer, 12);
-                                        gameObjectMap[objectId].Position = new Vector3(px, py, pz);
-
-                                        float rx = -1.0f * BitConverter.ToSingle(buffer, 16);
-                                        float ry = -1.0f * BitConverter.ToSingle(buffer, 20);
-                                        float rz = BitConverter.ToSingle(buffer, 24);
-                                        float rw = BitConverter.ToSingle(buffer, 28);
-                                        gameObjectMap[objectId].Rotation = new Quaternion(rx, ry, rz, rw);
-                                    }
+                                    case 1:
+                                        ReadGameObjectData(buffer, memoryStream, gameObjectMap);
+                                        break;
+                                    case 2:
+                                        ReadSubMeshData(buffer, memoryStream, gameObjectMap);
+                                        break;
+                                    default:
+                                        break;
                                 }
                             }
                         }
@@ -128,6 +122,68 @@ namespace RyzeEditor
                     }
                 }
             });
+        }
+
+        private void ReadGameObjectData(byte[] buffer, MemoryStream memoryStream, Dictionary<int, GameObject> gameObjectMap)
+        {
+            memoryStream.Read(buffer, 0, 32);
+            var objectId = BitConverter.ToInt32(buffer, 0);
+
+            if (gameObjectMap.ContainsKey(objectId))
+            {
+                float px = BitConverter.ToSingle(buffer, 4);
+                float py = BitConverter.ToSingle(buffer, 8);
+                float pz = -1.0f * BitConverter.ToSingle(buffer, 12);
+                gameObjectMap[objectId].Position = new Vector3(px, py, pz);
+
+                float rx = -1.0f * BitConverter.ToSingle(buffer, 16);
+                float ry = -1.0f * BitConverter.ToSingle(buffer, 20);
+                float rz = BitConverter.ToSingle(buffer, 24);
+                float rw = BitConverter.ToSingle(buffer, 28);
+                gameObjectMap[objectId].Rotation = new Quaternion(rx, ry, rz, rw);
+            }
+        }
+
+        private void ReadSubMeshData(byte[] buffer, MemoryStream memoryStream, Dictionary<int, GameObject> gameObjectMap)
+        {
+            memoryStream.Read(buffer, 0, 36);
+            int objectId = BitConverter.ToInt32(buffer, 0);
+
+            if (gameObjectMap.ContainsKey(objectId))
+            {
+                int submeshId = BitConverter.ToInt32(buffer, 4);
+
+                float px = BitConverter.ToSingle(buffer, 8);
+                float py = BitConverter.ToSingle(buffer, 12);
+                float pz = -1.0f * BitConverter.ToSingle(buffer, 16);
+
+                float rx = -1.0f * BitConverter.ToSingle(buffer, 20);
+                float ry = -1.0f * BitConverter.ToSingle(buffer, 24);
+                float rz = BitConverter.ToSingle(buffer, 28);
+                float rw = BitConverter.ToSingle(buffer, 32);
+
+                var gameObject = gameObjectMap[objectId];
+
+                SubMeshTransform transform;
+
+                if (gameObject.SubMeshTransforms == null)
+                {
+                    gameObject.SubMeshTransforms = new ConcurrentDictionary<uint, SubMeshTransform>();
+                }
+
+                if (!gameObject.SubMeshTransforms.ContainsKey((uint)submeshId))
+                {
+                    transform = new SubMeshTransform();
+                    gameObject.SubMeshTransforms[(uint)submeshId] = transform;
+                }
+                else
+                {
+                    transform = gameObject.SubMeshTransforms[(uint)submeshId];
+                }
+
+                transform.Position = new Vector3(px, py, pz);
+                transform.Rotation = new Quaternion(rx, ry, rz, rw);
+            }
         }
 
         private void PackWorldData()
