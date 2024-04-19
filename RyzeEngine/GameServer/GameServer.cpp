@@ -10,6 +10,8 @@
 #include "Vehicle.h"
 #pragma comment(lib,"WS2_32")
 
+#pragma warning(disable:6387)
+
 using namespace std;
 
 static void pack_object_data(char* data, game_object_t* object)
