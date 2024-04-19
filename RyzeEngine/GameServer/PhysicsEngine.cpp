@@ -233,6 +233,7 @@ void PhysicsEngine::InitializeVehicles()
 		for (int i = 0; i < raycastVehicle->getNumWheels(); i++)
 		{
 			raycastVehicle->updateWheelTransform(i, true);
+			raycastVehicle->applyEngineForce(100.0f, i);
 		}
 	}
 }

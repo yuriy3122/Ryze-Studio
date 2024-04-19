@@ -62,6 +62,12 @@ namespace RyzeEditor
 			get { return inspectorPanel; }
 		}
 
+        public void UpdateControls(bool enabled)
+        {
+            tbRunSimulation.Visible = enabled;
+            tbStopSimulation.Visible = !enabled;
+        }
+
 		private void tbPlacement_Click(object sender, EventArgs e)
 		{
 			ActivateToolButton(sender);
@@ -192,15 +198,13 @@ namespace RyzeEditor
 
         private void tbRunSimulation_Click(object sender, EventArgs e)
         {
-            tbRunSimulation.Visible = false;
-            tbStopSimulation.Visible = true;
+            UpdateControls(false);
             RunSimulation?.Invoke(this, new EventArgs());
         }
 
         private void tbStopSimulation_Click(object sender, EventArgs e)
         {
-            tbRunSimulation.Visible = true;
-            tbStopSimulation.Visible = false;
+            UpdateControls(true);
             StopSimulation?.Invoke(this, new EventArgs());
         }
 

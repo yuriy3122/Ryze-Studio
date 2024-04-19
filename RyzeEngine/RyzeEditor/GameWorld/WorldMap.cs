@@ -29,6 +29,16 @@ namespace RyzeEditor.GameWorld
         public void SetModified()
         {
             Id = Guid.NewGuid().ToString().Replace("-", "");
+
+            foreach (var entity in _entities)
+            {
+                var gameObject = entity as GameObject;
+
+                if (gameObject != null)
+                {
+                    gameObject.SubMeshTransforms = null;
+                }
+            }
         }
 
         public string Id
@@ -161,7 +171,23 @@ namespace RyzeEditor.GameWorld
 		{
             _undoRedoManager?.CommitChanges();
 		}
-	}
+
+        internal void EnableEntityChangeNotifications()
+        {
+            foreach (var entity in _entities)
+            {
+                entity.BlockNotifications = false;
+            }
+        }
+
+        internal void DisableEntityChangeNotifications()
+        {
+            foreach (var entity in _entities)
+            {
+                entity.BlockNotifications = true;
+            }
+        }
+    }
 
 	public class EntityEventArgs
 	{

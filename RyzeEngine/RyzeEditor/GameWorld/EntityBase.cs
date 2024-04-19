@@ -15,7 +15,10 @@ namespace RyzeEditor.GameWorld
 
 		public bool IsHidden { get; set; }
 
-		public override bool Equals(object entity)
+        [InspectorVisible(false)]
+        public bool BlockNotifications { get; set; }
+
+        public override bool Equals(object entity)
 		{
 			return entity is EntityBase && this == (EntityBase)entity;
 		}
@@ -50,7 +53,10 @@ namespace RyzeEditor.GameWorld
 
 		protected void NotifyPropertyChanged([CallerMemberName] string propertyName = "")
 		{
-            PropertyChanged?.Invoke(this, new EntityPropertyChangedEventArgs(propertyName, Id));
+            if (!BlockNotifications)
+            {
+                PropertyChanged?.Invoke(this, new EntityPropertyChangedEventArgs(propertyName, Id));
+            }
         }
 	}
 

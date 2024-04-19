@@ -3,6 +3,7 @@ using System.IO;
 using System.Linq;
 using System.Drawing;
 using System.Threading;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 using log4net;
 using SharpDX;
@@ -247,12 +248,14 @@ namespace RyzeEditor
 
             form.RunSimulation += (sender, args) =>
             {
-                RunSimulation();
+                bool suspended = RunSimulation();
+                form.UpdateControls(suspended);
             };
 
             form.StopSimulation += (sender, args) =>
             {
-                RunSimulation();
+                bool suspended = RunSimulation();
+                form.UpdateControls(suspended);
             };
 
             form.PackClicked += (sender, args) =>
@@ -283,23 +286,27 @@ namespace RyzeEditor
                     thread.Start();
                 }
             };
-
-            form.SimulationSuspendedClicked += (sender, args) =>
-            {
-                RunSimulation();
-            };
         }
 
-        private void RunSimulation()
+        private bool RunSimulation()
         {
-            bool suspended = !_serverClient.IsSuspended;
+            bool suspend = !_serverClient.IsSuspended;
 
-            if (suspended)
+            _serverClient.IsSuspended = suspend;
+
+            if (suspend)
             {
+                Task.Delay(100);
                 _worldMap.SetModified();
+                _worldMap.EnableEntityChangeNotifications();
+                _inspectorControl.UpdateControls(_toolManager.GetFirstActiveTool());
+            }
+            else
+            {
+                _worldMap.DisableEntityChangeNotifications();
             }
 
-            _serverClient.IsSuspended = suspended;
+            return suspend;
         }
 
         private void WorldMapPackerNewMessage(object sender, PackerEventArgs e)
@@ -357,6 +364,9 @@ namespace RyzeEditor
 
                 _worldMap.SetModified();
                 _serverClient.WorldMap = _worldMap;
+
+                var form = sender as MainForm;
+                form?.UpdateControls(true);
 
                 _userResized = true;
             }

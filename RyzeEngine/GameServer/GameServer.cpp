@@ -12,34 +12,6 @@
 
 using namespace std;
 
-static int send_data(const char* data, size_t size)
-{
-	WSADATA wsaData;
-	SOCKET sendSocket;
-	sockaddr_in recvAddr{};
-	int Port = 11000;
-	char* IP_ADDRESS_S = "127.0.0.1";
-
-	int res = WSAStartup(MAKEWORD(2, 2), &wsaData);
-
-	if (res == 0)
-	{
-		sendSocket = socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP);
-
-		recvAddr.sin_family = AF_INET;
-		recvAddr.sin_port = htons(Port);
-		recvAddr.sin_addr.s_addr = inet_addr(IP_ADDRESS_S);
-
-		sendto(sendSocket, data, size, 0, (SOCKADDR*)&recvAddr, sizeof(recvAddr));
-
-		closesocket(sendSocket);
-	}
-
-	WSACleanup();
-
-	return 0;
-}
-
 static void pack_object_data(char* data, game_object_t* object)
 {
 	uint32_t offset = 0;
@@ -145,6 +117,28 @@ int main()
 	size_t size = 38;
 	char* buffer = (char*)malloc(size);
 
+	int Port = 11001;
+	char* IP_ADDRESS_S = "127.0.0.1";
+	WSADATA wsaData;
+	SOCKET sendSocket;
+	sockaddr_in recvAddr{};
+	recvAddr.sin_family = AF_INET;
+	recvAddr.sin_port = htons(Port);
+	recvAddr.sin_addr.s_addr = inet_addr(IP_ADDRESS_S);
+
+	int res = WSAStartup(MAKEWORD(2, 2), &wsaData);
+
+	if (res != 0)
+	{
+		return 0;
+	}
+
+	sendSocket = socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP);
+
+	recvAddr.sin_family = AF_INET;
+	recvAddr.sin_port = htons(Port);
+	recvAddr.sin_addr.s_addr = inet_addr(IP_ADDRESS_S);
+
 	do
 	{
 		physicsEngine->StepSimulation(1.0f / 100.0f);
@@ -157,7 +151,7 @@ int main()
 			{
 				pack_object_data(buffer, gameObject);
 
-				send_data(buffer, 34);
+				sendto(sendSocket, buffer, 34, 0, (SOCKADDR*)&recvAddr, sizeof(recvAddr));
 
 				SubMeshTransformList transforms = physicsEngine->GetSubMeshTransforms(gameObject->objectId);
 
@@ -167,14 +161,18 @@ int main()
 
 					pack_submesh_data(buffer, gameObject, transform);
 
-					send_data(buffer, 38);
+					sendto(sendSocket, buffer, 38, 0, (SOCKADDR*)&recvAddr, sizeof(recvAddr));
 				}
 			}
 		}
 
-		std::this_thread::sleep_for(1ms);
+		std::this_thread::sleep_for(10ms);
 	}
 	while (true);
+
+	closesocket(sendSocket);
+
+	WSACleanup();
 
 	free(buffer);
 

@@ -18,8 +18,10 @@ namespace RyzeEditor
 {
     public class ServerClient
     {
-        private const int UdpPort = 11000;
-        
+        private const int UdpPort = 11001;
+
+        const string App = "GameServer";
+
         public WorldMap WorldMap { get; set; }
 
         private int _isSuspended = 1;
@@ -33,7 +35,7 @@ namespace RyzeEditor
         }
 
         public bool IsSuspended
-        { 
+        {
             get
             {
                 return Interlocked.CompareExchange(ref _isSuspended, 0, 0) > 0;
@@ -73,8 +75,6 @@ namespace RyzeEditor
                         {
                             if (gameWordId != WorldMap.Id)
                             {
-                                udpClient?.Close();
-
                                 PackWorldData();
 
                                 RestartServerProcess();
@@ -119,6 +119,11 @@ namespace RyzeEditor
                         {
                             Console.WriteLine(ex.Message);
                         }
+                    }
+                    else
+                    {
+                        udpClient?.Close();
+                        KillServerProcess();
                     }
                 }
             });
@@ -193,13 +198,11 @@ namespace RyzeEditor
             packer.Execute();
         }
 
-        private void RestartServerProcess()
+        private void KillServerProcess()
         {
-            const string app = "GameServer";
-
             try
             {
-                var processes = Process.GetProcessesByName(app);
+                var processes = Process.GetProcessesByName(App);
 
                 foreach (Process proc in processes)
                 {
@@ -208,10 +211,15 @@ namespace RyzeEditor
                 }
             }
             catch (NullReferenceException) {/* no instance running */}
+        }
+
+        private void RestartServerProcess()
+        {
+            KillServerProcess();
 
             try
             {
-                var proc = new ProcessStartInfo($"{app}.exe")
+                var proc = new ProcessStartInfo($"{App}.exe")
                 {
                     Arguments = $"{Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location)} {_outputFile}",
                     WindowStyle = ProcessWindowStyle.Hidden
@@ -221,7 +229,7 @@ namespace RyzeEditor
             }
             catch (Exception ex)
             {
-                Console.WriteLine(app + " shutdown exception: " + ex.Message);
+                Console.WriteLine(App + " shutdown exception: " + ex.Message);
             }
         }
     }
