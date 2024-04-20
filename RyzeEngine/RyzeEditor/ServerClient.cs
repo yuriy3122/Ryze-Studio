@@ -18,7 +18,7 @@ namespace RyzeEditor
 {
     public class ServerClient
     {
-        private const int UdpPort = 11001;
+        private const int UdpPort = 11000;
 
         const string App = "GameServer";
 

@@ -119,8 +119,8 @@ int main()
 	size_t size = 38;
 	char* buffer = (char*)malloc(size);
 
-	int Port = 11001;
-	char* IP_ADDRESS_S = "127.0.0.1";
+	int Port = 11000;
+	char* IP_ADDRESS_S = "127.0.0.5";
 	WSADATA wsaData;
 	SOCKET sendSocket;
 	sockaddr_in recvAddr{};
