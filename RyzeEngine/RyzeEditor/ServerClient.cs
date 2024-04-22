@@ -131,7 +131,7 @@ namespace RyzeEditor
             });
         }
 
-        public static int GetAvailablePort(IPAddress address, int startingPort)
+        private static int GetAvailablePort(IPAddress address, int startingPort)
         {
             IPEndPoint[] endPoints;
             List<int> portArray = new List<int>();
