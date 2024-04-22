@@ -454,6 +454,22 @@ namespace RyzeEditor.Tools
             var colorAxis = new Vector4(0.0f, 1.0f, 0.0f, 0.0f);
             var wheelPosition = _wheelPositions[_selectedWheel.Id].Value;
 
+            var raycastVehicle = _selection.Get().OfType<Vehicle>().FirstOrDefault();
+
+            uint? submeshId = null;
+            var subMeshIdStr = _selectedWheel.SubMeshIds.FirstOrDefault();
+
+            if (subMeshIdStr != null)
+            {
+                submeshId = uint.Parse(subMeshIdStr);
+            }
+
+            if (submeshId != null && raycastVehicle.SubMeshTransforms != null &&
+                raycastVehicle.SubMeshTransforms.ContainsKey(submeshId.Value))
+            {
+                wheelPosition = raycastVehicle.SubMeshTransforms[submeshId.Value].Position;
+            }
+
             var axisLinePoints = new Point3[2]
             {
                 new Point3(new Vector4(wheelPosition.X, wheelPosition.Y, wheelPosition.Z, 0), colorAxis),
