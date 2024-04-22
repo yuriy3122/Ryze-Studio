@@ -5,7 +5,6 @@ using System.Windows.Forms;
 using System.Collections.Generic;
 using System.ComponentModel;
 using SharpDX;
-using SharpDX.RawInput;
 using RyzeEditor.GameWorld;
 using RyzeEditor.Renderer;
 using RyzeEditor.Helpers;

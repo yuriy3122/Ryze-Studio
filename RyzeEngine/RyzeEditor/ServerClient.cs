@@ -1,7 +1,9 @@
 ﻿using System;
 using System.IO;
 using System.Linq;
+using System.Net;
 using System.Net.Sockets;
+using System.Net.NetworkInformation;
 using System.Diagnostics;
 using System.Reflection;
 using System.Threading;
@@ -18,13 +20,13 @@ namespace RyzeEditor
 {
     public class ServerClient
     {
-        private const int UdpPort = 11000;
-
-        const string App = "GameServer";
-
         public WorldMap WorldMap { get; set; }
 
+        private int _udpPort = 11000;
+
         private int _isSuspended = 1;
+
+        const string App = "GameServer";
 
         private readonly string _outputFile;
 
@@ -92,7 +94,7 @@ namespace RyzeEditor
 
                                 gameWordId = WorldMap.Id;
 
-                                udpClient = new UdpClient(UdpPort);
+                                udpClient = new UdpClient(_udpPort);
                             }
 
                             var receivedData = await udpClient.ReceiveAsync();
@@ -127,6 +129,40 @@ namespace RyzeEditor
                     }
                 }
             });
+        }
+
+        public static int GetAvailablePort(IPAddress address, int startingPort)
+        {
+            IPEndPoint[] endPoints;
+            List<int> portArray = new List<int>();
+
+            IPGlobalProperties properties = IPGlobalProperties.GetIPGlobalProperties();
+
+            //getting active connections
+            TcpConnectionInformation[] connections = properties.GetActiveTcpConnections();
+            portArray.AddRange(from n in connections
+                               where (n.LocalEndPoint.Port >= startingPort && n.LocalEndPoint.Address == address)
+                               select n.LocalEndPoint.Port);
+
+            //getting active tcp listners - WCF service listening in tcp
+            endPoints = properties.GetActiveTcpListeners();
+            portArray.AddRange(from n in endPoints
+                               where (n.Port >= startingPort && n.Address == address)
+                               select n.Port);
+
+            //getting active udp listeners
+            endPoints = properties.GetActiveUdpListeners();
+            portArray.AddRange(from n in endPoints
+                               where (n.Port >= startingPort && n.Address == address)
+                               select n.Port);
+
+            portArray.Sort();
+
+            for (int i = startingPort; i < ushort.MaxValue; i++)
+                if (!portArray.Contains(i))
+                    return i;
+
+            return 0;
         }
 
         private void ReadGameObjectData(byte[] buffer, MemoryStream memoryStream, Dictionary<int, GameObject> gameObjectMap)
@@ -217,11 +253,16 @@ namespace RyzeEditor
         {
             KillServerProcess();
 
+            Task.Delay(100);
+
+            var address = IPAddress.Parse("127.0.0.5");
+            var _udpPort = GetAvailablePort(address, 11000);
+
             try
             {
                 var proc = new ProcessStartInfo($"{App}.exe")
                 {
-                    Arguments = $"{Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location)} {_outputFile}",
+                    Arguments = $"{Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location)} {_udpPort}",
                     WindowStyle = ProcessWindowStyle.Hidden
                 };
 

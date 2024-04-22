@@ -104,7 +104,7 @@ static string ExePath()
 	return std::string(buffer).substr(0, pos);
 }
 
-int main()
+int main(int argc, const char* argv[])
 {
 	using namespace std::chrono_literals;
 
@@ -119,13 +119,13 @@ int main()
 	size_t size = 38;
 	char* buffer = (char*)malloc(size);
 
-	int Port = 11000;
+	int port = atoi(argv[2]);
 	char* IP_ADDRESS_S = "127.0.0.5";
 	WSADATA wsaData;
 	SOCKET sendSocket;
 	sockaddr_in recvAddr{};
 	recvAddr.sin_family = AF_INET;
-	recvAddr.sin_port = htons(Port);
+	recvAddr.sin_port = htons(port);
 	recvAddr.sin_addr.s_addr = inet_addr(IP_ADDRESS_S);
 
 	int res = WSAStartup(MAKEWORD(2, 2), &wsaData);
@@ -138,7 +138,7 @@ int main()
 	sendSocket = socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP);
 
 	recvAddr.sin_family = AF_INET;
-	recvAddr.sin_port = htons(Port);
+	recvAddr.sin_port = htons(port);
 	recvAddr.sin_addr.s_addr = inet_addr(IP_ADDRESS_S);
 
 	do

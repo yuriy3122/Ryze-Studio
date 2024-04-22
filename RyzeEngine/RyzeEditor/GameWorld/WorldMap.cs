@@ -172,19 +172,39 @@ namespace RyzeEditor.GameWorld
             _undoRedoManager?.CommitChanges();
 		}
 
-        internal void EnableEntityChangeNotifications()
+        public void EnableEntityChangeNotifications()
         {
             foreach (var entity in _entities)
             {
                 entity.BlockNotifications = false;
+
+                var raycastVehicle = entity as Vehicle;
+
+                if (raycastVehicle != null)
+                {
+                    foreach (var wheel in raycastVehicle.Wheels)
+                    {
+                        wheel.BlockNotifications = false;
+                    }
+                }
             }
         }
 
-        internal void DisableEntityChangeNotifications()
+        public void DisableEntityChangeNotifications()
         {
             foreach (var entity in _entities)
             {
                 entity.BlockNotifications = true;
+
+                var raycastVehicle = entity as Vehicle;
+
+                if (raycastVehicle != null)
+                {
+                    foreach (var wheel in raycastVehicle.Wheels)
+                    {
+                        wheel.BlockNotifications = true;
+                    }
+                }
             }
         }
     }
