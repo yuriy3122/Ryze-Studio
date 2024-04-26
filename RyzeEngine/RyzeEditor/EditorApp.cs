@@ -125,6 +125,8 @@ namespace RyzeEditor
                     _userResized = false;
                 }
 
+                _serverClient.Update();
+
                 context.RenderWorld(_worldMap);
             });
 
@@ -296,7 +298,6 @@ namespace RyzeEditor
 
             if (suspend)
             {
-                Task.Delay(100);
                 _worldMap.SetModified();
                 _worldMap.EnableEntityChangeNotifications();
                 _inspectorControl.UpdateControls(_toolManager.GetFirstActiveTool());

@@ -30,10 +30,76 @@ namespace RyzeEditor
 
         private readonly string _outputFile;
 
+        private readonly ConcurrentQueue<GameObjectMessage> _messages;
+
+        private readonly Dictionary<int, GameObject> _gameObjectMap;
+
         public ServerClient()
         {
+            _messages = new ConcurrentQueue<GameObjectMessage>();
+            _gameObjectMap = new Dictionary<int, GameObject>();
+
             var dir = Path.GetDirectoryName(Application.ExecutablePath); ;
             _outputFile = Path.Combine(dir, "collision_data.bin");
+        }
+
+        public void Update()
+        {
+            _gameObjectMap.Clear();
+
+            var gameObjects = WorldMap.Entities.OfType<GameObject>().ToList();
+
+            foreach (var gameObject in gameObjects)
+            {
+                if (gameObject.UserData != null)
+                {
+                    _gameObjectMap[(int)gameObject.UserData] = gameObject;
+                }
+            }
+
+            int count = gameObjects.Count * 4;
+
+            for (int i = 0; i < count; i++)
+            {
+                if (_messages.TryDequeue(out GameObjectMessage message))
+                {
+                    if (IsSuspended || !_gameObjectMap.ContainsKey(message.ObjectId))
+                    {
+                        continue;
+                    }
+
+                    var gameObject = _gameObjectMap[message.ObjectId];
+
+                    if (message.SubmeshId < 0)
+                    {
+                        gameObject.Position = message.Position;
+                        gameObject.Rotation = message.Rotation;
+                    }
+                    else
+                    {
+                        SubMeshTransform transform;
+                        uint submeshId = (uint)message.SubmeshId;
+
+                        if (gameObject.SubMeshTransforms == null)
+                        {
+                            gameObject.SubMeshTransforms = new ConcurrentDictionary<uint, SubMeshTransform>();
+                        }
+
+                        if (!gameObject.SubMeshTransforms.ContainsKey(submeshId))
+                        {
+                            transform = new SubMeshTransform();
+                            gameObject.SubMeshTransforms[submeshId] = transform;
+                        }
+                        else
+                        {
+                            transform = gameObject.SubMeshTransforms[submeshId];
+                        }
+
+                        transform.Position = message.Position;
+                        transform.Rotation = message.Rotation;
+                    }
+                }
+            }
         }
 
         public bool IsSuspended
@@ -64,7 +130,6 @@ namespace RyzeEditor
             var task = Task.Run(async () =>
             {
                 string gameWordId = string.Empty;
-                Dictionary<int, GameObject> gameObjectMap = null;
 
                 UdpClient udpClient = null;
                 byte[] buffer = new byte[1024];
@@ -81,17 +146,6 @@ namespace RyzeEditor
 
                                 RestartServerProcess();
 
-                                gameObjectMap = new Dictionary<int, GameObject>();
-                                var gameObjects = WorldMap.Entities.OfType<GameObject>().ToList();
-
-                                foreach (var gameObject in gameObjects)
-                                {
-                                    if (gameObject.UserData != null)
-                                    {
-                                        gameObjectMap[(int)gameObject.UserData] = gameObject;
-                                    }
-                                }
-
                                 gameWordId = WorldMap.Id;
 
                                 udpClient = new UdpClient(_udpPort);
@@ -107,10 +161,10 @@ namespace RyzeEditor
                                 switch (header)
                                 {
                                     case 1:
-                                        ReadGameObjectData(buffer, memoryStream, gameObjectMap);
+                                        ReadGameObjectData(buffer, memoryStream);
                                         break;
                                     case 2:
-                                        ReadSubMeshData(buffer, memoryStream, gameObjectMap);
+                                        ReadSubMeshData(buffer, memoryStream);
                                         break;
                                     default:
                                         break;
@@ -165,66 +219,55 @@ namespace RyzeEditor
             return 0;
         }
 
-        private void ReadGameObjectData(byte[] buffer, MemoryStream memoryStream, Dictionary<int, GameObject> gameObjectMap)
+        private void ReadGameObjectData(byte[] buffer, MemoryStream memoryStream)
         {
             memoryStream.Read(buffer, 0, 32);
             var objectId = BitConverter.ToInt32(buffer, 0);
 
-            if (gameObjectMap.ContainsKey(objectId))
-            {
-                float px = BitConverter.ToSingle(buffer, 4);
-                float py = BitConverter.ToSingle(buffer, 8);
-                float pz = -1.0f * BitConverter.ToSingle(buffer, 12);
-                gameObjectMap[objectId].Position = new Vector3(px, py, pz);
+            float px = BitConverter.ToSingle(buffer, 4);
+            float py = BitConverter.ToSingle(buffer, 8);
+            float pz = -1.0f * BitConverter.ToSingle(buffer, 12);
 
-                float rx = -1.0f * BitConverter.ToSingle(buffer, 16);
-                float ry = -1.0f * BitConverter.ToSingle(buffer, 20);
-                float rz = BitConverter.ToSingle(buffer, 24);
-                float rw = BitConverter.ToSingle(buffer, 28);
-                gameObjectMap[objectId].Rotation = new Quaternion(rx, ry, rz, rw);
-            }
+            float rx = -1.0f * BitConverter.ToSingle(buffer, 16);
+            float ry = -1.0f * BitConverter.ToSingle(buffer, 20);
+            float rz = BitConverter.ToSingle(buffer, 24);
+            float rw = BitConverter.ToSingle(buffer, 28);
+
+            var message = new GameObjectMessage() 
+            { 
+                ObjectId = objectId,
+                SubmeshId = -1,
+                Position = new Vector3(px, py, pz),
+                Rotation = new Quaternion(rx, ry, rz, rw)
+            };
+
+            _messages.Enqueue(message);
         }
 
-        private void ReadSubMeshData(byte[] buffer, MemoryStream memoryStream, Dictionary<int, GameObject> gameObjectMap)
+        private void ReadSubMeshData(byte[] buffer, MemoryStream memoryStream)
         {
             memoryStream.Read(buffer, 0, 36);
             int objectId = BitConverter.ToInt32(buffer, 0);
+            int submeshId = BitConverter.ToInt32(buffer, 4);
 
-            if (gameObjectMap.ContainsKey(objectId))
+            float px = BitConverter.ToSingle(buffer, 8);
+            float py = BitConverter.ToSingle(buffer, 12);
+            float pz = -1.0f * BitConverter.ToSingle(buffer, 16);
+
+            float rx = -1.0f * BitConverter.ToSingle(buffer, 20);
+            float ry = -1.0f * BitConverter.ToSingle(buffer, 24);
+            float rz = BitConverter.ToSingle(buffer, 28);
+            float rw = BitConverter.ToSingle(buffer, 32);
+
+            var message = new GameObjectMessage()
             {
-                int submeshId = BitConverter.ToInt32(buffer, 4);
+                ObjectId = objectId,
+                SubmeshId = submeshId,
+                Position = new Vector3(px, py, pz),
+                Rotation = new Quaternion(rx, ry, rz, rw)
+            };
 
-                float px = BitConverter.ToSingle(buffer, 8);
-                float py = BitConverter.ToSingle(buffer, 12);
-                float pz = -1.0f * BitConverter.ToSingle(buffer, 16);
-
-                float rx = -1.0f * BitConverter.ToSingle(buffer, 20);
-                float ry = -1.0f * BitConverter.ToSingle(buffer, 24);
-                float rz = BitConverter.ToSingle(buffer, 28);
-                float rw = BitConverter.ToSingle(buffer, 32);
-
-                var gameObject = gameObjectMap[objectId];
-
-                SubMeshTransform transform;
-
-                if (gameObject.SubMeshTransforms == null)
-                {
-                    gameObject.SubMeshTransforms = new ConcurrentDictionary<uint, SubMeshTransform>();
-                }
-
-                if (!gameObject.SubMeshTransforms.ContainsKey((uint)submeshId))
-                {
-                    transform = new SubMeshTransform();
-                    gameObject.SubMeshTransforms[(uint)submeshId] = transform;
-                }
-                else
-                {
-                    transform = gameObject.SubMeshTransforms[(uint)submeshId];
-                }
-
-                transform.Position = new Vector3(px, py, pz);
-                transform.Rotation = new Quaternion(rx, ry, rz, rw);
-            }
+            _messages.Enqueue(message);
         }
 
         private void PackWorldData()
@@ -278,6 +321,8 @@ namespace RyzeEditor
     public class GameObjectMessage
     {
         public int ObjectId { get; set; }
+
+        public int SubmeshId { get; set; }
 
         public Vector3 Position { get; set; }
 
