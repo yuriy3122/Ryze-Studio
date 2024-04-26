@@ -25,7 +25,6 @@ namespace RyzeEditor
         private IPEndPoint _endpoint = null;
         private UdpClient _udpClient = null;
         private int _udpPort = 11000;
-        const int _messageSize = 38;
 
         private int _isSuspended = 1;
         private string _gameWordId;
