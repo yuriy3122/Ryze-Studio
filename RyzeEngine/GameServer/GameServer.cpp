@@ -147,7 +147,7 @@ int main(int argc, const char* argv[])
 
 	do
 	{
-		physicsEngine->StepSimulation(1.0f / 30.0f);
+		physicsEngine->StepSimulation(1.0f / 100.0f);
 
 		for (int i = 0; i < resourceManager->GetGameObjects().count; i++)
 		{
@@ -172,7 +172,7 @@ int main(int argc, const char* argv[])
 			}
 		}
 
-		std::this_thread::sleep_for(30ms);
+		std::this_thread::sleep_for(10ms);
 	}
 	while (true);
 
