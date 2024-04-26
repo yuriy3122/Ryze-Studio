@@ -107,7 +107,6 @@ namespace RyzeEditor
             _renderer.Initialize(form.Handle, _worldMap.Camera);
             var context = new RenderContext(_renderer, _toolManager);
             _serverClient = new ServerClient { WorldMap = _worldMap };
-            _serverClient.ProcessMessages();
 
             _worldMap.EntityAdded += WorldMapEntityAdded;
             _worldMap.EntityDeleted += WorldMapEntityDeleted;

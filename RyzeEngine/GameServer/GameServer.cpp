@@ -25,6 +25,10 @@ static void pack_object_data(char* data, game_object_t* object)
 	memcpy(data + offset, (void*)&id, sizeof(int32_t));
 	offset += sizeof(int32_t);
 
+	int32_t submeshId = 0;
+	memcpy(data + offset, (void*)&submeshId, sizeof(int32_t));
+	offset += sizeof(int32_t);
+
 	float px = object->position.x;
 	memcpy(data + offset, (void*)&px, sizeof(float));
 	offset += sizeof(float);
@@ -116,7 +120,7 @@ int main(int argc, const char* argv[])
 	auto physicsEngine = new PhysicsEngine(resourceManager);
 	physicsEngine->Initialize();
 
-	size_t size = 38;
+	const size_t size = 38;
 	char* buffer = (char*)malloc(size);
 
 	int port = atoi(argv[2]);
@@ -143,7 +147,7 @@ int main(int argc, const char* argv[])
 
 	do
 	{
-		physicsEngine->StepSimulation(1.0f / 100.0f);
+		physicsEngine->StepSimulation(1.0f / 30.0f);
 
 		for (int i = 0; i < resourceManager->GetGameObjects().count; i++)
 		{
@@ -153,7 +157,7 @@ int main(int argc, const char* argv[])
 			{
 				pack_object_data(buffer, gameObject);
 
-				sendto(sendSocket, buffer, 34, 0, (SOCKADDR*)&recvAddr, sizeof(recvAddr));
+				sendto(sendSocket, buffer, size, 0, (SOCKADDR*)&recvAddr, sizeof(recvAddr));
 
 				SubMeshTransformList transforms = physicsEngine->GetSubMeshTransforms(gameObject->objectId);
 
@@ -163,12 +167,12 @@ int main(int argc, const char* argv[])
 
 					pack_submesh_data(buffer, gameObject, transform);
 
-					sendto(sendSocket, buffer, 38, 0, (SOCKADDR*)&recvAddr, sizeof(recvAddr));
+					sendto(sendSocket, buffer, size, 0, (SOCKADDR*)&recvAddr, sizeof(recvAddr));
 				}
 			}
 		}
 
-		std::this_thread::sleep_for(10ms);
+		std::this_thread::sleep_for(30ms);
 	}
 	while (true);
 
