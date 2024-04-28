@@ -14,9 +14,6 @@ namespace RyzeEditor.GameWorld
         public Wheel()
         {
             Id = Guid.NewGuid();
-            SuspensionStiffness = 5.88f;
-            SuspensionCompression = 0.83f;
-            SuspensionDamping = 0.88f;
             MaxSuspensionTravelCm = 500.0f;
             FrictionSlip = 10.5f;
             SubMeshIds = new List<string>();
@@ -56,28 +53,6 @@ namespace RyzeEditor.GameWorld
         public Vector3 ChassisConnectionPointCS { get; set; }
 
         public Quaternion Rotation { get; set; }
-
-        //The maximum length of the suspension (metres)
-        //Rest length is the length of a spring when no force is applied to it.
-        //If the suspension’s rest lengths are too large,
-        //the chassis will seem to be jacked up on stilts and the vehicle will be prone to tipping, even when not moving.
-        public float SuspensionRestLength { get; set; }
-
-        //The stiffness constant for the suspension. 10.0 - Offroad buggy, 50.0 - Sports car, 200.0 - F1 Car
-        //Stiffness is the force exerted by a spring divided by its change in length.
-        //If the suspension is too stiff, a small bump could cause the vehicle to bounce violently.
-        //If it isn’t stiff enough, a large bump could cause the chassis to "bottom out"
-        public float SuspensionStiffness { get; set; }
-
-        public float SuspensionCompression { get; set; }
-
-        //Each wheel has 2 suspension damping parameters, one for expansion and one for compression.
-        //The range of plausible values depends on the suspension stiffness, according to the formula:
-        //damping = 2f * k * FastMath.sqrt(stiffness);
-        //where k is the suspension’s damping ratio: k = 0: undamped and bouncy. k = 1: critically damped.
-        //Good values of k are between 0.1 and 0.3.
-        //The default damping parameters of 0.83 and 0.88 are suitable for a chassis with the default stiffness of 5.88 (k= 0.171 and 0.181, respectively).
-        public float SuspensionDamping { get; set; }
 
         public float MaxSuspensionTravelCm { get; set; }
 
@@ -153,6 +128,9 @@ namespace RyzeEditor.GameWorld
             MaxBreakingForce = 100.0f;
             SteeringIncrement = 0.04f;
             SteeringClamp = 0.3f;
+            SuspensionStiffness = 5.88f;
+            SuspensionCompression = 0.83f;
+            SuspensionDamping = 0.88f;
 
             var meshId = geometryMeshIds?.FirstOrDefault();
 
@@ -198,6 +176,28 @@ namespace RyzeEditor.GameWorld
         public float SteeringIncrement { get; set; }
 
         public float SteeringClamp { get; set; }
+
+        //The maximum length of the suspension (metres)
+        //Rest length is the length of a spring when no force is applied to it.
+        //If the suspension’s rest lengths are too large,
+        //the chassis will seem to be jacked up on stilts and the vehicle will be prone to tipping, even when not moving.
+        public float SuspensionRestLength { get; set; }
+
+        //The stiffness constant for the suspension. 10.0 - Offroad buggy, 50.0 - Sports car, 200.0 - F1 Car
+        //Stiffness is the force exerted by a spring divided by its change in length.
+        //If the suspension is too stiff, a small bump could cause the vehicle to bounce violently.
+        //If it isn’t stiff enough, a large bump could cause the chassis to "bottom out"
+        public float SuspensionStiffness { get; set; }
+
+        public float SuspensionCompression { get; set; }
+
+        //Each wheel has 2 suspension damping parameters, one for expansion and one for compression.
+        //The range of plausible values depends on the suspension stiffness, according to the formula:
+        //damping = 2f * k * FastMath.sqrt(stiffness);
+        //where k is the suspension’s damping ratio: k = 0: undamped and bouncy. k = 1: critically damped.
+        //Good values of k are between 0.1 and 0.3.
+        //The default damping parameters of 0.83 and 0.88 are suitable for a chassis with the default stiffness of 5.88 (k= 0.171 and 0.181, respectively).
+        public float SuspensionDamping { get; set; }
 
         public bool DrawChassisPoints { get; set; }
     }

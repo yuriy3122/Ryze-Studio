@@ -101,107 +101,6 @@ namespace RyzeEditor.Controls
             retval = tableLayoutPanel.RowStyles.Add(new RowStyle(SizeType.AutoSize));
             tableLayoutPanel.Controls.Add(_chassisConnectionPointCSVectorUpDown, 0, retval);
 
-            var suspMaxLenLabel = new Label
-            {
-                AutoSize = false, TextAlign = ContentAlignment.MiddleCenter, Dock = DockStyle.None, Text = @"Max susp. length:"
-            };
-
-            _suspensionRestLengthNumericUpDown = new NumericUpDown
-            {
-                DecimalPlaces = 2, Maximum = 1000, Increment = 0.1M, Dock = DockStyle.Fill, Anchor = AnchorStyles.Top
-            };
-
-            var suspensionRestLengthPanel = new TableLayoutPanel() { Dock = DockStyle.Fill, Height = 30, ColumnCount = 2, RowCount = 1 };
-            suspensionRestLengthPanel.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 70F));
-            suspensionRestLengthPanel.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 30F));
-            suspensionRestLengthPanel.RowStyles.Add(new RowStyle(SizeType.AutoSize));
-            suspensionRestLengthPanel.Controls.Add(suspMaxLenLabel, 0, 0);
-            suspensionRestLengthPanel.Controls.Add(_suspensionRestLengthNumericUpDown, 1, 0);
-
-            retval = tableLayoutPanel.RowStyles.Add(new RowStyle(SizeType.AutoSize));
-            tableLayoutPanel.Controls.Add(suspensionRestLengthPanel, 0, retval);
-
-            var suspensionStiffness = new Label
-            {
-                AutoSize = false,
-                TextAlign = ContentAlignment.MiddleCenter,
-                Dock = DockStyle.None,
-                Text = @"Stiffness constant :"
-            };
-
-            _suspensionStiffnessNumericUpDown = new NumericUpDown
-            {
-                DecimalPlaces = 2,
-                Maximum = 1000,
-                Increment = 0.1M,
-                Dock = DockStyle.Fill,
-                Anchor = AnchorStyles.Top
-            };
-
-            var suspensionStiffnessPanel = new TableLayoutPanel() { Dock = DockStyle.Fill, Height = 30, ColumnCount = 2, RowCount = 1 };
-            suspensionStiffnessPanel.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 70F));
-            suspensionStiffnessPanel.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 30F));
-            suspensionStiffnessPanel.RowStyles.Add(new RowStyle(SizeType.AutoSize));
-            suspensionStiffnessPanel.Controls.Add(suspensionStiffness, 0, 0);
-            suspensionStiffnessPanel.Controls.Add(_suspensionStiffnessNumericUpDown, 1, 0);
-
-            retval = tableLayoutPanel.RowStyles.Add(new RowStyle(SizeType.AutoSize));
-            tableLayoutPanel.Controls.Add(suspensionStiffnessPanel, 0, retval);
-
-            var suspensionCompression = new Label
-            {
-                AutoSize = false,
-                TextAlign = ContentAlignment.MiddleCenter,
-                Dock = DockStyle.None,
-                Text = @"Susp. compr.:"
-            };
-
-            _suspensionCompressionNumericUpDown = new NumericUpDown
-            {
-                DecimalPlaces = 2,
-                Maximum = 1000,
-                Increment = 0.1M,
-                Dock = DockStyle.Fill,
-                Anchor = AnchorStyles.Top
-            };
-
-            var suspensionCompressionPanel = new TableLayoutPanel() { Dock = DockStyle.Fill, Height = 30, ColumnCount = 2, RowCount = 1 };
-            suspensionCompressionPanel.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 70F));
-            suspensionCompressionPanel.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 30F));
-            suspensionCompressionPanel.RowStyles.Add(new RowStyle(SizeType.AutoSize));
-            suspensionCompressionPanel.Controls.Add(suspensionCompression, 0, 0);
-            suspensionCompressionPanel.Controls.Add(_suspensionCompressionNumericUpDown, 1, 0);
-
-            retval = tableLayoutPanel.RowStyles.Add(new RowStyle(SizeType.AutoSize));
-            tableLayoutPanel.Controls.Add(suspensionCompressionPanel, 0, retval);
-
-            var suspensionDampingLabel = new Label
-            {
-                AutoSize = false,
-                TextAlign = ContentAlignment.MiddleCenter,
-                Dock = DockStyle.None,
-                Text = @"Susp. damping:"
-            };
-
-            _suspensionDampingNumericUpDown = new NumericUpDown
-            {
-                DecimalPlaces = 2,
-                Maximum = 1000,
-                Increment = 0.1M,
-                Dock = DockStyle.Fill,
-                Anchor = AnchorStyles.Top
-            };
-
-            var suspensionDampingPanel = new TableLayoutPanel() { Dock = DockStyle.Fill, Height = 30, ColumnCount = 2, RowCount = 1 };
-            suspensionDampingPanel.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 70F));
-            suspensionDampingPanel.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 30F));
-            suspensionDampingPanel.RowStyles.Add(new RowStyle(SizeType.AutoSize));
-            suspensionDampingPanel.Controls.Add(suspensionDampingLabel, 0, 0);
-            suspensionDampingPanel.Controls.Add(_suspensionDampingNumericUpDown, 1, 0);
-
-            retval = tableLayoutPanel.RowStyles.Add(new RowStyle(SizeType.AutoSize));
-            tableLayoutPanel.Controls.Add(suspensionDampingPanel, 0, retval);
-
             ResumeLayout(false);
             PerformLayout();
 
@@ -323,47 +222,7 @@ namespace RyzeEditor.Controls
                     _chassisConnectionPointCSVectorUpDown.ValueChanged -= ChassisConnectionPointCSValueChanged;
                     _chassisConnectionPointCSVectorUpDown.Vector = _selectedWheel.ChassisConnectionPointCS;
                     _chassisConnectionPointCSVectorUpDown.ValueChanged += ChassisConnectionPointCSValueChanged;
-
-                    _suspensionRestLengthNumericUpDown.ValueChanged -= SuspensionRestLengthValueChanged;
-                    _suspensionRestLengthNumericUpDown.Value = Convert.ToDecimal(_selectedWheel.SuspensionRestLength);
-                    _suspensionRestLengthNumericUpDown.ValueChanged += SuspensionRestLengthValueChanged;
-
-                    _suspensionStiffnessNumericUpDown.ValueChanged -= SuspensionStiffnessValueChanged;
-                    _suspensionStiffnessNumericUpDown.Value = Convert.ToDecimal(_selectedWheel.SuspensionStiffness);
-                    _suspensionStiffnessNumericUpDown.ValueChanged += SuspensionStiffnessValueChanged;
-
-                    _suspensionCompressionNumericUpDown.ValueChanged -= SuspensionCompressionValueChanged;
-                    _suspensionCompressionNumericUpDown.Value = Convert.ToDecimal(_selectedWheel.SuspensionCompression);
-                    _suspensionCompressionNumericUpDown.ValueChanged += SuspensionCompressionValueChanged;
-
-                    _suspensionDampingNumericUpDown.ValueChanged -= SuspensionDampingValueChanged;
-                    _suspensionDampingNumericUpDown.Value = Convert.ToDecimal(_selectedWheel.SuspensionDamping);
-                    _suspensionDampingNumericUpDown.ValueChanged += SuspensionDampingValueChanged;
                 }
-            }
-        }
-
-        private void SuspensionDampingValueChanged(object sender, EventArgs e)
-        {
-            if (_selectedWheel != null)
-            {
-                _selectedWheel.SuspensionDamping = (float)_suspensionDampingNumericUpDown.Value;
-            }
-        }
-
-        private void SuspensionCompressionValueChanged(object sender, EventArgs e)
-        {
-            if (_selectedWheel != null)
-            {
-                _selectedWheel.SuspensionCompression = (float)_suspensionCompressionNumericUpDown.Value;
-            }
-        }
-
-        private void SuspensionStiffnessValueChanged(object sender, EventArgs e)
-        {
-            if (_selectedWheel != null)
-            {
-                _selectedWheel.SuspensionStiffness = (float)_suspensionStiffnessNumericUpDown.Value;
             }
         }
 
@@ -380,14 +239,6 @@ namespace RyzeEditor.Controls
             if (_selectedWheel != null)
             {
                 _selectedWheel.WheelDirectionCS = _wheelDirectionCSVectorUpDown.Vector;
-            }
-        }
-
-        private void SuspensionRestLengthValueChanged(object sender, EventArgs e)
-        {
-            if (_selectedWheel != null)
-            {
-                _selectedWheel.SuspensionRestLength = (float)_suspensionRestLengthNumericUpDown.Value;
             }
         }
 

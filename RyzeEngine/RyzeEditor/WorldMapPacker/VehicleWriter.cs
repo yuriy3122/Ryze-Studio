@@ -42,7 +42,7 @@ namespace RyzeEditor.Packer
                 {
                     if (wheel.IsFrontWheel && wheel.IsLeftSideWheel)
                     {
-                        WriteWheelData(stream, wheel);
+                        WriteWheelData(stream, wheel, vehicle);
                     }
                 }
 
@@ -51,7 +51,7 @@ namespace RyzeEditor.Packer
                 {
                     if (wheel.IsFrontWheel && !wheel.IsLeftSideWheel)
                     {
-                        WriteWheelData(stream, wheel);
+                        WriteWheelData(stream, wheel, vehicle);
                     }
                 }
 
@@ -60,7 +60,7 @@ namespace RyzeEditor.Packer
                 {
                     if (!wheel.IsFrontWheel && wheel.IsLeftSideWheel)
                     {
-                        WriteWheelData(stream, wheel);
+                        WriteWheelData(stream, wheel, vehicle);
                     }
                 }
 
@@ -69,7 +69,7 @@ namespace RyzeEditor.Packer
                 {
                     if (!wheel.IsFrontWheel && !wheel.IsLeftSideWheel)
                     {
-                        WriteWheelData(stream, wheel);
+                        WriteWheelData(stream, wheel, vehicle);
                     }
                 }
 
@@ -93,7 +93,7 @@ namespace RyzeEditor.Packer
             }
         }
 
-        private void WriteWheelData(Stream stream, Wheel wheel)
+        private void WriteWheelData(Stream stream, Wheel wheel, Vehicle vehicle)
         {
             stream.Write(BitConverter.GetBytes(wheel.SubMeshIds.Count), 0, sizeof(int));
 
@@ -124,14 +124,14 @@ namespace RyzeEditor.Packer
             stream.Write(BitConverter.GetBytes(_wheelId++), 0, sizeof(int));                    //Wheel Id
             stream.Write(BitConverter.GetBytes(wheel.Radius), 0, sizeof(float));                //Radius
             stream.Write(BitConverter.GetBytes(wheel.Width), 0, sizeof(float));                 //Width
-            stream.Write(BitConverter.GetBytes(wheel.SuspensionRestLength), 0, sizeof(float));  //SuspensionRestLength
+            stream.Write(BitConverter.GetBytes(vehicle.SuspensionRestLength), 0, sizeof(float));//SuspensionRestLength
             stream.Write(axleCS.GetBytes(), 0, 3 * sizeof(float));                              //AxleCS
             stream.Write(wheelDirectionCS.GetBytes(), 0, 3 * sizeof(float));                    //WheelDirectionCS
             stream.Write(chassisConnectionPointCS.GetBytes(), 0, 3 * sizeof(float));            //ChassicConnectionPoint
             stream.Write(wheel.Rotation.GetBytes(), 0, 4 * sizeof(float));                      //Rotation (Right-handed) in Model space
-            stream.Write(BitConverter.GetBytes(wheel.SuspensionStiffness), 0, sizeof(float));
-            stream.Write(BitConverter.GetBytes(wheel.SuspensionCompression), 0, sizeof(float));
-            stream.Write(BitConverter.GetBytes(wheel.SuspensionDamping), 0, sizeof(float));
+            stream.Write(BitConverter.GetBytes(vehicle.SuspensionStiffness), 0, sizeof(float));
+            stream.Write(BitConverter.GetBytes(vehicle.SuspensionCompression), 0, sizeof(float));
+            stream.Write(BitConverter.GetBytes(vehicle.SuspensionDamping), 0, sizeof(float));
             stream.Write(BitConverter.GetBytes(wheel.MaxSuspensionTravelCm), 0, sizeof(float));
             stream.Write(BitConverter.GetBytes(wheel.FrictionSlip), 0, sizeof(float));
             stream.Write(BitConverter.GetBytes(wheel.Offset), 0, sizeof(float));                //Offset suspention center - geometry center

@@ -102,18 +102,6 @@ namespace RyzeEditor.Tools
 		{
 			switch (arg.Key)
 			{
-				case Keys.Left:
-					_world.Camera.RotateY(0.005f);
-					break;
-				case Keys.Right:
-					_world.Camera.RotateY(-0.005f);
-					break;
-				case Keys.Up:
-					_world.Camera.RotateX(0.005f);
-					break;
-				case Keys.Down:
-					_world.Camera.RotateX(-0.005f);
-					break;
 				case Keys.A:
 					_world.Camera.Strafe(0.125f);
 					break;
