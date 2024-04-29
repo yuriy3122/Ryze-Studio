@@ -124,7 +124,7 @@ namespace RyzeEditor.GameWorld
         {
             Id = Guid.NewGuid();
 
-            MaxEngineForce = 1000.0f;
+            MaxEngineForce = 200.0f;
             MaxBreakingForce = 100.0f;
             SteeringIncrement = 0.04f;
             SteeringClamp = 0.3f;
@@ -132,7 +132,7 @@ namespace RyzeEditor.GameWorld
             SuspensionStiffness = 5.88f;
             SuspensionCompression = 0.88f;
             SuspensionDamping = 0.0f;
-            Mass = 1850.0f;
+            Mass = 1800.0f;
 
             var meshId = geometryMeshIds?.FirstOrDefault();
 

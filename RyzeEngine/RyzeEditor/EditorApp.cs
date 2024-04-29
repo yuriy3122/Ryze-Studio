@@ -299,11 +299,13 @@ namespace RyzeEditor
             {
                 _worldMap.SetModified();
                 _worldMap.EnableEntityChangeNotifications();
+                _worldMap.IsSimulationRunning = false;
                 _inspectorControl.UpdateControls(_toolManager.GetFirstActiveTool());
             }
             else
             {
                 _worldMap.DisableEntityChangeNotifications();
+                _worldMap.IsSimulationRunning = true;
             }
 
             return suspend;

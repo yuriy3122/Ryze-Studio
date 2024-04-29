@@ -33,6 +33,9 @@ namespace RyzeEditor.Tools
         [field: NonSerialized]
         private bool _wheelSelectionIsActive;
 
+        [field: NonSerialized]
+        private Vector3? _position;
+
         public VehicleTool(WorldMap world, Selection selection) : base(world, selection)
         {
             Options = new RenderOptions();
@@ -259,6 +262,24 @@ namespace RyzeEditor.Tools
             if (selectedVehicle == null)
             {
                 return;
+            }
+
+            if (_world.IsSimulationRunning)
+            {
+                if (!_position.HasValue)
+                {
+                    _position = selectedVehicle.Position;
+                }
+
+                var delta = selectedVehicle.Position - _position.Value;
+                _world.Camera.Position += delta;
+                _world.Camera.LookAtDir += delta;
+
+                _position = selectedVehicle.Position;
+            }
+            else
+            {
+                _position = null;
             }
 
             if (selectedVehicle.DrawChassisPoints)

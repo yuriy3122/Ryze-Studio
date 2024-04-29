@@ -26,6 +26,8 @@ namespace RyzeEditor.GameWorld
         [field: NonSerialized]
         public string _id;
 
+        public bool IsSimulationRunning { get; set; }
+
         public void SetModified()
         {
             Id = Guid.NewGuid().ToString().Replace("-", "");
