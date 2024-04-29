@@ -128,18 +128,56 @@ namespace RyzeEditor.GameWorld
             MaxBreakingForce = 100.0f;
             SteeringIncrement = 0.04f;
             SteeringClamp = 0.3f;
+            SuspensionRestLength = 0.58f;
             SuspensionStiffness = 5.88f;
-            SuspensionCompression = 0.83f;
-            SuspensionDamping = 0.88f;
+            SuspensionCompression = 0.88f;
+            SuspensionDamping = 0.0f;
+            Mass = 1850.0f;
 
             var meshId = geometryMeshIds?.FirstOrDefault();
 
             Wheels = new List<Wheel>
             {
-                new Wheel() { IsFrontWheel = true, IsLeftSideWheel = true, MeshId = meshId, ParentId = Id },
-                new Wheel() { IsFrontWheel = true, IsLeftSideWheel = false, MeshId = meshId, ParentId = Id },
-                new Wheel() { IsFrontWheel = false, IsLeftSideWheel = true, MeshId = meshId, ParentId = Id },
-                new Wheel() { IsFrontWheel = false, IsLeftSideWheel = false, MeshId = meshId, ParentId = Id }
+                new Wheel()
+                {
+                    IsFrontWheel = true,
+                    IsLeftSideWheel = true,
+                    MeshId = meshId,
+                    ParentId = Id,
+                    AxleCS = new Vector3(-1.0f, 0.0f, 0.0f),
+                    WheelDirectionCS = new Vector3(0.0f, -1.0f, 0.0f),
+                    ChassisConnectionPointCS = new Vector3(0.761f, 0.188f, -1.3f)
+                },
+                new Wheel()
+                { 
+                    IsFrontWheel = true, 
+                    IsLeftSideWheel = false, 
+                    MeshId = meshId,
+                    ParentId = Id,
+                    AxleCS = new Vector3(-1.0f, 0.0f, 0.0f),
+                    WheelDirectionCS = new Vector3(0.0f, -1.0f, 0.0f),
+                    ChassisConnectionPointCS = new Vector3(-0.761f, 0.188f, -1.3f)
+                },
+                new Wheel()
+                { 
+                    IsFrontWheel = false, 
+                    IsLeftSideWheel = true,
+                    MeshId = meshId, 
+                    ParentId = Id,
+                    AxleCS = new Vector3(-1.0f, 0.0f, 0.0f),
+                    WheelDirectionCS = new Vector3(0.0f, -1.0f, 0.0f),
+                    ChassisConnectionPointCS = new Vector3(0.761f, 0.188f, 1.910f)
+                },
+                new Wheel()
+                { 
+                    IsFrontWheel = false, 
+                    IsLeftSideWheel = false, 
+                    MeshId = meshId,
+                    ParentId = Id,
+                    AxleCS = new Vector3(-1.0f, 0.0f, 0.0f),
+                    WheelDirectionCS = new Vector3(0.0f, -1.0f, 0.0f),
+                    ChassisConnectionPointCS = new Vector3(-0.761f, 0.188f, 1.910f)
+                }
             };
         }
 

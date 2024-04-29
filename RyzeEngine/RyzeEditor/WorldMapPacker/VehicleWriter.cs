@@ -118,10 +118,14 @@ namespace RyzeEditor.Packer
 
             wheel.ComputeParams();
 
+            var wheelId = _wheelId++;
+
+            Console.WriteLine($"Wheel ID: {wheelId}");
+
             //Write Wheel data struct (104 bytes)
             stream.Write(BitConverter.GetBytes(0L), 0, sizeof(long));                           //Reserve for 64-bit pointer
             stream.Write(BitConverter.GetBytes(wheel.SubMeshIds.Count), 0, sizeof(int));        //SubMeshIds count
-            stream.Write(BitConverter.GetBytes(_wheelId++), 0, sizeof(int));                    //Wheel Id
+            stream.Write(BitConverter.GetBytes(wheelId), 0, sizeof(int));                       //Wheel Id
             stream.Write(BitConverter.GetBytes(wheel.Radius), 0, sizeof(float));                //Radius
             stream.Write(BitConverter.GetBytes(wheel.Width), 0, sizeof(float));                 //Width
             stream.Write(BitConverter.GetBytes(vehicle.SuspensionRestLength), 0, sizeof(float));//SuspensionRestLength
@@ -135,6 +139,20 @@ namespace RyzeEditor.Packer
             stream.Write(BitConverter.GetBytes(wheel.MaxSuspensionTravelCm), 0, sizeof(float));
             stream.Write(BitConverter.GetBytes(wheel.FrictionSlip), 0, sizeof(float));
             stream.Write(BitConverter.GetBytes(wheel.Offset), 0, sizeof(float));                //Offset suspention center - geometry center
+
+            Console.WriteLine($"Radius: {wheel.Radius}");
+            Console.WriteLine($"Width: {wheel.Width}");
+            Console.WriteLine($"SuspensionRestLength: {vehicle.SuspensionRestLength}");
+            Console.WriteLine($"AxleCS: {axleCS}");
+            Console.WriteLine($"WheelDirectionCS: {wheelDirectionCS}");
+            Console.WriteLine($"ChassisConnectionPointCS: {chassisConnectionPointCS}");
+            Console.WriteLine($"Rotation: {wheel.Rotation}");
+            Console.WriteLine($"SuspensionStiffness: {vehicle.SuspensionStiffness}");
+            Console.WriteLine($"SuspensionCompression: {vehicle.SuspensionCompression}");
+            Console.WriteLine($"SuspensionDamping: {vehicle.SuspensionDamping}");
+            Console.WriteLine($"MaxSuspensionTravelCm: {wheel.MaxSuspensionTravelCm}");
+            Console.WriteLine($"FrictionSlip: {wheel.FrictionSlip}");
+            Console.WriteLine($"Offset: {wheel.Offset}");
         }
     }
 }
