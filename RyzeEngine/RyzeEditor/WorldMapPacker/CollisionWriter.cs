@@ -389,6 +389,11 @@ namespace RyzeEditor.Packer
 
             foreach (var group in groups)
             {
+                if (!_worldMapData.GameObjects.ContainsKey(group.Key))
+                {
+                    continue;
+                }
+
                 var rotation = group.Key.Rotation;
                 rotation.X = -rotation.X;
                 rotation.Y = -rotation.Y;
@@ -498,26 +503,11 @@ namespace RyzeEditor.Packer
 
         public void Dispose()
         {
-            if (_dynamicsWorld != null)
-            {
-                _dynamicsWorld.Dispose();
-            }
-            if (_solver != null)
-            {
-                _solver.Dispose();
-            }
-            if (_broadphaseInterface != null)
-            {
-                _broadphaseInterface.Dispose();
-            }
-            if (_dispatcher != null)
-            {
-                _dispatcher.Dispose();
-            }
-            if (_collisionConfiguration != null)
-            {
-                _collisionConfiguration.Dispose();
-            }
+            _dynamicsWorld?.Dispose();
+            _solver?.Dispose();
+            _broadphaseInterface?.Dispose();
+            _dispatcher?.Dispose();
+            _collisionConfiguration?.Dispose();
         }
     }
 }
