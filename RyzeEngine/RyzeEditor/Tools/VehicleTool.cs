@@ -264,7 +264,7 @@ namespace RyzeEditor.Tools
                 return;
             }
 
-            if (_world.IsSimulationRunning)
+            if (_world.IsSimulationRunning && selectedVehicle.AttachCamera)
             {
                 if (!_position.HasValue)
                 {

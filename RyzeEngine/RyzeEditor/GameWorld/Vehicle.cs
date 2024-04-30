@@ -115,15 +115,60 @@ namespace RyzeEditor.GameWorld
     /// 2. Reducing the maximum steering angle with increasing vehicle speed.
     /// 3. Setting engine force based on an analogue input, or alternatively based on the duration of the forward key being pressed down
     /// </summary>
-
     [Serializable]
     [ImplementPropertyChanged]
     public class Vehicle : GameObject
     {
+        public float Mass { get; set; }
+
+        //Vehicle Mesh assumed to be a "Chassis"
+        public string ChassisMeshId { get; set; }
+
+        //For binary writer
+        [InspectorVisible(false)]
+        public int CollisionShapeId { get; set; }
+
+        public List<Wheel> Wheels { get; set; }
+
+        //This should be engine/velocity dependent
+        public float MaxEngineForce { get; set; }
+
+        public float MaxBreakingForce { get; set; }
+
+        public float SteeringIncrement { get; set; }
+
+        public float SteeringClamp { get; set; }
+
+        //The maximum length of the suspension (metres)
+        //Rest length is the length of a spring when no force is applied to it.
+        //If the suspension’s rest lengths are too large,
+        //the chassis will seem to be jacked up on stilts and the vehicle will be prone to tipping, even when not moving.
+        public float SuspensionRestLength { get; set; }
+
+        //The stiffness constant for the suspension. 10.0 - Offroad buggy, 50.0 - Sports car, 200.0 - F1 Car
+        //Stiffness is the force exerted by a spring divided by its change in length.
+        //If the suspension is too stiff, a small bump could cause the vehicle to bounce violently.
+        //If it isn’t stiff enough, a large bump could cause the chassis to "bottom out"
+        public float SuspensionStiffness { get; set; }
+
+        public float SuspensionCompression { get; set; }
+
+        //Each wheel has 2 suspension damping parameters, one for expansion and one for compression.
+        //The range of plausible values depends on the suspension stiffness, according to the formula:
+        //damping = 2f * k * FastMath.sqrt(stiffness);
+        //where k is the suspension’s damping ratio: k = 0: undamped and bouncy. k = 1: critically damped.
+        //Good values of k are between 0.1 and 0.3.
+        //The default damping parameters of 0.83 and 0.88 are suitable for a chassis with the default stiffness of 5.88 (k= 0.171 and 0.181, respectively).
+        public float SuspensionDamping { get; set; }
+
+        public bool DrawChassisPoints { get; set; }
+
+        public bool AttachCamera { get; set; }
+
         public Vehicle(List<string> geometryMeshIds, List<string> collisionMeshIds) : base(geometryMeshIds, collisionMeshIds)
         {
             Id = Guid.NewGuid();
-
+            AttachCamera = true;
             MaxEngineForce = 200.0f;
             MaxBreakingForce = 100.0f;
             SteeringIncrement = 0.04f;
@@ -194,49 +239,5 @@ namespace RyzeEditor.GameWorld
 
             return chassisConvexHullMeshId ?? ChassisMeshId;
         }
-
-        public float Mass { get; set; }
-
-        //Vehicle Mesh assumed to be a "Chassis"
-        public string ChassisMeshId { get; set; }
-
-        //For binary writer
-        [InspectorVisible(false)]
-        public int CollisionShapeId { get; set; }
-
-        public List<Wheel> Wheels { get; set; }
-
-        //This should be engine/velocity dependent
-        public float MaxEngineForce { get; set; }
-
-        public float MaxBreakingForce { get; set; }
-
-        public float SteeringIncrement { get; set; }
-
-        public float SteeringClamp { get; set; }
-
-        //The maximum length of the suspension (metres)
-        //Rest length is the length of a spring when no force is applied to it.
-        //If the suspension’s rest lengths are too large,
-        //the chassis will seem to be jacked up on stilts and the vehicle will be prone to tipping, even when not moving.
-        public float SuspensionRestLength { get; set; }
-
-        //The stiffness constant for the suspension. 10.0 - Offroad buggy, 50.0 - Sports car, 200.0 - F1 Car
-        //Stiffness is the force exerted by a spring divided by its change in length.
-        //If the suspension is too stiff, a small bump could cause the vehicle to bounce violently.
-        //If it isn’t stiff enough, a large bump could cause the chassis to "bottom out"
-        public float SuspensionStiffness { get; set; }
-
-        public float SuspensionCompression { get; set; }
-
-        //Each wheel has 2 suspension damping parameters, one for expansion and one for compression.
-        //The range of plausible values depends on the suspension stiffness, according to the formula:
-        //damping = 2f * k * FastMath.sqrt(stiffness);
-        //where k is the suspension’s damping ratio: k = 0: undamped and bouncy. k = 1: critically damped.
-        //Good values of k are between 0.1 and 0.3.
-        //The default damping parameters of 0.83 and 0.88 are suitable for a chassis with the default stiffness of 5.88 (k= 0.171 and 0.181, respectively).
-        public float SuspensionDamping { get; set; }
-
-        public bool DrawChassisPoints { get; set; }
     }
 }
