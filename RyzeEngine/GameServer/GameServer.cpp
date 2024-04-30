@@ -14,12 +14,15 @@
 
 using namespace std;
 
-static void pack_object_data(char* data, game_object_t* object)
+static void pack_object_data(char* data, game_object_t* object, long long time)
 {
 	uint32_t offset = 0;
 	uint16_t header = 1;
 	memcpy(data + offset, (void*)&header, sizeof(uint16_t));
 	offset += sizeof(uint16_t);
+
+	memcpy(data + offset, (void*)&time, sizeof(int64_t));
+	offset += sizeof(int64_t);
 
 	int32_t id = object->objectId;
 	memcpy(data + offset, (void*)&id, sizeof(int32_t));
@@ -57,12 +60,15 @@ static void pack_object_data(char* data, game_object_t* object)
 	memcpy(data + offset, (void*)&rw, sizeof(float));
 }
 
-static void pack_submesh_data(char* data, const game_object_t* object, const submesh_transform_t* transform)
+static void pack_submesh_data(char* data, const game_object_t* object, const submesh_transform_t* transform, long long time)
 {
 	uint32_t offset = 0;
 	uint16_t header = 2;
 	memcpy(data + offset, (void*)&header, sizeof(uint16_t));
 	offset += sizeof(uint16_t);
+
+	memcpy(data + offset, (void*)&time, sizeof(int64_t));
+	offset += sizeof(int64_t);
 
 	int32_t objectId = object->objectId;
 	memcpy(data + offset, (void*)&objectId, sizeof(int32_t));
@@ -120,7 +126,7 @@ int main(int argc, const char* argv[])
 	auto physicsEngine = new PhysicsEngine(resourceManager);
 	physicsEngine->Initialize();
 
-	const size_t size = 38;
+	const size_t size = 46;
 	char* buffer = (char*)malloc(size);
 
 	int port = atoi(argv[2]);
@@ -145,9 +151,14 @@ int main(int argc, const char* argv[])
 	recvAddr.sin_port = htons(port);
 	recvAddr.sin_addr.s_addr = inet_addr(IP_ADDRESS_S);
 
+	auto start_time = chrono::high_resolution_clock::now();
+
 	do
 	{
 		physicsEngine->StepSimulation(1.0f / 100.0f);
+
+		auto current_time = chrono::high_resolution_clock::now();
+		auto time = chrono::duration_cast<std::chrono::milliseconds>(current_time - start_time).count();
 
 		for (int i = 0; i < resourceManager->GetGameObjects().count; i++)
 		{
@@ -155,7 +166,7 @@ int main(int argc, const char* argv[])
 
 			if (gameObject != NULL)
 			{
-				pack_object_data(buffer, gameObject);
+				pack_object_data(buffer, gameObject, time);
 
 				sendto(sendSocket, buffer, size, 0, (SOCKADDR*)&recvAddr, sizeof(recvAddr));
 
@@ -165,14 +176,14 @@ int main(int argc, const char* argv[])
 				{
 					auto transform = &transforms.data[j];
 
-					pack_submesh_data(buffer, gameObject, transform);
+					pack_submesh_data(buffer, gameObject, transform, time);
 
 					sendto(sendSocket, buffer, size, 0, (SOCKADDR*)&recvAddr, sizeof(recvAddr));
 				}
 			}
 		}
 
-		std::this_thread::sleep_for(10ms);
+		std::this_thread::sleep_for(1ms);
 	}
 	while (true);
 

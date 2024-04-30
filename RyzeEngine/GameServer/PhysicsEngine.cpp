@@ -240,7 +240,7 @@ void PhysicsEngine::InitializeVehicles()
 
 void PhysicsEngine::StepSimulation(float deltaTime)
 {
-	m_dynamicsWorld->stepSimulation(deltaTime, 10, 1.0f / 100.0f);
+	m_dynamicsWorld->stepSimulation(deltaTime, 10, 1.0f / 60.0f);
 
 	for (int j = m_dynamicsWorld->getNumCollisionObjects() - 1; j >= 0; j--)
 	{

@@ -161,6 +161,7 @@ namespace RyzeEditor.GameWorld
         //The default damping parameters of 0.83 and 0.88 are suitable for a chassis with the default stiffness of 5.88 (k= 0.171 and 0.181, respectively).
         public float SuspensionDamping { get; set; }
 
+        [InspectorVisible(false)]
         public bool DrawChassisPoints { get; set; }
 
         public bool AttachCamera { get; set; }
@@ -169,7 +170,7 @@ namespace RyzeEditor.GameWorld
         {
             Id = Guid.NewGuid();
             AttachCamera = true;
-            MaxEngineForce = 200.0f;
+            MaxEngineForce = 100.0f;
             MaxBreakingForce = 100.0f;
             SteeringIncrement = 0.04f;
             SteeringClamp = 0.3f;
