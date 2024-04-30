@@ -108,7 +108,6 @@
     <Compile Include="Helpers\PatchHelper.cs" />
     <Compile Include="Helpers\StringUtils.cs" />
     <Compile Include="ServerClient.cs" />
-    <Compile Include="SkinnedAnimation\SkinnedVertex.cs" />
     <Compile Include="Tools\PointLightTool.cs" />
     <Compile Include="Tools\VehicleTool.cs" />
     <Compile Include="WorldMapPacker\CollisionWriter.cs" />
@@ -282,6 +281,7 @@
     </Content>
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="SkinnedAnimation\" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\SharpDX.D3DCompiler\SharpDX.D3DCompiler.csproj">

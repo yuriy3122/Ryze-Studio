@@ -14,6 +14,7 @@ namespace RyzeEditor.ResourceManagment
         public Vector3 Norm;
         public Vector3 Tangent;
         public Vector3 Bitangent;
+        public Vector4 Weights;//JointIndices and JointWeights are compressed in 4 floats: f.e.: {index:1, weight:0.2} -> Weights.X = 1.2f;
         public Vector2 Tex;
 
         public Vertex(Vector3 pos, Vector3 norm, Vector3 tangent, Vector3 bitangent, Vector2 tex)
@@ -23,6 +24,7 @@ namespace RyzeEditor.ResourceManagment
             Tangent = tangent;
             Bitangent = bitangent;
             Tex = tex;
+            Weights = Vector4.Zero;
         }
 
         public override bool Equals(object obj)
@@ -55,6 +57,11 @@ namespace RyzeEditor.ResourceManagment
                 return false;
             }
 
+            if (Vector4.Distance(vertex.Weights, Weights) > 0.00001f)
+            {
+                return false;
+            }
+
             if (Vector2.Distance(vertex.Tex, Tex) > 0.00001f)
             {
                 return false;
@@ -69,6 +76,7 @@ namespace RyzeEditor.ResourceManagment
             hash = hash * 23 + Pos.GetHashCode();
             hash = hash * 23 + Norm.GetHashCode();
             hash = hash * 23 + Tex.GetHashCode();
+            hash = hash * 23 + Weights.GetHashCode();
             return hash;
         }
 

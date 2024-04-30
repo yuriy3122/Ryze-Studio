@@ -93,7 +93,7 @@ namespace RyzeEditor.Renderer
 			var desc = new BufferDescription(IndexBufferCapacity * sizeof(uint), ResourceUsage.Dynamic, BindFlags.IndexBuffer, CpuAccessFlags.Write, ResourceOptionFlags.None, 0);
 			_indexBuffer = Buffer.Create(_device, new uint[IndexBufferCapacity], desc);
 
-			int vertSize = 4 * Utilities.SizeOf<Vector3>() + Utilities.SizeOf<Vector2>();
+			int vertSize = 4 * Utilities.SizeOf<Vector3>() + Utilities.SizeOf<Vector2>() + Utilities.SizeOf<Vector4>();
 			desc = new BufferDescription(VertexBufferCapacity * vertSize, ResourceUsage.Dynamic, BindFlags.VertexBuffer, CpuAccessFlags.Write, ResourceOptionFlags.None, 0);
 			_vertBuffer = Buffer.Create(_device, new Vertex[VertexBufferCapacity], desc);
 

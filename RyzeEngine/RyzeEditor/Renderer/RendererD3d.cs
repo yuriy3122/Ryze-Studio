@@ -119,7 +119,7 @@ namespace RyzeEditor.Renderer
 				stream.WriteRange(subMesh.VertexData.ToArray());
 				_context.UnmapSubresource(_vertBuffer, 0);
 
-				int stride = 4 * Utilities.SizeOf<Vector3>() + Utilities.SizeOf<Vector2>();
+				int stride = 4 * Utilities.SizeOf<Vector3>() + Utilities.SizeOf<Vector2>() + Utilities.SizeOf<Vector4>();
 				var vertexBufferBinding = new VertexBufferBinding(_vertBuffer, stride, 0);
 
 				_context.InputAssembler.SetVertexBuffers(0, vertexBufferBinding, instanceBufferBinding);
