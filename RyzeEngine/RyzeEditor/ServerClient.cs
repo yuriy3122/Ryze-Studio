@@ -34,17 +34,21 @@ namespace RyzeEditor
 
         private readonly Dictionary<int, GameObject> _gameObjectMap;
         private readonly Dictionary<long, GameObjectData> _objectData;
+        private readonly Dictionary<long, Queue<GameObjectTimeState>> _states;
+
+        private const int QueueSize = 8;
 
         public ServerClient()
         {
             _gameObjectMap = new Dictionary<int, GameObject>();
             _objectData = new Dictionary<long, GameObjectData>();
+            _states = new Dictionary<long, Queue<GameObjectTimeState>>();
 
-            var dir = Path.GetDirectoryName(Application.ExecutablePath); ;
+            var dir = Path.GetDirectoryName(Application.ExecutablePath);
             _outputFile = Path.Combine(dir, "collision_data.bin");
         }
 
-        public long MakeLong(int left, int right)
+        public long MakeKey(int left, int right, ushort header)
         {
             //implicit conversion of left to a long
             long res = left;
@@ -55,7 +59,7 @@ namespace RyzeEditor
 
             //combine the bits on the right with the previous value
             // ex: 0xCFFF0000 | 0x0000ABCD becomes 0xCFFFABCD
-            res |= (uint)right; //uint first to prevent loss of signed bit
+            res |= (uint)(right + header); //uint first to prevent loss of signed bit
 
             //return the combined result
             return res;
@@ -120,9 +124,7 @@ namespace RyzeEditor
                         continue;
                     }
 
-                    var submeshId = message.SubmeshId + message.Header;
-
-                    var key = MakeLong(message.ObjectId, submeshId);
+                    var key = MakeKey(message.ObjectId, message.SubmeshId, message.Header);
 
                     if (!_objectData.ContainsKey(key))
                     {
@@ -141,13 +143,70 @@ namespace RyzeEditor
             foreach (var kv in _objectData)
             {
                 var gameObject = _gameObjectMap[kv.Value.ObjectId];
+                var newPos = kv.Value.Position;
+                var newRot = kv.Value.Rotation;
+
+                if (kv.Value.Header == 1)
+                {
+                    var key = kv.Value.ObjectId;
+
+                    if (!_states.ContainsKey(key))
+                    {
+                        _states[key] = new Queue<GameObjectTimeState>();
+                    }
+
+                    var queue = _states[key];
+                    var newState = new GameObjectTimeState(kv.Value.Position, kv.Value.Rotation, kv.Value.Time);
+
+                    if (queue.Count < QueueSize)
+                    {
+                        if (queue.Count == 0 || Vector3.Distance(queue.Last().Position, newState.Position) > 0.01f)
+                        {
+                            queue.Enqueue(newState);
+                        }
+                    }
+
+                    if (queue.Count == QueueSize)
+                    {
+                        float dist = 0.0f;
+                        var items = queue.ToList();
+
+                        for (int i = 0; i < (QueueSize - 1); i++)
+                        {
+                            var prev = items[i];
+                            var next = items[i + 1];
+                            dist += Vector3.Distance(prev.Position, next.Position);
+                        }
+
+                        var firstState = queue.Dequeue();
+                        var lastState = queue.Last();
+
+                        if (dist > 0)
+                        {
+                            var delta = lastState.Time - firstState.Time;
+                            var velocity = dist / delta;
+                            var norm = items[QueueSize - 1].Position - items[QueueSize - 2].Position;
+                            norm.Normalize();
+                            var extPos = lastState.Position + norm * velocity * (newState.Time - lastState.Time);
+
+                            newPos = new Vector3(0.8f * extPos.X + 0.2f * newPos.X,
+                                                 0.8f * extPos.Y + 0.2f * newPos.Y,
+                                                 0.8f * extPos.Z + 0.2f * newPos.Z);
+                        }
+
+                        queue.Enqueue(newState);
+                    }
+                }
 
                 switch (kv.Value.Header)
                 {
                     case 1:
-                        gameObject.Position = kv.Value.Position;
-                        gameObject.Rotation = kv.Value.Rotation;
 
+                        if (Vector3.Distance(gameObject.Position, newPos) < 1.0f)
+                        {
+                            gameObject.Position = newPos;
+                            gameObject.Rotation = newRot;
+                        }
                         break;
                     case 2:
                         SubMeshTransform transform;
@@ -168,8 +227,8 @@ namespace RyzeEditor
                             transform = gameObject.SubMeshTransforms[submeshId];
                         }
 
-                        transform.Position = kv.Value.Position;
-                        transform.Rotation = kv.Value.Rotation;
+                        transform.Position = newPos;
+                        transform.Rotation = newRot;
 
                         break;
                 }
@@ -316,6 +375,22 @@ namespace RyzeEditor
         public int ObjectId { get; set; }
 
         public int SubmeshId { get; set; }
+
+        public Vector3 Position { get; set; }
+
+        public Quaternion Rotation { get; set; }
+    }
+
+    public class GameObjectTimeState
+    {
+        public GameObjectTimeState(Vector3 position, Quaternion rotation, long time)
+        {
+            Time = time;
+            Position = position;
+            Rotation = rotation;
+        }
+
+        public long Time { get; set; }
 
         public Vector3 Position { get; set; }
 
