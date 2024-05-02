@@ -201,12 +201,9 @@ namespace RyzeEditor
                 switch (kv.Value.Header)
                 {
                     case 1:
+                        gameObject.Position = newPos;
+                        gameObject.Rotation = newRot;
 
-                        if (Vector3.Distance(gameObject.Position, newPos) < 1.0f)
-                        {
-                            gameObject.Position = newPos;
-                            gameObject.Rotation = newRot;
-                        }
                         break;
                     case 2:
                         SubMeshTransform transform;
