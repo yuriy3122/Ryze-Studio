@@ -79,7 +79,7 @@ float4 PS(PS_IN input) : SV_Target
     if (input.light.a > 0.9f)
     {
         const float step = 50.0f;
-        const float dx = 1.0f / input.color.w;
+        const float dx = 2.0f / input.color.w;
         const float bias = 0.0001f;
         const float2 offsets[9] =
         {

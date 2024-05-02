@@ -49,6 +49,9 @@ namespace RyzeEditor.Renderer
         protected Buffer _fxaaIndexBuffer;
         protected EffectManager _effectManager;
 		protected ShaderResourceManager _shaderResourceManager;
+        protected VertexBufferBinding _instanceBufferBinding;
+        protected VertexBufferBinding _vertexBufferLineStripBinding;
+        protected VertexBufferBinding _vertexBufferBinding;
         protected const int IndexBufferCapacity = 300 * 1024 * 100;
         protected const int VertexBufferCapacity = 300 * 1024;
 		protected const int InstanceMaxValue = 1000;
@@ -97,6 +100,12 @@ namespace RyzeEditor.Renderer
 			desc = new BufferDescription(VertexBufferCapacity * vertSize, ResourceUsage.Dynamic, BindFlags.VertexBuffer, CpuAccessFlags.Write, ResourceOptionFlags.None, 0);
 			_vertBuffer = Buffer.Create(_device, new Vertex[VertexBufferCapacity], desc);
 
+            int stride = 2 * Utilities.SizeOf<Vector4>();
+            _vertexBufferLineStripBinding = new VertexBufferBinding(_vertBuffer, stride, 0);
+
+            stride = 4 * Utilities.SizeOf<Vector3>() + Utilities.SizeOf<Vector2>() + Utilities.SizeOf<Vector4>();
+            _vertexBufferBinding = new VertexBufferBinding(_vertBuffer, stride, 0);
+
             VertexPositionTex[] quadVertices =
             {
                 new VertexPositionTex(new Vector4(-1.0f, -1.0f, 0.0f, 1.0f), new Vector2(0.0f, 1.0f)),
@@ -114,6 +123,8 @@ namespace RyzeEditor.Renderer
 
             desc = new BufferDescription(InstanceMaxValue * Utilities.SizeOf<Matrix>(), ResourceUsage.Dynamic, BindFlags.VertexBuffer, CpuAccessFlags.Write, ResourceOptionFlags.None, 0);
 			_instanceBuffer = Buffer.Create(_device, new Matrix[InstanceMaxValue], desc);
+
+            _instanceBufferBinding = new VertexBufferBinding(_instanceBuffer, Utilities.SizeOf<Matrix>(), 0);
 
             var rasterDesc = RasterizerStateDescription.Default();
             rasterDesc.CullMode = CullMode.None;

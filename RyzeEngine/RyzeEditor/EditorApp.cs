@@ -3,7 +3,6 @@ using System.IO;
 using System.Linq;
 using System.Drawing;
 using System.Threading;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using log4net;
 using SharpDX;
@@ -16,7 +15,6 @@ using RyzeEditor.Serialization;
 using RyzeEditor.Tools;
 using RyzeEditor.Packer;
 using RyzeEditor.Controls;
-using System.Diagnostics;
 
 namespace RyzeEditor
 {
@@ -112,9 +110,6 @@ namespace RyzeEditor
             _worldMap.EntityAdded += WorldMapEntityAdded;
             _worldMap.EntityDeleted += WorldMapEntityDeleted;
 
-            ushort count = 0;
-            var stopwatch = Stopwatch.StartNew();
-
             RenderLoop.Run(form, () =>
             {
                 if (userMinimized)
@@ -131,18 +126,6 @@ namespace RyzeEditor
                 _serverClient.Update();
 
                 context.RenderWorld(_worldMap);
-
-                count++;
-
-                if (count == 200)
-                {
-                    count = 0;
-                    stopwatch.Stop();
-
-                    Console.WriteLine($"FPS: {(int)(200.0f / ((float)stopwatch.ElapsedMilliseconds / 1000.0f))}");
-                    
-                    stopwatch.Restart();
-                }
             });
 
             context.Dispose();

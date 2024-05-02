@@ -33,10 +33,7 @@ namespace RyzeEditor.Renderer
 
             _context.UnmapSubresource(_vertBuffer, 0);
 
-			int stride = 2 * Utilities.SizeOf<Vector4>();
-			var vertexBufferBinding = new VertexBufferBinding(_vertBuffer, stride, 0);
-
-			_context.InputAssembler.SetVertexBuffers(0, vertexBufferBinding);
+			_context.InputAssembler.SetVertexBuffers(0, _vertexBufferLineStripBinding);
 
 			var view = Matrix.LookAtLH(_camera.Position, _camera.LookAtDir, _camera.UpDir);
 			var proj = Matrix.PerspectiveFovLH(_camera.FOV, _camera.AspectRatio, _camera.ZNear, _camera.ZFar);
@@ -69,8 +66,6 @@ namespace RyzeEditor.Renderer
             {
                 _context.PixelShader.Set(effect.PixelShader);
             }
-
-			var instanceBufferBinding = new VertexBufferBinding(_instanceBuffer, Utilities.SizeOf<Matrix>(), 0);
 
 			foreach (var subMesh in mesh.SubMeshes)
 			{
@@ -119,10 +114,7 @@ namespace RyzeEditor.Renderer
 				stream.WriteRange(subMesh.VertexData.ToArray());
 				_context.UnmapSubresource(_vertBuffer, 0);
 
-				int stride = 4 * Utilities.SizeOf<Vector3>() + Utilities.SizeOf<Vector2>() + Utilities.SizeOf<Vector4>();
-				var vertexBufferBinding = new VertexBufferBinding(_vertBuffer, stride, 0);
-
-				_context.InputAssembler.SetVertexBuffers(0, vertexBufferBinding, instanceBufferBinding);
+				_context.InputAssembler.SetVertexBuffers(0, _vertexBufferBinding, _instanceBufferBinding);
 				
 				for (int i = 0; i < subMesh.Materials.Count; i++)
 				{
@@ -160,7 +152,7 @@ namespace RyzeEditor.Renderer
 
                     for (int j = 0; j < RenderMode.ShadowMapCascadeNumber; j++)
                     {
-                        float size = Vector3.Distance(_camera.LookAtDir, _camera.Position) * (j * 5.5f + 1.5f);
+                        float size = Vector3.Distance(_camera.LookAtDir, _camera.Position) * (j * 5.5f + 2.5f);
                         lightViewProj[j] = Matrix.LookAtLH(ligthPos, _camera.LookAtDir, _camera.UpDir) * Matrix.OrthoLH(size, size, -size, size);
                         lightViewProj[j].Transpose();
                     }

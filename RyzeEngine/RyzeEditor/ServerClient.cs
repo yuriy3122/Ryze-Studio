@@ -97,6 +97,8 @@ namespace RyzeEditor
             }
             else
             {
+                _states.Clear();
+
                 if (_udpClient != null)
                 {
                     _udpClient.Close();
@@ -181,7 +183,7 @@ namespace RyzeEditor
                         var firstState = queue.Dequeue();
                         var lastState = queue.Last();
 
-                        if (dist > 0)
+                        if (dist > 0.0001f)
                         {
                             var delta = lastState.Time - firstState.Time;
                             var velocity = dist / delta;
