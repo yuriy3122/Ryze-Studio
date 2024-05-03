@@ -148,56 +148,53 @@ namespace RyzeEditor
                 var newPos = kv.Value.Position;
                 var newRot = kv.Value.Rotation;
 
-                if (kv.Value.Header == 1)
+                var key = MakeKey(kv.Value.ObjectId, kv.Value.SubmeshId, kv.Value.Header);
+
+                if (!_states.ContainsKey(key))
                 {
-                    var key = kv.Value.ObjectId;
+                    _states[key] = new Queue<GameObjectTimeState>();
+                }
 
-                    if (!_states.ContainsKey(key))
+                var queue = _states[key];
+                var newState = new GameObjectTimeState(kv.Value.Position, kv.Value.Rotation, kv.Value.Time);
+
+                if (queue.Count < QueueSize)
+                {
+                    if (queue.Count == 0 || Vector3.Distance(queue.Last().Position, newState.Position) > 0.01f)
                     {
-                        _states[key] = new Queue<GameObjectTimeState>();
-                    }
-
-                    var queue = _states[key];
-                    var newState = new GameObjectTimeState(kv.Value.Position, kv.Value.Rotation, kv.Value.Time);
-
-                    if (queue.Count < QueueSize)
-                    {
-                        if (queue.Count == 0 || Vector3.Distance(queue.Last().Position, newState.Position) > 0.01f)
-                        {
-                            queue.Enqueue(newState);
-                        }
-                    }
-
-                    if (queue.Count == QueueSize)
-                    {
-                        float dist = 0.0f;
-                        var items = queue.ToList();
-
-                        for (int i = 0; i < (QueueSize - 1); i++)
-                        {
-                            var prev = items[i];
-                            var next = items[i + 1];
-                            dist += Vector3.Distance(prev.Position, next.Position);
-                        }
-
-                        var firstState = queue.Dequeue();
-                        var lastState = queue.Last();
-
-                        if (dist > 0.0001f)
-                        {
-                            var delta = lastState.Time - firstState.Time;
-                            var velocity = dist / delta;
-                            var norm = items[QueueSize - 1].Position - items[QueueSize - 2].Position;
-                            norm.Normalize();
-                            var extPos = lastState.Position + norm * velocity * (newState.Time - lastState.Time);
-
-                            newPos = new Vector3(0.8f * extPos.X + 0.2f * newPos.X,
-                                                 0.8f * extPos.Y + 0.2f * newPos.Y,
-                                                 0.8f * extPos.Z + 0.2f * newPos.Z);
-                        }
-
                         queue.Enqueue(newState);
                     }
+                }
+
+                if (queue.Count == QueueSize)
+                {
+                    float dist = 0.0f;
+                    var items = queue.ToList();
+
+                    for (int i = 0; i < (QueueSize - 1); i++)
+                    {
+                        var prev = items[i];
+                        var next = items[i + 1];
+                        dist += Vector3.Distance(prev.Position, next.Position);
+                    }
+
+                    var firstState = queue.Dequeue();
+                    var lastState = queue.Last();
+
+                    if (dist > 0.0001f)
+                    {
+                        var delta = lastState.Time - firstState.Time;
+                        var velocity = dist / delta;
+                        var norm = items[QueueSize - 1].Position - items[QueueSize - 2].Position;
+                        norm.Normalize();
+                        var extPos = lastState.Position + norm * velocity * (newState.Time - lastState.Time);
+
+                        newPos = new Vector3(0.8f * extPos.X + 0.2f * newPos.X,
+                                                0.8f * extPos.Y + 0.2f * newPos.Y,
+                                                0.8f * extPos.Z + 0.2f * newPos.Z);
+                    }
+
+                    queue.Enqueue(newState);
                 }
 
                 switch (kv.Value.Header)
