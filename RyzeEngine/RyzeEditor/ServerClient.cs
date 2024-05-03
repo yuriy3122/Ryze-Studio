@@ -35,14 +35,16 @@ namespace RyzeEditor
         private readonly Dictionary<int, GameObject> _gameObjectMap;
         private readonly Dictionary<long, GameObjectData> _objectData;
         private readonly Dictionary<long, Queue<GameObjectTimeState>> _states;
+        private readonly Dictionary<long, float> _velocityValues;
 
-        private const int QueueSize = 8;
+        private const int QueueSize = 4;
 
         public ServerClient()
         {
             _gameObjectMap = new Dictionary<int, GameObject>();
             _objectData = new Dictionary<long, GameObjectData>();
             _states = new Dictionary<long, Queue<GameObjectTimeState>>();
+            _velocityValues = new Dictionary<long, float>();
 
             var dir = Path.GetDirectoryName(Application.ExecutablePath);
             _outputFile = Path.Combine(dir, "collision_data.bin");
@@ -98,6 +100,7 @@ namespace RyzeEditor
             else
             {
                 _states.Clear();
+                _velocityValues.Clear();
 
                 if (_udpClient != null)
                 {
@@ -145,8 +148,6 @@ namespace RyzeEditor
             foreach (var kv in _objectData)
             {
                 var gameObject = _gameObjectMap[kv.Value.ObjectId];
-                var newPos = kv.Value.Position;
-                var newRot = kv.Value.Rotation;
 
                 var key = MakeKey(kv.Value.ObjectId, kv.Value.SubmeshId, kv.Value.Header);
 
@@ -178,6 +179,11 @@ namespace RyzeEditor
                         dist += Vector3.Distance(prev.Position, next.Position);
                     }
 
+                    if (!_velocityValues.ContainsKey(key))
+                    {
+                        _velocityValues[key] = 0.0f;
+                    }
+
                     var firstState = queue.Dequeue();
                     var lastState = queue.Last();
 
@@ -185,48 +191,58 @@ namespace RyzeEditor
                     {
                         var delta = lastState.Time - firstState.Time;
                         var velocity = dist / delta;
+                        var initialVelocity = _velocityValues[key];
+                        var deltaVelocity = velocity - initialVelocity;
+                        var acceleration = deltaVelocity / delta;
+                        var deltaTime = newState.Time - lastState.Time;
+
                         var norm = items[QueueSize - 1].Position - items[QueueSize - 2].Position;
                         norm.Normalize();
-                        var extPos = lastState.Position + norm * velocity * (newState.Time - lastState.Time);
+                        var extPos = lastState.Position + norm * (initialVelocity * deltaTime + 0.5f * acceleration * deltaTime * deltaTime);
 
-                        newPos = new Vector3(0.8f * extPos.X + 0.2f * newPos.X,
-                                                0.8f * extPos.Y + 0.2f * newPos.Y,
-                                                0.8f * extPos.Z + 0.2f * newPos.Z);
+                        var newPos = kv.Value.Position;
+                        var newRot = kv.Value.Rotation;
+
+                        newPos = new Vector3(0.5f * extPos.X + 0.5f * newPos.X,
+                                             0.5f * extPos.Y + 0.5f * newPos.Y,
+                                             0.5f * extPos.Z + 0.5f * newPos.Z);
+
+                        switch (kv.Value.Header)
+                        {
+                            case 1:
+                                gameObject.Position = newPos;
+                                gameObject.Rotation = newRot;
+
+                                break;
+                            case 2:
+                                SubMeshTransform transform;
+                                uint submeshId = (uint)kv.Value.SubmeshId;
+
+                                if (gameObject.SubMeshTransforms == null)
+                                {
+                                    gameObject.SubMeshTransforms = new ConcurrentDictionary<uint, SubMeshTransform>();
+                                }
+
+                                if (!gameObject.SubMeshTransforms.ContainsKey(submeshId))
+                                {
+                                    transform = new SubMeshTransform();
+                                    gameObject.SubMeshTransforms[submeshId] = transform;
+                                }
+                                else
+                                {
+                                    transform = gameObject.SubMeshTransforms[submeshId];
+                                }
+
+                                transform.Position = newPos;
+                                transform.Rotation = newRot;
+
+                                break;
+                        }
+
+                        _velocityValues[key] = velocity;
                     }
 
                     queue.Enqueue(newState);
-                }
-
-                switch (kv.Value.Header)
-                {
-                    case 1:
-                        gameObject.Position = newPos;
-                        gameObject.Rotation = newRot;
-
-                        break;
-                    case 2:
-                        SubMeshTransform transform;
-                        uint submeshId = (uint)kv.Value.SubmeshId;
-
-                        if (gameObject.SubMeshTransforms == null)
-                        {
-                            gameObject.SubMeshTransforms = new ConcurrentDictionary<uint, SubMeshTransform>();
-                        }
-
-                        if (!gameObject.SubMeshTransforms.ContainsKey(submeshId))
-                        {
-                            transform = new SubMeshTransform();
-                            gameObject.SubMeshTransforms[submeshId] = transform;
-                        }
-                        else
-                        {
-                            transform = gameObject.SubMeshTransforms[submeshId];
-                        }
-
-                        transform.Position = newPos;
-                        transform.Rotation = newRot;
-
-                        break;
                 }
             }
         }
@@ -387,6 +403,8 @@ namespace RyzeEditor
         }
 
         public long Time { get; set; }
+
+        public float Velocity { get; set; }
 
         public Vector3 Position { get; set; }
 
