@@ -161,7 +161,8 @@ namespace RyzeEditor
 
                 if (queue.Count < QueueSize)
                 {
-                    if (queue.Count == 0 || Vector3.Distance(queue.Last().Position, newState.Position) > 0.01f)
+                    if (queue.Count == 0 || Vector3.Distance(queue.Last().Position, newState.Position) > 0.01f ||
+                        (newState.Rotation - queue.Last().Rotation).LengthSquared() > 0.001f)
                     {
                         queue.Enqueue(newState);
                     }
@@ -169,8 +170,11 @@ namespace RyzeEditor
 
                 if (queue.Count == QueueSize)
                 {
-                    float dist = 0.0f;
                     var items = queue.ToList();
+
+                    float rot = (queue.Last().Rotation - queue.First().Rotation).LengthSquared();
+
+                    float dist = 0.0f;
 
                     for (int i = 0; i < (QueueSize - 1); i++)
                     {
@@ -187,7 +191,7 @@ namespace RyzeEditor
                     var firstState = queue.Dequeue();
                     var lastState = queue.Last();
 
-                    if (dist > 0.0001f)
+                    if (dist > 0.0001f || rot > 0.0001f)
                     {
                         var deltaTime = lastState.Time - firstState.Time;
                         var velocity = dist / deltaTime;
