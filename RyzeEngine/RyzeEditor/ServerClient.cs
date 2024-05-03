@@ -37,7 +37,7 @@ namespace RyzeEditor
         private readonly Dictionary<long, Queue<GameObjectTimeState>> _states;
         private readonly Dictionary<long, float> _velocityValues;
 
-        private const int QueueSize = 4;
+        private const int QueueSize = 3;
 
         public ServerClient()
         {
