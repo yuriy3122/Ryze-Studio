@@ -189,16 +189,17 @@ namespace RyzeEditor
 
                     if (dist > 0.0001f)
                     {
-                        var delta = lastState.Time - firstState.Time;
-                        var velocity = dist / delta;
+                        var deltaTime = lastState.Time - firstState.Time;
+                        var velocity = dist / deltaTime;
                         var initialVelocity = _velocityValues[key];
                         var deltaVelocity = velocity - initialVelocity;
-                        var acceleration = deltaVelocity / delta;
-                        var deltaTime = newState.Time - lastState.Time;
+                        var acceleration = deltaVelocity / deltaTime;
+                        var time = (float)(newState.Time - lastState.Time);
 
                         var norm = items[QueueSize - 1].Position - items[QueueSize - 2].Position;
                         norm.Normalize();
-                        var extPos = lastState.Position + norm * (initialVelocity * deltaTime + 0.5f * acceleration * deltaTime * deltaTime);
+                        var extPos = lastState.Position + 
+                            norm * (initialVelocity * time + 0.5f * acceleration * (float)Math.Pow(time, 2.0f));
 
                         var newPos = kv.Value.Position;
                         var newRot = kv.Value.Rotation;
