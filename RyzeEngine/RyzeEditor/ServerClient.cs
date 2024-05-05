@@ -191,7 +191,9 @@ namespace RyzeEditor
                     var firstState = queue.Dequeue();
                     var lastState = queue.Last();
 
-                    if (dist > 0.0001f || rot > 0.0001f)
+                    const float delta = 0.0001f;
+
+                    if (dist > delta || rot > delta)
                     {
                         var deltaTime = lastState.Time - firstState.Time;
                         var velocity = dist / deltaTime;
