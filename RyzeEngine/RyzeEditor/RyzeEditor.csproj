@@ -108,6 +108,12 @@
     <Compile Include="Helpers\PatchHelper.cs" />
     <Compile Include="Helpers\StringUtils.cs" />
     <Compile Include="ServerClient.cs" />
+    <Compile Include="SkinnedAnimation\AnimationClip.cs" />
+    <Compile Include="SkinnedAnimation\AnimationSample.cs" />
+    <Compile Include="SkinnedAnimation\Joint.cs" />
+    <Compile Include="SkinnedAnimation\JointPose.cs" />
+    <Compile Include="SkinnedAnimation\Skeleton.cs" />
+    <Compile Include="SkinnedAnimation\SkeletonPose.cs" />
     <Compile Include="Tools\PointLightTool.cs" />
     <Compile Include="Tools\VehicleTool.cs" />
     <Compile Include="WorldMapPacker\CollisionWriter.cs" />
@@ -280,9 +286,7 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="SkinnedAnimation\" />
-  </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
     <ProjectReference Include="..\SharpDX.D3DCompiler\SharpDX.D3DCompiler.csproj">
       <Project>{dd3909e6-250b-426f-9eac-c56dfa059be6}</Project>

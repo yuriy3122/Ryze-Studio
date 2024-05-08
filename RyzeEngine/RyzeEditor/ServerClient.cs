@@ -73,28 +73,7 @@ namespace RyzeEditor
             {
                 if (_gameWordId != WorldMap.Id)
                 {
-                    _gameObjectMap.Clear();
-
-                    PackWorldData();
-
-                    var gameObjects = WorldMap.Entities.OfType<GameObject>().ToList();
-
-                    foreach (var gameObject in gameObjects)
-                    {
-                        if (gameObject.UserData != null)
-                        {
-                            _gameObjectMap[(int)gameObject.UserData] = gameObject;
-                        }
-                    }
-
-                    RestartServerProcess();
-
-                    var address = IPAddress.Parse("127.0.0.5");
-                    var _udpPort = GetAvailablePort(address, 11000);
-                    _endpoint = new IPEndPoint(address, _udpPort);
-                    _udpClient = new UdpClient(_udpPort);
-
-                    _gameWordId = WorldMap.Id;
+                    RestartUdpClientAndServer();
                 }
             }
             else
@@ -145,6 +124,60 @@ namespace RyzeEditor
                 }
             }
 
+            UpdateObjectData();
+        }
+
+        public bool IsSuspended
+        {
+            get
+            {
+                return Interlocked.CompareExchange(ref _isSuspended, 0, 0) > 0;
+            }
+
+            set
+            {
+                if (value)
+                {
+                    if (Interlocked.CompareExchange(ref _isSuspended, 0, 0) == 0)
+                    {
+                        Interlocked.Increment(ref _isSuspended);
+                    }
+                }
+                else
+                {
+                    Interlocked.Decrement(ref _isSuspended);
+                }
+            }
+        }
+
+        private void RestartUdpClientAndServer()
+        {
+            _gameObjectMap.Clear();
+
+            PackWorldData();
+
+            var gameObjects = WorldMap.Entities.OfType<GameObject>().ToList();
+
+            foreach (var gameObject in gameObjects)
+            {
+                if (gameObject.UserData != null)
+                {
+                    _gameObjectMap[(int)gameObject.UserData] = gameObject;
+                }
+            }
+
+            RestartServerProcess();
+
+            var address = IPAddress.Parse("127.0.0.5");
+            var _udpPort = GetAvailablePort(address, 11000);
+            _endpoint = new IPEndPoint(address, _udpPort);
+            _udpClient = new UdpClient(_udpPort);
+
+            _gameWordId = WorldMap.Id;
+        }
+
+        private void UpdateObjectData()
+        {
             foreach (var kv in _objectData)
             {
                 var gameObject = _gameObjectMap[kv.Value.ObjectId];
@@ -204,7 +237,7 @@ namespace RyzeEditor
 
                         var norm = items[QueueSize - 1].Position - items[QueueSize - 2].Position;
                         norm.Normalize();
-                        var extPos = lastState.Position + 
+                        var extPos = lastState.Position +
                             norm * (initialVelocity * time + 0.5f * acceleration * (float)Math.Pow(time, 2.0f));
 
                         var newPos = kv.Value.Position;
@@ -250,29 +283,6 @@ namespace RyzeEditor
                     }
 
                     queue.Enqueue(newState);
-                }
-            }
-        }
-
-        public bool IsSuspended
-        {
-            get
-            {
-                return Interlocked.CompareExchange(ref _isSuspended, 0, 0) > 0;
-            }
-
-            set
-            {
-                if (value)
-                {
-                    if (Interlocked.CompareExchange(ref _isSuspended, 0, 0) == 0)
-                    {
-                        Interlocked.Increment(ref _isSuspended);
-                    }
-                }
-                else
-                {
-                    Interlocked.Decrement(ref _isSuspended);
                 }
             }
         }
