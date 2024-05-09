@@ -7,7 +7,7 @@ namespace RyzeEditor.SkinnedAnimation
     /// Represents the current state (interpolation of the skeleton's joint poses)
     /// We except to send Joint's data to the Rendering Pipeline
     /// </summary>
-    public class Joint
+    public struct Joint
     {
         public ushort ParentId { get; set; }
 

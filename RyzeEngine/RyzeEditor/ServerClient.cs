@@ -103,7 +103,7 @@ namespace RyzeEditor
                     memoryStream.Read(receivedData, 0, 46);
                     var message = ReadGameObjectData(receivedData);
 
-                    if (message == null || !_gameObjectMap.ContainsKey(message.ObjectId))
+                    if (!_gameObjectMap.ContainsKey(message.ObjectId))
                     {
                         continue;
                     }
@@ -124,7 +124,7 @@ namespace RyzeEditor
                 }
             }
 
-            UpdateObjectData();
+            UpdateObjectState();
         }
 
         public bool IsSuspended
@@ -176,7 +176,7 @@ namespace RyzeEditor
             _gameWordId = WorldMap.Id;
         }
 
-        private void UpdateObjectData()
+        private void UpdateObjectState()
         {
             foreach (var kv in _objectData)
             {
@@ -395,7 +395,7 @@ namespace RyzeEditor
         }
     }
 
-    public class GameObjectData
+    public struct GameObjectData
     {
         public ushort Header { get; set; }
 
@@ -410,13 +410,14 @@ namespace RyzeEditor
         public Quaternion Rotation { get; set; }
     }
 
-    public class GameObjectTimeState
+    public struct GameObjectTimeState
     {
         public GameObjectTimeState(Vector3 position, Quaternion rotation, long time)
         {
             Time = time;
             Position = position;
             Rotation = rotation;
+            Velocity = 0.0f;
         }
 
         public long Time { get; set; }
