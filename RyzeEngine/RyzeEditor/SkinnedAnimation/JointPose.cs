@@ -6,7 +6,7 @@ namespace RyzeEditor.SkinnedAnimation
     /// The pose of a joint is defined as the joint’s position, 
     /// orientation and scale, relative to some frame of reference
     /// </summary>
-    public class JointPose
+    public struct JointPose
     {
         public ushort Id { get; set; }
 
