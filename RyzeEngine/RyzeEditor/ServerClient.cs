@@ -25,6 +25,7 @@ namespace RyzeEditor
         private IPEndPoint _endpoint = null;
         private UdpClient _udpClient = null;
         private int _udpPort = 11000;
+        private const string IpAddress = "127.0.0.5";
 
         private int _isSuspended = 1;
         private string _gameWordId;
@@ -84,8 +85,9 @@ namespace RyzeEditor
                 if (_udpClient != null)
                 {
                     _udpClient.Close();
-                    KillServerProcess();
                     _udpClient = null;
+
+                    KillServerProcess();
                 }
             }
 
@@ -168,7 +170,7 @@ namespace RyzeEditor
 
             RestartServerProcess();
 
-            var address = IPAddress.Parse("127.0.0.5");
+            var address = IPAddress.Parse(IpAddress);
             var _udpPort = GetAvailablePort(address, 11000);
             _endpoint = new IPEndPoint(address, _udpPort);
             _udpClient = new UdpClient(_udpPort);
