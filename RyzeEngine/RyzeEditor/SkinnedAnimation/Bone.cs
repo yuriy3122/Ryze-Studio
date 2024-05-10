@@ -3,7 +3,7 @@
 namespace RyzeEditor.SkinnedAnimation
 {
     /// <summary>
-    /// A skeleton is comprised of a hierarchy of rigid pieces - boness
+    /// A skeleton is comprised of a hierarchy of rigid pieces - bones
     /// Represents the current state (interpolation of the skeleton's bone poses)
     /// We except to send Bone's data to the Rendering Pipeline
     /// </summary>
