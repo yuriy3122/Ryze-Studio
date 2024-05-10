@@ -3,10 +3,10 @@
 namespace RyzeEditor.SkinnedAnimation
 {
     /// <summary>
-    /// The pose of a joint is defined as the joint’s position, 
+    /// The pose of a bone is defined as the bone’s position, 
     /// orientation and scale, relative to some frame of reference
     /// </summary>
-    public struct JointPose
+    public struct BonePose
     {
         public ushort Id { get; set; }
 

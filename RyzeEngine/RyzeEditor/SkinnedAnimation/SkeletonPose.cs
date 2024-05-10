@@ -5,7 +5,7 @@ namespace RyzeEditor.SkinnedAnimation
 {
     public class SkeletonPose
     {
-        public List<JointPose> JointPoses;
+        public List<BonePose> JointPoses;
 
         public List<Matrix> GlobalPoses;//in Model space
 

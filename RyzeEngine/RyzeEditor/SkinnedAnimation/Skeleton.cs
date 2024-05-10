@@ -4,6 +4,6 @@ namespace RyzeEditor.SkinnedAnimation
 {
     public class Skeleton
     {
-        public List<Joint> Joints;
+        public List<Bone> Joints;
     }
 }

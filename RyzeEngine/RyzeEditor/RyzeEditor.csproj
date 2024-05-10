@@ -110,8 +110,8 @@
     <Compile Include="ServerClient.cs" />
     <Compile Include="SkinnedAnimation\AnimationClip.cs" />
     <Compile Include="SkinnedAnimation\AnimationSample.cs" />
-    <Compile Include="SkinnedAnimation\Joint.cs" />
-    <Compile Include="SkinnedAnimation\JointPose.cs" />
+    <Compile Include="SkinnedAnimation\Bone.cs" />
+    <Compile Include="SkinnedAnimation\BonePose.cs" />
     <Compile Include="SkinnedAnimation\Skeleton.cs" />
     <Compile Include="SkinnedAnimation\SkeletonPose.cs" />
     <Compile Include="Tools\PointLightTool.cs" />

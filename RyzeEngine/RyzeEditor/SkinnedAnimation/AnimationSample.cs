@@ -4,6 +4,6 @@ namespace RyzeEditor.SkinnedAnimation
 {
     public class AnimationSample
     {
-        public List<JointPose> JointPoses;
+        public List<BonePose> JointPoses;
     }
 }
