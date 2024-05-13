@@ -169,6 +169,8 @@ namespace RyzeEditor
                 }
             }
 
+            _udpClient?.Close();
+
             RestartServerProcess();
 
             var address = IPAddress.Parse(IpAddress);
