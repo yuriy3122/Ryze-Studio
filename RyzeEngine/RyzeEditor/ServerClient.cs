@@ -26,6 +26,7 @@ namespace RyzeEditor
         private UdpClient _udpClient = null;
         private int _udpPort = 11000;
         private const string IpAddress = "127.0.0.5";
+        private const string CollisionFile = "collision_data.bin";
 
         private int _isSuspended = 1;
         private string _gameWordId;
@@ -48,7 +49,7 @@ namespace RyzeEditor
             _velocityValues = new Dictionary<long, float>();
 
             var dir = Path.GetDirectoryName(Application.ExecutablePath);
-            _outputFile = Path.Combine(dir, "collision_data.bin");
+            _outputFile = Path.Combine(dir, CollisionFile);
         }
 
         public long MakeKey(int left, int right, ushort header)
