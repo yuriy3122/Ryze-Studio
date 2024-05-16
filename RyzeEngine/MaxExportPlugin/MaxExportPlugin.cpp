@@ -182,15 +182,29 @@ static void TruncateBoneWeights(map<int, float>& boneWeights)
 	boneWeights.clear();
 
 	int count = 0;
+	float weightsSum = 0.0f;
 
 	for (auto iter = sortedWeights.rbegin(); iter != sortedWeights.rend(); ++iter)
 	{
 		if (count < 4)
 		{
 			boneWeights[iter->second] = iter->first;
+			weightsSum += iter->first;
 		}
 
 		count++;
+	}
+
+	float diff = 1.0f - weightsSum;
+
+	if (diff > 0.0001f)
+	{
+		diff /= (float)boneWeights.size();
+	}
+
+	for (auto iter = boneWeights.begin(); iter != boneWeights.end(); ++iter)
+	{
+		iter->second += diff;
 	}
 }
 
