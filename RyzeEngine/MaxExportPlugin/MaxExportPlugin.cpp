@@ -1,5 +1,7 @@
 #include "MaxExportPlugin.h"
 #include "decomp.h"
+#include "modstack.h"
+#include "iskin.h"
 
 static MeshExporter		g_meshExporter;
 static ofstream			g_outputFile;
@@ -127,8 +129,39 @@ int MeshExporter::callback(INode* node)
 	return TREE_CONTINUE;
 }
 
+static Modifier* FindSkinModifier(INode* nodePtr)
+{
+	Object* ObjectPtr = nodePtr->GetObjectRef();
+
+	if (!ObjectPtr)
+	{
+		return NULL;
+	}
+
+	while (ObjectPtr && ObjectPtr->SuperClassID() == GEN_DERIVOB_CLASS_ID)
+	{
+		IDerivedObject* DerivedObjectPtr = (IDerivedObject*)(ObjectPtr);
+		int ModStackIndex = 0;
+
+		while (ModStackIndex < DerivedObjectPtr->NumModifiers())
+		{
+			Modifier* ModifierPtr = DerivedObjectPtr->GetModifier(ModStackIndex);
+
+			if (ModifierPtr->ClassID() == Class_ID(SKIN_CLASSID))
+			{
+				return ModifierPtr;
+			}
+
+			ModStackIndex++;
+		}
+
+		ObjectPtr = DerivedObjectPtr->GetObjRef();
+	}
+	return NULL;
+}
+
 void MeshExporter::ProcNode(INode* node)
-{	
+{
 	Control *pTMController = node->GetTMController();
 
 	if (!pTMController)
@@ -558,6 +591,16 @@ void MeshExporter::PrepareVerts(TriObject* triObj, INode* node)
 	m_vertices.clear();
 	m_indices.clear();
 	m_mtlsIndices.clear();
+
+	ISkin* iskin = NULL;
+	ISkinContextData* skinData = NULL;
+	Modifier* skinModifier = FindSkinModifier(node);
+
+	if (skinModifier)
+	{
+		ISkin* iskin = (ISkin*)skinModifier->GetInterface(I_SKIN);
+		ISkinContextData* skinData = iskin->GetContextInterface(node);
+	}
 
 	// In MAX a vertex can have more than one normal (but doesn't always have it).
 	// This is depending on the face you are accessing the vertex through.
