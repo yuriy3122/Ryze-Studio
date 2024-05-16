@@ -17,6 +17,7 @@
 #include <mesh.h>
 #include <vector>
 #include <map>
+#include <iterator>
 
 using namespace std;
 

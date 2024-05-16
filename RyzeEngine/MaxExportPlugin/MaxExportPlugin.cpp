@@ -160,6 +160,40 @@ static Modifier* FindSkinModifier(INode* nodePtr)
 	return NULL;
 }
 
+template<typename A, typename B>
+pair<B, A> flip_pair(const pair<A, B>& p)
+{
+	return pair<B, A>(p.second, p.first);
+}
+
+template<typename A, typename B>
+multimap<B, A> flip_map(const map<A, B>& src)
+{
+	multimap<B, A> dst;
+	transform(src.begin(), src.end(), inserter(dst, dst.begin()), flip_pair<A, B>);
+
+	return dst;
+}
+
+static void TruncateBoneWeights(map<int, float>& boneWeights)
+{
+	multimap<float, int> sortedWeights = flip_map(boneWeights);
+
+	boneWeights.clear();
+
+	int count = 0;
+
+	for (auto iter = sortedWeights.rbegin(); iter != sortedWeights.rend(); ++iter)
+	{
+		if (count < 4)
+		{
+			boneWeights[iter->second] = iter->first;
+		}
+
+		count++;
+	}
+}
+
 void MeshExporter::ProcNode(INode* node)
 {
 	Control *pTMController = node->GetTMController();
@@ -651,6 +685,8 @@ void MeshExporter::PrepareVerts(TriObject* triObj, INode* node)
 
 					boneWeights[boneId] = weight;
 				}
+
+				TruncateBoneWeights(boneWeights);
 			}
 
 			index = GetEqualVertex(vp, vn, tc);
