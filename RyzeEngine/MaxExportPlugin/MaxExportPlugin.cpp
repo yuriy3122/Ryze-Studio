@@ -596,11 +596,17 @@ void MeshExporter::PrepareVerts(TriObject* triObj, INode* node)
 	ISkinContextData* skinData = NULL;
 	Modifier* skinModifier = FindSkinModifier(node);
 
-	if (skinModifier)
+	if (skinModifier != NULL)
 	{
-		ISkin* iskin = (ISkin*)skinModifier->GetInterface(I_SKIN);
-		ISkinContextData* skinData = iskin->GetContextInterface(node);
+		iskin = (ISkin*)skinModifier->GetInterface(I_SKIN);
+
+		if (iskin != NULL)
+		{
+			skinData = iskin->GetContextInterface(node);
+		}
 	}
+
+	map<int, float> boneWeights;
 
 	// In MAX a vertex can have more than one normal (but doesn't always have it).
 	// This is depending on the face you are accessing the vertex through.
@@ -612,7 +618,7 @@ void MeshExporter::PrepareVerts(TriObject* triObj, INode* node)
 		for (j = 0; j < 3; j++)
 		{
 			vi = face->getVert(2 - j);
-			vp = mesh->verts[vi];
+			vp = mesh->getVert(vi);
 			vn = GetVertexNormal(mesh, i, mesh->getRVertPtr(vi));
 			tangent = GetVertexTangent(mesh, i);
 			bitangent = GetVertexBitangent(mesh, i);
@@ -632,6 +638,19 @@ void MeshExporter::PrepareVerts(TriObject* triObj, INode* node)
 			if (material != NULL)
 			{
 				mi = face->getMatID();
+			}
+
+			boneWeights.clear();
+
+			if (skinData != NULL)
+			{
+				for (int nodeId = 0; nodeId < skinData->GetNumAssignedBones(vi); nodeId++)
+				{
+					int boneId = skinData->GetAssignedBone(vi, nodeId);
+					float weight = skinData->GetBoneWeight(vi, nodeId);
+
+					boneWeights[boneId] = weight;
+				}
 			}
 
 			index = GetEqualVertex(vp, vn, tc);
