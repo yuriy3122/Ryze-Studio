@@ -671,13 +671,12 @@ void MeshExporter::PrepareVerts(TriObject* triObj, INode* node)
 	m_indices.clear();
 	m_mtlsIndices.clear();
 
-	ISkin* iskin = NULL;
 	ISkinContextData* skinData = NULL;
 	Modifier* skinModifier = FindSkinModifier(node);
 
 	if (skinModifier != NULL)
 	{
-		iskin = (ISkin*)skinModifier->GetInterface(I_SKIN);
+		ISkin* iskin = (ISkin*)skinModifier->GetInterface(I_SKIN);
 
 		if (iskin != NULL)
 		{
