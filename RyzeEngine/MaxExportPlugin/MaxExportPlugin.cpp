@@ -186,7 +186,7 @@ static void TruncateBoneWeights(map<int, float>& boneWeights)
 
 	for (auto iter = sortedWeights.rbegin(); iter != sortedWeights.rend(); ++iter)
 	{
-		if (count < 4)
+		if (count < 4 && iter->first > 0.0001f)
 		{
 			boneWeights[iter->second] = iter->first;
 			weightsSum += iter->first;
