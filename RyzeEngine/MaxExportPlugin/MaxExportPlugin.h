@@ -10,6 +10,7 @@
 #include <iparamm2.h>
 #include <maxtypes.h>
 #include <triobj.h>
+#include "iskin.h"
 #include <stdmat.h>
 #include <impapi.h>
 #include <impexp.h>
@@ -75,7 +76,7 @@ class MeshExporter: public ITreeEnumProc
 {
 public:
 	// SubExporters
-	void PrepareVerts(TriObject* TObj, INode* node);
+	void PrepareVerts(TriObject* TObj, INode* node, ISkinContextData* skinData);
 	void ExportFaces();
 	void ExportVerts();
 	void ExportMaterial(INode* node);

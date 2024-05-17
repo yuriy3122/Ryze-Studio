@@ -1,7 +1,6 @@
 #include "MaxExportPlugin.h"
 #include "decomp.h"
 #include "modstack.h"
-#include "iskin.h"
 
 static MeshExporter		g_meshExporter;
 static ofstream			g_outputFile;
@@ -312,13 +311,27 @@ void MeshExporter::ProcNode(INode* node)
 	g_outputFile.write((char*)&parentId, sizeof(ULONG));
 
 	TriObject *triObj = GetTriObjFromNode(node);
+	Modifier* skinModifier = FindSkinModifier(node);
+
+	ISkinContextData* skinData = NULL;
+	ISkin* iskin = NULL;
+
+	if (skinModifier != NULL)
+	{
+		iskin = (ISkin*)skinModifier->GetInterface(I_SKIN);
+
+		if (iskin != NULL)
+		{
+			skinData = iskin->GetContextInterface(node);
+		}
+	}
 
 	int verts = 0;
 	int faces = 0;
 
 	if (triObj)
 	{
-		PrepareVerts(triObj, node);
+		PrepareVerts(triObj, node, skinData);
 		verts = (int)m_vertices.size();
 		faces = (int)(m_indices.size() / 3);
 	}
@@ -670,7 +683,7 @@ int MeshExporter::GetEqualVertex(const Point3 &vp, const Point3 &vn, const Point
 	return -1;
 }
 
-void MeshExporter::PrepareVerts(TriObject* triObj, INode* node)
+void MeshExporter::PrepareVerts(TriObject* triObj, INode* node, ISkinContextData* skinData)
 {
 	Point3 vp { 0.0f, 0.0f, 0.0f };			// Vertex position 
 	Point3 vn { 0.0f, 0.0f, 0.0f };			// Vertex normal
@@ -687,19 +700,6 @@ void MeshExporter::PrepareVerts(TriObject* triObj, INode* node)
 	m_vertices.clear();
 	m_indices.clear();
 	m_mtlsIndices.clear();
-
-	ISkinContextData* skinData = NULL;
-	Modifier* skinModifier = FindSkinModifier(node);
-
-	if (skinModifier != NULL)
-	{
-		ISkin* iskin = (ISkin*)skinModifier->GetInterface(I_SKIN);
-
-		if (iskin != NULL)
-		{
-			skinData = iskin->GetContextInterface(node);
-		}
-	}
 
 	map<int, float> boneWeights;
 
@@ -739,10 +739,10 @@ void MeshExporter::PrepareVerts(TriObject* triObj, INode* node)
 
 			if (skinData != NULL)
 			{
-				for (int nodeId = 0; nodeId < skinData->GetNumAssignedBones(vi); nodeId++)
+				for (int boneIdx = 0; boneIdx < skinData->GetNumAssignedBones(vi); boneIdx++)
 				{
-					int boneId = skinData->GetAssignedBone(vi, nodeId);
-					float weight = skinData->GetBoneWeight(vi, nodeId);
+					int boneId = skinData->GetAssignedBone(vi, boneIdx);
+					float weight = skinData->GetBoneWeight(vi, boneIdx);
 
 					boneWeights[boneId] = weight;
 				}
