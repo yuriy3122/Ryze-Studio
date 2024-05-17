@@ -239,39 +239,14 @@ static Point4 PackBoneWeights(const map<int, float>& boneWeights)
 	return weights;
 }
 
-void MeshExporter::ProcNode(INode* node)
+static void GetNodeTM(INode* node, Point3& p, Quat& q, Point3& s)
 {
-	Control *pTMController = node->GetTMController();
+	Control* pTMController = node->GetTMController();
 
-	if (!pTMController)
+	if (pTMController == NULL)
 	{
 		return;
 	}
-
-	int currHeader = ID_NODE_HEADER;
-	g_outputFile.write((char*)&currHeader, 2);
-
-	ULONG id = node->GetHandle();
-	g_outputFile.write((char*)&id, sizeof(ULONG));
-
-	INode *pParent = node->GetParentNode();
-	ULONG parentId = pParent ? pParent->GetHandle() : 0;
-	g_outputFile.write((char*)&parentId, sizeof(ULONG));
-
-	TriObject *triObj = GetTriObjFromNode(node);
-
-	int verts = 0;
-	int faces = 0;
-
-	if (triObj)
-	{
-		PrepareVerts(triObj, node);
-		verts = (int)m_vertices.size();
-		faces = (int)(m_indices.size() / 3);
-	}
-
-	g_outputFile.write((char*)&verts, sizeof(int));
-	g_outputFile.write((char*)&faces, sizeof(int));
 
 	Matrix3 offsetTM;
 	offsetTM.IdentityMatrix();
@@ -314,7 +289,49 @@ void MeshExporter::ProcNode(INode* node)
 
 	Matrix3 objectTM = offsetTM * localTM;
 
-	DecomposeMatrix(objectTM, pos, rot, scale.s);
+	DecomposeMatrix(objectTM, p, q, s);
+}
+
+void MeshExporter::ProcNode(INode* node)
+{
+	Control *pTMController = node->GetTMController();
+
+	if (!pTMController)
+	{
+		return;
+	}
+
+	int currHeader = ID_NODE_HEADER;
+	g_outputFile.write((char*)&currHeader, 2);
+
+	ULONG id = node->GetHandle();
+	g_outputFile.write((char*)&id, sizeof(ULONG));
+
+	INode *pParent = node->GetParentNode();
+	ULONG parentId = pParent ? pParent->GetHandle() : 0;
+	g_outputFile.write((char*)&parentId, sizeof(ULONG));
+
+	TriObject *triObj = GetTriObjFromNode(node);
+
+	int verts = 0;
+	int faces = 0;
+
+	if (triObj)
+	{
+		PrepareVerts(triObj, node);
+		verts = (int)m_vertices.size();
+		faces = (int)(m_indices.size() / 3);
+	}
+
+	g_outputFile.write((char*)&verts, sizeof(int));
+	g_outputFile.write((char*)&faces, sizeof(int));
+
+	Point3 pos = {0.0f, 0.0f, 0.0f};
+	Quat rot = {0.0f, 0.0f, 0.0f, 0.0f};
+	ScaleValue scale;
+	scale.s = {1.0f, 1.0f, 1.0f};
+
+	GetNodeTM(node, pos, rot, scale.s);
 
 	// Write scale param for current Node
 	g_outputFile.write((char*)&scale.s.x, sizeof(float));
