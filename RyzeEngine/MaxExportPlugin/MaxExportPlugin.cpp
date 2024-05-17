@@ -238,7 +238,7 @@ static Point4 PackBoneWeights(const map<int, float>& boneWeights)
 	return weights;
 }
 
-static void GetNodeTM(INode* node, Point3& p, Quat& q, Point3& s)
+static void GetNodeTM(INode* node, Point3& p, Quat& q, Point3& s, Interval interval = NEVER)
 {
 	Control* pTMController = node->GetTMController();
 
@@ -257,7 +257,6 @@ static void GetNodeTM(INode* node, Point3& p, Quat& q, Point3& s)
 	Quat rot = { 0.0f, 0.0f, 0.0f, 0.0f };
 	ScaleValue scale;
 	scale.s = { 1.0f, 1.0f, 1.0f };
-	Interval interval = NEVER;
 
 	Control* pPositionController = pTMController->GetPositionController();
 
