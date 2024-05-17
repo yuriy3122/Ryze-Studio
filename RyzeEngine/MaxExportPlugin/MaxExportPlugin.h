@@ -33,6 +33,7 @@ struct VertexPosition
 	Point3 tangent;
 	Point3 bitangent;
 	Point3 tex;
+	Point4 boneWeights;
 };
 
 class MaxExportPlugin : public SceneExport

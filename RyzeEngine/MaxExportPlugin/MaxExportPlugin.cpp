@@ -208,6 +208,37 @@ static void TruncateBoneWeights(map<int, float>& boneWeights)
 	}
 }
 
+static Point4 PackBoneWeights(const map<int, float>& boneWeights)
+{
+	Point4 weights = {0.0f, 0.0f, 0.0f, 0.0f};
+
+	if (boneWeights.size() == 0)
+	{
+		return weights;
+	}
+
+	int i = 0;
+
+	for (auto iter = boneWeights.begin(); iter != boneWeights.end(); ++iter)
+	{
+		weights[i++] = (float)iter->first + iter->second;
+	}
+
+	int count = 4 - i;
+
+	if (count > 0)
+	{
+		auto lastPair = prev(boneWeights.end());
+
+		for (int j = i - 1; j < 4; j++)
+		{
+			weights[j] = (float)lastPair->first + lastPair->second / ((float)(count + 1));
+		}
+	}
+
+	return weights;
+}
+
 void MeshExporter::ProcNode(INode* node)
 {
 	Control *pTMController = node->GetTMController();
@@ -703,6 +734,8 @@ void MeshExporter::PrepareVerts(TriObject* triObj, INode* node)
 				TruncateBoneWeights(boneWeights);
 			}
 
+			Point4 weights = PackBoneWeights(boneWeights);
+
 			index = GetEqualVertex(vp, vn, tc);
 
 			if (index >= 0)
@@ -712,6 +745,7 @@ void MeshExporter::PrepareVerts(TriObject* triObj, INode* node)
 				vertex.bitangent += bitangent;
 				vertex.tangent.Normalize();
 				vertex.bitangent.Normalize();
+				vertex.boneWeights = weights;
 
 				m_indices.push_back(index);
 				m_mtlsIndices.push_back(mi);
@@ -724,6 +758,7 @@ void MeshExporter::PrepareVerts(TriObject* triObj, INode* node)
 				vert.tangent = tangent;
 				vert.bitangent = bitangent;
 				vert.tex = tc;
+				vert.boneWeights = weights;
 
 				m_vertices.push_back(vert);
 				m_indices.push_back((DWORD)m_vertices.size() - 1);
