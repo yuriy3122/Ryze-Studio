@@ -128,37 +128,6 @@ int MeshExporter::callback(INode* node)
 	return TREE_CONTINUE;
 }
 
-static Modifier* FindSkinModifier(INode* nodePtr)
-{
-	Object* ObjectPtr = nodePtr->GetObjectRef();
-
-	if (!ObjectPtr)
-	{
-		return NULL;
-	}
-
-	while (ObjectPtr && ObjectPtr->SuperClassID() == GEN_DERIVOB_CLASS_ID)
-	{
-		IDerivedObject* DerivedObjectPtr = (IDerivedObject*)(ObjectPtr);
-		int ModStackIndex = 0;
-
-		while (ModStackIndex < DerivedObjectPtr->NumModifiers())
-		{
-			Modifier* ModifierPtr = DerivedObjectPtr->GetModifier(ModStackIndex);
-
-			if (ModifierPtr->ClassID() == Class_ID(SKIN_CLASSID))
-			{
-				return ModifierPtr;
-			}
-
-			ModStackIndex++;
-		}
-
-		ObjectPtr = DerivedObjectPtr->GetObjRef();
-	}
-	return NULL;
-}
-
 template<typename A, typename B>
 pair<B, A> flip_pair(const pair<A, B>& p)
 {
@@ -253,10 +222,10 @@ static void GetNodeTM(INode* node, Point3& p, Quat& q, Point3& s, Interval inter
 	PreRotateMatrix(offsetTM, node->GetObjOffsetRot());
 	ApplyScaling(offsetTM, node->GetObjOffsetScale());
 
-	Point3 pos = { 0.0f, 0.0f, 0.0f };
-	Quat rot = { 0.0f, 0.0f, 0.0f, 0.0f };
+	Point3 pos = {0.0f, 0.0f, 0.0f};
+	Quat rot = {0.0f, 0.0f, 0.0f, 0.0f};
 	ScaleValue scale;
-	scale.s = { 1.0f, 1.0f, 1.0f };
+	scale.s = {1.0f, 1.0f, 1.0f};
 
 	Control* pPositionController = pTMController->GetPositionController();
 
@@ -310,7 +279,7 @@ void MeshExporter::ProcNode(INode* node)
 	g_outputFile.write((char*)&parentId, sizeof(ULONG));
 
 	TriObject *triObj = GetTriObjFromNode(node);
-	Modifier* skinModifier = FindSkinModifier(node);
+	Modifier* skinModifier = GetSkinModifierFromNode(node);
 
 	ISkinContextData* skinData = NULL;
 	ISkin* iskin = NULL;
@@ -423,6 +392,8 @@ void MeshExporter::ProcNode(INode* node)
 		ExportFaces();
 	}
 
+	//ExportAnimationKeys(node, iskin);
+
 	// Now put this pos as begin of new node
 	tmpPos = g_outputFile.tellp();
 	g_outputFile.seekp(nextNode);
@@ -516,6 +487,35 @@ void MeshExporter::ExportDefaultMaterial()
 
 	int hdr = 0;
 	g_outputFile.write((char*)&hdr, sizeof(int));
+}
+
+void MeshExporter::ExportAnimationKeys(INode* node, ISkin* iskin)
+{
+	if (iskin == NULL)
+	{
+		return;
+	}
+
+	for (int idx = 0; idx < iskin->GetNumBones(); idx++)
+	{
+		INode* boneNode = iskin->GetBone(idx);
+
+		if (boneNode != NULL)
+		{
+			for (int i = 0; i < 100; i++)
+			{
+				Point3 pos = { 0.0f, 0.0f, 0.0f };
+				Quat rot = { 0.0f, 0.0f, 0.0f, 0.0f };
+				ScaleValue scale = { 0 };
+
+				Interval interval;
+				interval.SetStart(i);
+				interval.SetEnd(i + 1);
+
+				GetNodeTM(boneNode, pos, rot, scale.s, interval);
+			}
+		}
+	}
 }
 
 void MeshExporter::ExportMaterial(INode* node)
@@ -838,4 +838,36 @@ TriObject* MeshExporter::GetTriObjFromNode(INode* node)
 	}
 
 	return triObj;
+}
+
+Modifier* MeshExporter::GetSkinModifierFromNode(INode* node)
+{
+	Object* ObjectPtr = node->GetObjectRef();
+
+	if (ObjectPtr == NULL)
+	{
+		return NULL;
+	}
+
+	while (ObjectPtr && ObjectPtr->SuperClassID() == GEN_DERIVOB_CLASS_ID)
+	{
+		IDerivedObject* DerivedObjectPtr = (IDerivedObject*)(ObjectPtr);
+		int ModStackIndex = 0;
+
+		while (ModStackIndex < DerivedObjectPtr->NumModifiers())
+		{
+			Modifier* ModifierPtr = DerivedObjectPtr->GetModifier(ModStackIndex);
+
+			if (ModifierPtr->ClassID() == Class_ID(SKIN_CLASSID))
+			{
+				return ModifierPtr;
+			}
+
+			ModStackIndex++;
+		}
+
+		ObjectPtr = DerivedObjectPtr->GetObjRef();
+	}
+
+	return NULL;
 }

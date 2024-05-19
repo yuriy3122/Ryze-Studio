@@ -87,12 +87,16 @@ public:
 
 private:
 	TriObject* GetTriObjFromNode(INode *node);
+	Modifier* GetSkinModifierFromNode(INode* node);
+
 	Point3 GetVertexNormal(Mesh* mesh, int faceNo, RVertex* rv);
 	Point3 GetVertexTangent(Mesh* mesh, int faceNo);
 	Point3 GetVertexBitangent(Mesh* mesh, int faceNo);
 	int GetEqualVertex(const Point3 &vp, const Point3 &vn, const Point3 &tc);
+
 	void ExportStdMaterial(Mtl *material);
 	void ExportDefaultMaterial();
+	void ExportAnimationKeys(INode* node, ISkin* iskin);
 
 	vector<VertexPosition> m_vertices;
 	vector<DWORD> m_indices;
