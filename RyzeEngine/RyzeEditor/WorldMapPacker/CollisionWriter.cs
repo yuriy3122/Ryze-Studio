@@ -512,9 +512,9 @@ namespace RyzeEditor.Packer
                     shape = new BoxShapeEx(new Vector3(boxHalfExtends.ToArray())) { Center = new Vector3(center.ToArray()) };
                     break;
                 case CollisionShapeType.Sphere:
-                    var shpereCenter = rigidBody.BoundingSphere.Center;
-                    shpereCenter.Z *= -1.0f;
-                    shape = new SphereShapeEx(rigidBody.BoundingSphere.Radius) { Center = new Vector3(shpereCenter.ToArray()) };
+                    var sphereCenter = rigidBody.BoundingSphere.Center;
+                    sphereCenter.Z *= -1.0f;
+                    shape = new SphereShapeEx(rigidBody.BoundingSphere.Radius) { Center = new Vector3(sphereCenter.ToArray()) };
                     break;
                 case CollisionShapeType.ConvexHull:
                     var vertices = rigidBody.GetMeshVertices();
