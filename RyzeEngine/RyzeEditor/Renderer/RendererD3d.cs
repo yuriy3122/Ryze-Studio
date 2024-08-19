@@ -57,15 +57,7 @@ namespace RyzeEditor.Renderer
 			_context.InputAssembler.PrimitiveTopology = PrimitiveTopology.TriangleList;
 			_context.VertexShader.SetConstantBuffer(0, effect.ContantBuffer);
 			_context.VertexShader.Set(effect.VertexShader);
-
-            if (mode.ShadowMap)
-            {
-                _context.PixelShader.Set(null);
-            }
-            else
-            {
-                _context.PixelShader.Set(effect.PixelShader);
-            }
+            _context.PixelShader.Set(mode.ShadowMap ? null : effect.PixelShader);
 
 			foreach (var subMesh in mesh.SubMeshes)
 			{
