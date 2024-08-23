@@ -55,9 +55,9 @@ namespace RyzeEditor.Packer
 
         public SharpDX.Vector3 Center { get; private set; }
 
-        public int HeightStickX { get; private set; }
+        public int HeightStickWidth { get; private set; }
 
-        public int HeightStickZ { get; private set; }
+        public int HeightStickLength { get; private set; }
 
         public float MinHeight { get; private set; }
 
@@ -93,31 +93,33 @@ namespace RyzeEditor.Packer
 
             var ray = new SharpDX.Ray
             {
-                Position = new SharpDX.Vector3(0.0f, 1000.0f, 0.0f),
+                Position = new SharpDX.Vector3(0.0f, 5000.0f, 0.0f),
                 Direction = new SharpDX.Vector3(0.0f, -1.0f, 0.0f)
             };
 
             var max = RigidBody.BoundingBox.Maximum;
             var min = RigidBody.BoundingBox.Minimum;
+            var center = (max + min) / 2.0f;
 
-            const float Eplison = 0.001f;
-            var dx = Math.Abs(max.X - min.X) - 2 * Eplison;
-            var dz = Math.Abs(max.Z - min.Z) - 2 * Eplison;
+            var dx = Math.Abs(max.X - min.X);
+            var dz = Math.Abs(max.Z - min.Z);
 
-            HeightStickX = (int)Math.Ceiling(dx / Math.Max(RigidBody.GridSpacing, Eplison));
-            HeightStickZ = (int)Math.Ceiling(dz / Math.Max(RigidBody.GridSpacing, Eplison));
+            const float MinStickSize = 0.01f;
 
-            var gridSpacingX = dx / HeightStickX;
-            var gridSpacingZ = dz / HeightStickZ;
+            float gridSpacing = Math.Max(RigidBody.GridSpacing, MinStickSize);
+
+            HeightStickWidth = (int)Math.Ceiling(dx / gridSpacing);
+            HeightStickLength = (int)Math.Ceiling(dz / gridSpacing);
 
             var heightfieldData = new List<float>();
+            var pointsOutOfRange = new Dictionary<int, float>();
 
-            for (int i = -HeightStickX / 2; i < HeightStickX / 2; i++)
+            for (int i = -HeightStickWidth / 2; i <= HeightStickWidth / 2; i++)
             {
-                for (int j = -HeightStickZ / 2; j < HeightStickZ / 2; j++)
+                for (int j = -HeightStickLength / 2; j <= HeightStickLength / 2; j++)
                 {
-                    ray.Position.X = i * gridSpacingX + Eplison;
-                    ray.Position.Z = j * gridSpacingZ + Eplison;
+                    ray.Position.X = center.X + i * gridSpacing;
+                    ray.Position.Z = center.Z + j * gridSpacing;
 
                     RigidBody.GameObject.Intersects(ray, out RayPickData data);
 
@@ -127,9 +129,39 @@ namespace RyzeEditor.Packer
                     }
                     else
                     {
-                        heightfieldData.Add(-1000.0f);
+                        heightfieldData.Add(float.MinValue);
+                        pointsOutOfRange[heightfieldData.Count - 1] = float.MinValue;
                     }
                 }
+            }
+
+            MinHeight = float.MaxValue;
+            MaxHeight = float.MinValue;
+
+            for (int i = 0; i < heightfieldData.Count; i++)
+            {
+                if (pointsOutOfRange.ContainsKey(i))
+                {
+                    continue;
+                }
+
+                if (heightfieldData[i] < MinHeight)
+                {
+                    MinHeight = heightfieldData[i];
+                }
+
+                if (heightfieldData[i] > MaxHeight)
+                {
+                    MaxHeight = heightfieldData[i];
+                }
+            }
+
+            MaxHeight = Math.Max(Math.Abs(MinHeight), Math.Abs(MaxHeight));
+            MinHeight = -1.0f * MaxHeight;
+
+            foreach (var kv in pointsOutOfRange)
+            {
+                heightfieldData[kv.Key] = MinHeight;
             }
 
             HeightfieldData = heightfieldData.ToArray();
@@ -343,14 +375,20 @@ namespace RyzeEditor.Packer
                 stream.Write(BitConverter.GetBytes(heightfieldTerrainShape.Center.Y), 0, sizeof(float));
                 stream.Write(BitConverter.GetBytes(heightfieldTerrainShape.Center.Z), 0, sizeof(float));
 
-                //HeightStick Wwdth
-                stream.Write(BitConverter.GetBytes(heightfieldTerrainShape.HeightStickX * 2), 0, sizeof(int));
+                //StickWidth
+                stream.Write(BitConverter.GetBytes(heightfieldTerrainShape.HeightStickWidth), 0, sizeof(int));
 
-                //HeightStick length
-                stream.Write(BitConverter.GetBytes(heightfieldTerrainShape.HeightStickZ * 2), 0, sizeof(int));
+                //StickLength
+                stream.Write(BitConverter.GetBytes(heightfieldTerrainShape.HeightStickLength), 0, sizeof(int));
 
                 //Grid spacing
                 stream.Write(BitConverter.GetBytes(heightfieldTerrainShape.GridSpacing), 0, sizeof(float));
+
+                //Min Height
+                stream.Write(BitConverter.GetBytes(heightfieldTerrainShape.MinHeight), 0, sizeof(float));
+
+                //Max Height
+                stream.Write(BitConverter.GetBytes(heightfieldTerrainShape.MaxHeight), 0, sizeof(float));
 
                 //HeightfieldData length
                 stream.Write(BitConverter.GetBytes(heightfieldTerrainShape.HeightfieldData.Length), 0, sizeof(int));
