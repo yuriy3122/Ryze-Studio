@@ -81,9 +81,6 @@ namespace RyzeEditor.Packer
             point.Z *= -1.0f;
             Center = point;
 
-            MinHeight = min.Y;
-            MaxHeight = max.Y;
-
             PrepareHeightfieldData();
         }
 
@@ -99,7 +96,6 @@ namespace RyzeEditor.Packer
 
             var max = RigidBody.BoundingBox.Maximum;
             var min = RigidBody.BoundingBox.Minimum;
-            var center = (max + min) / 2.0f;
 
             var dx = Math.Abs(max.X - min.X);
             var dz = Math.Abs(max.Z - min.Z);
@@ -118,8 +114,8 @@ namespace RyzeEditor.Packer
             {
                 for (int j = -HeightStickLength / 2; j <= HeightStickLength / 2; j++)
                 {
-                    ray.Position.X = center.X + i * gridSpacing;
-                    ray.Position.Z = center.Z + j * gridSpacing;
+                    ray.Position.X = Center.X + i * gridSpacing;
+                    ray.Position.Z = Center.Z + j * gridSpacing * -1.0f;
 
                     RigidBody.GameObject.Intersects(ray, out RayPickData data);
 
