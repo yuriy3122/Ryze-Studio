@@ -3,6 +3,10 @@
 
 #include "Vector.h"
 
+#define ID_BOX_COLLISION_SHAPE              0
+#define ID_CONVEX_HULL_COLLISION_SHAPE      4
+#define ID_TERRAIN_COLLISION_SHAPE          24
+
 typedef struct CollisionShape
 {
     int userIndex;
@@ -10,6 +14,16 @@ typedef struct CollisionShape
     int shapeType;
     
     int numberOfVertices;
+
+	int heightStickWidth;
+
+	int heightStickLength;
+
+	float gridSpacing;
+
+	float minHeight;
+
+	float maxHeight;
     
     void *vertexData;
     

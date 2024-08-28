@@ -86,21 +86,13 @@ namespace RyzeEditor.Packer
 
         private void PrepareHeightfieldData()
         {
-            var mesh = RigidBody.Mesh;
-
-            var ray = new SharpDX.Ray
-            {
-                Position = new SharpDX.Vector3(0.0f, 5000.0f, 0.0f),
-                Direction = new SharpDX.Vector3(0.0f, -1.0f, 0.0f)
-            };
+            const float MinStickSize = 0.01f;
 
             var max = RigidBody.BoundingBox.Maximum;
             var min = RigidBody.BoundingBox.Minimum;
 
             var dx = Math.Abs(max.X - min.X);
             var dz = Math.Abs(max.Z - min.Z);
-
-            const float MinStickSize = 0.01f;
 
             float gridSpacing = Math.Max(RigidBody.GridSpacing, MinStickSize);
 
@@ -109,6 +101,12 @@ namespace RyzeEditor.Packer
 
             var heightfieldData = new List<float>();
             var pointsOutOfRange = new Dictionary<int, float>();
+
+            var ray = new SharpDX.Ray
+            {
+                Position = new SharpDX.Vector3(0.0f, 5000.0f, 0.0f),
+                Direction = new SharpDX.Vector3(0.0f, -1.0f, 0.0f)
+            };
 
             for (int i = -HeightStickWidth / 2; i <= HeightStickWidth / 2; i++)
             {

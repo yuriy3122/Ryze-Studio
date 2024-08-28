@@ -5,6 +5,7 @@
 #include "ResourceManager.h"
 #include "btBulletDynamicsCommon.h"
 #include <map>
+#include <vector>
 
 using namespace std;
 
@@ -24,6 +25,7 @@ public:
 private:
 	btCollisionShape* CreateBoxShape(const collision_shape_t* shape);
 	btCollisionShape* CreateConvexHullShape(const collision_shape_t* shape);
+	btCollisionShape* CreateHeightfieldTerrainShape(const collision_shape_t* shape);
 
 	btRigidBody* CreateRigidBody(const rigid_body_t* rigidBody, btCollisionShape* collisionShape);
 

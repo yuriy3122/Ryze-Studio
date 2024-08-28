@@ -72,6 +72,36 @@ DWORD ResourceManager::ReadCollisionShapeData(const char* buffer, DWORD pos)
 				offset += static_cast<unsigned long long>(shape->numberOfVertices) * 4 * sizeof(float);
 
 				break;
+
+			case 24://Heightfield Terrain
+				shape->center = *((vector3_t*)((char*)buffer + pos + offset));
+				offset += sizeof(vector3_t);
+
+				shape->heightStickWidth = *((int*)((char*)buffer + pos + offset));
+				offset += sizeof(int);
+
+				shape->heightStickLength = *((int*)((char*)buffer + pos + offset));
+				offset += sizeof(int);
+
+				shape->gridSpacing = *((float*)((char*)buffer + pos + offset));
+				offset += sizeof(float);
+
+				shape->minHeight = *((float*)((char*)buffer + pos + offset));
+				offset += sizeof(float);
+
+				shape->maxHeight = *((float*)((char*)buffer + pos + offset));
+				offset += sizeof(float);
+
+				shape->numberOfVertices = *((int*)((char*)buffer + pos + offset));
+				offset += sizeof(int);
+
+				alligment = *((int*)((char*)buffer + pos + offset));
+				offset += sizeof(int) + alligment;
+
+				shape->vertexData = (float*)((char*)buffer + pos + offset);
+				offset += static_cast<unsigned long long>(shape->numberOfVertices) * sizeof(float);
+
+				break;
 		}
 
 		m_collisionShapeList.data[m_collisionShapeList.count++] = shape;

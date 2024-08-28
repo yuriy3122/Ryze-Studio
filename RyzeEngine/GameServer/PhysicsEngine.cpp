@@ -1,5 +1,6 @@
-#include "PhysicsEngine.h"
 #include <iostream>
+#include "PhysicsEngine.h"
+#include <BulletCollision/CollisionShapes/btHeightfieldTerrainShape.h>
 
 #pragma warning(disable:6011)
 
@@ -43,13 +44,17 @@ btCollisionShape* PhysicsEngine::GetBulletCollisionShape(collision_shape_t* shap
 	{
 		switch (shape->shapeType)
 		{
-			case 0:
+			case ID_BOX_COLLISION_SHAPE:
 				collisionShape = CreateBoxShape(shape);
 				break;
-			case 4:
+			case ID_CONVEX_HULL_COLLISION_SHAPE:
 				collisionShape = CreateConvexHullShape(shape);
 				break;
+			case ID_TERRAIN_COLLISION_SHAPE:
+				collisionShape = CreateHeightfieldTerrainShape(shape);
 		}
+
+		collisionShape->setUserPointer(shape);
 
 		m_collisionShapes[shape->userIndex] = collisionShape;
 	}
@@ -311,6 +316,21 @@ btCollisionShape* PhysicsEngine::CreateConvexHullShape(const collision_shape_t* 
 	return collisionShape;
 }
 
+btCollisionShape* PhysicsEngine::CreateHeightfieldTerrainShape(const collision_shape_t* shape)
+{
+	int upAxis = 1;
+	bool flipQuadEdges = false;
+	float heightScale = 1.0f;
+
+	btHeightfieldTerrainShape* collisionShape = new btHeightfieldTerrainShape(shape->heightStickLength, shape->heightStickWidth,
+		shape->vertexData, heightScale, shape->minHeight, shape->maxHeight, upAxis, PHY_FLOAT, flipQuadEdges);
+
+	btVector3 localScaling(shape->gridSpacing, 1.0f, shape->gridSpacing);
+	collisionShape->setLocalScaling(localScaling);
+
+	return collisionShape;
+}
+
 btRigidBody* PhysicsEngine::CreateRigidBody(const rigid_body_t* rigidBody, btCollisionShape* collisionShape)
 {
 	game_object_t* gameObject = NULL;
@@ -335,6 +355,14 @@ btRigidBody* PhysicsEngine::CreateRigidBody(const rigid_body_t* rigidBody, btCol
 	{
 		startTransform.setOrigin(btVector3(gameObject->position.x, gameObject->position.y, gameObject->position.z));
 		startTransform.setRotation(btQuaternion(gameObject->rotation.x, gameObject->rotation.y, gameObject->rotation.z, gameObject->rotation.w));
+	}
+
+	collision_shape_t* originShape = (collision_shape_t*)collisionShape->getUserPointer();
+
+	if (originShape != NULL && originShape->shapeType == ID_TERRAIN_COLLISION_SHAPE)
+	{
+		btVector3 origin = startTransform.getOrigin() + btVector3(originShape->center.x, 0.0f, originShape->center.z);
+		startTransform.setOrigin(origin);
 	}
 
 	btDefaultMotionState* motionState = new btDefaultMotionState(startTransform);
