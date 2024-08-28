@@ -46,7 +46,7 @@ DWORD ResourceManager::ReadCollisionShapeData(const char* buffer, DWORD pos)
 
 		switch (shape->shapeType)
 		{
-			case 0://BoxShape
+			case ID_BOX_COLLISION_SHAPE:
 				shape->numberOfVertices = 0;
 				shape->vertexData = NULL;
 
@@ -58,7 +58,7 @@ DWORD ResourceManager::ReadCollisionShapeData(const char* buffer, DWORD pos)
 
 				break;
 
-			case 4://ConvexHullShape
+			case ID_CONVEX_HULL_COLLISION_SHAPE:
 				shape->center = *((vector3_t*)((char*)buffer + pos + offset));
 				offset += sizeof(vector3_t);
 
@@ -73,7 +73,7 @@ DWORD ResourceManager::ReadCollisionShapeData(const char* buffer, DWORD pos)
 
 				break;
 
-			case 24://Heightfield Terrain
+			case ID_TERRAIN_COLLISION_SHAPE:
 				shape->center = *((vector3_t*)((char*)buffer + pos + offset));
 				offset += sizeof(vector3_t);
 
