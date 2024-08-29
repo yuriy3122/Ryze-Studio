@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Windows.Forms;
 using log4net;
 using RyzeEditor.GameWorld;
 using RyzeEditor.Properties;
@@ -53,6 +54,8 @@ namespace RyzeEditor.Packer
         {
             try
             {
+                Cursor.Current = Cursors.WaitCursor;
+
                 _preProcessor.Run();
 
                 _worldMapData.Prepare();
@@ -63,6 +66,10 @@ namespace RyzeEditor.Packer
             {
                 _logger.Error(ex.Message);
                 BinaryWriterNewMessage(this, new PackerEventArgs($"ERROR: {ex.Message}"));
+            }
+            finally
+            {
+                Cursor.Current = Cursors.Default;
             }
         }
 
