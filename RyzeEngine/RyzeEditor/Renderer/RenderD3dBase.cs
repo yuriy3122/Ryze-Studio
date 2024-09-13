@@ -132,6 +132,7 @@ namespace RyzeEditor.Renderer
 
             rasterDesc = RasterizerStateDescription.Default();
             rasterDesc.CullMode = CullMode.Back;
+            //rasterDesc.FillMode = FillMode.Wireframe;
             _rasterState = new RasterizerState(_device, rasterDesc);
 
             var depthRasterDesc = RasterizerStateDescription.Default();
