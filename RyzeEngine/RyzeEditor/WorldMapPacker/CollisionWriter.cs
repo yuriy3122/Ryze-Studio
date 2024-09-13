@@ -108,12 +108,12 @@ namespace RyzeEditor.Packer
                 Direction = new SharpDX.Vector3(0.0f, -1.0f, 0.0f)
             };
 
-            for (int i = -HeightStickWidth / 2; i <= HeightStickWidth / 2; i++)
+            for (int i = 0; i < HeightStickWidth; i++)
             {
-                for (int j = -HeightStickLength / 2; j <= HeightStickLength / 2; j++)
+                for (int j = 0; j < HeightStickLength; j++)
                 {
-                    ray.Position.X = Center.X + i * gridSpacing;
-                    ray.Position.Z = Center.Z + j * gridSpacing * -1.0f;
+                    ray.Position.X = min.X + i * gridSpacing;
+                    ray.Position.Z = max.Z - j * gridSpacing;
 
                     RigidBody.GameObject.Intersects(ray, out RayPickData data);
 
