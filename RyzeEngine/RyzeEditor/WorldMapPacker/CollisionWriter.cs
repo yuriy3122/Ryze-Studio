@@ -108,18 +108,22 @@ namespace RyzeEditor.Packer
                 Direction = new SharpDX.Vector3(0.0f, -1.0f, 0.0f)
             };
 
+            var mi = SharpDX.Matrix.Invert(RigidBody.GameObject.WorldMatrix);
+
             for (int i = 0; i < HeightStickWidth; i++)
             {
                 for (int j = 0; j < HeightStickLength; j++)
                 {
                     ray.Position.X = min.X + i * gridSpacing;
-                    ray.Position.Z = max.Z - j * gridSpacing;
+                    ray.Position.Z = min.Z + j * gridSpacing;
 
                     RigidBody.GameObject.Intersects(ray, out RayPickData data);
 
                     if (data != null)
                     {
-                        heightfieldData.Add(data.Point.Y - RigidBody.GameObject.Position.Y);
+                        var point = data.Point;
+                        SharpDX.Vector3.TransformCoordinate(ref point, ref mi, out SharpDX.Vector3 pointLocal);
+                        heightfieldData.Add(pointLocal.Y - RigidBody.GameObject.Position.Y);
                     }
                     else
                     {
