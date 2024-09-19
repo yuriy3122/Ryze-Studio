@@ -72,7 +72,7 @@ namespace RyzeEditor.GameWorld
 
         public bool Static { get; set; }
 
-        [InspectorVisible(false)]
+        [InspectorVisible(true)]
         public bool RenderNormals { get; set; }
 
         [InspectorVisible(false)]
