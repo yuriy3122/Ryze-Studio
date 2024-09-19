@@ -114,8 +114,8 @@ namespace RyzeEditor.Packer
             {
                 for (int j = 0; j < HeightStickLength; j++)
                 {
-                    ray.Position.X = min.X + i * gridSpacing;
-                    ray.Position.Z = min.Z + j * gridSpacing;
+                    ray.Position.X = max.X - i * gridSpacing;
+                    ray.Position.Z = max.Z - j * gridSpacing;
 
                     RigidBody.GameObject.Intersects(ray, out RayPickData data);
 
