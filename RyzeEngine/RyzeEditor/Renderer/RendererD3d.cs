@@ -170,7 +170,7 @@ namespace RyzeEditor.Renderer
                     normMatrix.Transpose();
 
                     var dir = _camera.Position - _camera.LookAtDir;
-                    var lightDir = Vector4.Normalize((new Vector4(dir, 0)));
+                    var lightDir = Vector4.Normalize(new Vector4(dir, 0));
                     var diffuseColor = (mode.SubMeshIds != null && mode.SubMeshIds.Contains((int)subMesh.Id)) ? mode.Color : new Vector4(material.Diffuse, 0);
                     diffuseColor.W = (_camera.ClientWndSize.Width / 1024) * 1024.0f;
 
