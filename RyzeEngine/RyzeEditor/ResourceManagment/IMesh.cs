@@ -15,6 +15,8 @@ namespace RyzeEditor.ResourceManagment
 
         List<SubMesh> SubMeshes { get; }
 
+        long SubMeshMask { get; set; }
+
         SubMesh GetSubMesh(uint subMeshId);
 
         void SetDiffuseColor(Color3 color);

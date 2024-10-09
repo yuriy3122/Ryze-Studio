@@ -499,6 +499,7 @@ namespace RyzeEditor.Packer
                 stream.Write(max.GetBytes(), 0, 3 * sizeof(float));
                 stream.Write(BitConverter.GetBytes(subMeshes[mesh.Key].Count), 0, sizeof(int));
                 stream.Write(BitConverter.GetBytes(mesh.Value), 0, sizeof(int));
+                stream.Write(BitConverter.GetBytes(mesh.Key.SubMeshMask), 0, sizeof(long));
 
                 foreach (var subMesh in subMeshes[mesh.Key])
                 {
