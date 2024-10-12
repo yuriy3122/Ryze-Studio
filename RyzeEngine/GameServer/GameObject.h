@@ -11,6 +11,8 @@ typedef struct GameObject
 	vector3_t scale;
     
 	vector3_t position;
+
+    long long subMeshMask;
     
     long long ptr;
     
