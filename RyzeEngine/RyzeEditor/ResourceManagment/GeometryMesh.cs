@@ -281,8 +281,6 @@ namespace RyzeEditor.ResourceManagment
 
         public List<SubMesh> SubMeshes { get; } = new List<SubMesh>();
 
-        public long SubMeshMask { get; set; } = -1;
-
         public SubMesh GetSubMesh(uint subMeshId)
         {
             return SubMeshes.Where(x => x.Id == subMeshId).FirstOrDefault();

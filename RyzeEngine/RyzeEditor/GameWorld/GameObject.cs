@@ -81,6 +81,9 @@ namespace RyzeEditor.GameWorld
         [InspectorVisible(false)]
         public bool RenderBitangents { get; set; }
 
+        [InspectorVisible(false)]
+        public long SubMeshMask { get; set; } = -1;
+
         /// <summary>
         /// Include in Ray Traced acceleration stucture
         /// </summary>

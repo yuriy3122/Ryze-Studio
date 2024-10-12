@@ -310,6 +310,9 @@ namespace RyzeEditor.Packer
                 stream.Write(obj.Scale.GetBytes(), 0, 3 * sizeof(float));                      //Scale
                 stream.Write(position.GetBytes(), 0, 3 * sizeof(float));                       //Position
 
+                long subMeshMask = -1;
+                stream.Write(BitConverter.GetBytes(subMeshMask), 0, sizeof(long));             //SubMesh mask - gameplay feature
+
                 stream.Write(BitConverter.GetBytes(0L), 0, sizeof(long));                      //Reserve for 64-bit pointer
                 stream.Write(BitConverter.GetBytes(obj.GeometryMeshes.Count), 0, sizeof(int)); //Geometry mesh count
                 stream.Write(BitConverter.GetBytes((int)obj.UserData), 0, sizeof(int));        //GameObject Id
@@ -499,7 +502,6 @@ namespace RyzeEditor.Packer
                 stream.Write(max.GetBytes(), 0, 3 * sizeof(float));
                 stream.Write(BitConverter.GetBytes(subMeshes[mesh.Key].Count), 0, sizeof(int));
                 stream.Write(BitConverter.GetBytes(mesh.Value), 0, sizeof(int));
-                stream.Write(BitConverter.GetBytes(mesh.Key.SubMeshMask), 0, sizeof(long));
 
                 foreach (var subMesh in subMeshes[mesh.Key])
                 {
