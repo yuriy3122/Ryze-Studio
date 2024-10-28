@@ -116,9 +116,9 @@ namespace RyzeEditor.Packer
                 }
             }
 
-            ProcessFontTextures(textureId);
+            ProcessFontTextures(ref textureId);
 
-            ProcessSkyboxTextures(textureId);
+            ProcessSkyboxTextures(ref textureId);
 
             ProcessSkyboxMesh(meshId, materialId);
         }
@@ -155,7 +155,7 @@ namespace RyzeEditor.Packer
             }
         }
 
-        private void ProcessSkyboxTextures(int textureId)
+        private void ProcessSkyboxTextures(ref int textureId)
         {
             var map = new List<string>() { "skybox_px.pvr", "skybox_nx.pvr", "skybox_py.pvr", "skybox_ny.pvr", "skybox_pz.pvr", "skybox_nz.pvr" };
 
@@ -178,7 +178,7 @@ namespace RyzeEditor.Packer
             }
         }
 
-        private void ProcessFontTextures(int textureId)
+        private void ProcessFontTextures(ref int textureId)
         {
             var textures = ResourceManager.Instance.GetTextureIdList();
 
