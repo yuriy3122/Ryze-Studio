@@ -7,5 +7,6 @@
 #define ID_VERTEX_HEADER        0x2FF2
 #define ID_TVERTEX_HEADER       0x2EE2
 #define ID_FACE_HEADER          0x3FF3
+#define ID_VERSION				0x4FF4
 
 #endif

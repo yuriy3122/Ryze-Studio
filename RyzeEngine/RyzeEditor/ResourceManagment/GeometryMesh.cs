@@ -109,6 +109,10 @@ namespace RyzeEditor.ResourceManagment
 
         public int TessellationFactor { get; set; }
 
+        public int DamageLevel { get; set; }
+
+        public bool IsHidden { get; set; }
+
         public BoundingBox BoundingBox
         {
             get
@@ -273,6 +277,7 @@ namespace RyzeEditor.ResourceManagment
     public class GeometryMesh : IMesh
     {
         private const short IdMaterialHeader = 0x1FF1;
+        private const short IdVersion2Header = 0x4FF4;
 
         public string Id { get; set; }
         public string Name { get; set; }
@@ -325,45 +330,70 @@ namespace RyzeEditor.ResourceManagment
 
         private void LoadFromStream(Stream stream)
         {
-            byte[] buffer = new byte[66];
+            var buffer = new byte[2];
+            stream.Read(buffer, 0, 2);
+            short header = BitConverter.ToInt16(buffer, 0);
+
+            if (header == IdVersion2Header)
+            {
+                buffer = new byte[74];
+            }
+            else
+            {
+                buffer = new byte[66];
+                stream.Position = 0;
+            }
+
+            var offset = new FByteOffset();
 
             while (stream.Read(buffer, 0, 2) > 0)
             {
+                offset.Value = 0;
                 stream.Read(buffer, 0, buffer.Length);
 
                 uint id = BitConverter.ToUInt32(buffer, 0);
-                uint parentId = BitConverter.ToUInt32(buffer, 4);
+                uint parentId = BitConverter.ToUInt32(buffer, (offset++).Value);
 
                 if (parentId == 0)
                 {
                     parentId = uint.MaxValue;
                 }
 
-                int vertNum = BitConverter.ToInt32(buffer, 8);
-                int faceNum = BitConverter.ToInt32(buffer, 12);
+                int vertNum = BitConverter.ToInt32(buffer, (offset++).Value);
+                int faceNum = BitConverter.ToInt32(buffer, (offset++).Value);
 
                 Vector3 scale;
-                scale.X = BitConverter.ToSingle(buffer, 16);
-                scale.Y = BitConverter.ToSingle(buffer, 20);
-                scale.Z = BitConverter.ToSingle(buffer, 24);
+                scale.X = BitConverter.ToSingle(buffer, (offset++).Value);
+                scale.Y = BitConverter.ToSingle(buffer, (offset++).Value);
+                scale.Z = BitConverter.ToSingle(buffer, (offset++).Value);
 
                 Vector3 rotation;
-                rotation.X = BitConverter.ToSingle(buffer, 28);
-                rotation.Y = BitConverter.ToSingle(buffer, 32);
-                rotation.Z = BitConverter.ToSingle(buffer, 36);
+                rotation.X = BitConverter.ToSingle(buffer, (offset++).Value);
+                rotation.Y = BitConverter.ToSingle(buffer, (offset++).Value);
+                rotation.Z = BitConverter.ToSingle(buffer, (offset++).Value);
 
                 Vector3 position;
-                position.X = BitConverter.ToSingle(buffer, 40);
-                position.Y = BitConverter.ToSingle(buffer, 44);
-                position.Z = BitConverter.ToSingle(buffer, 48);
+                position.X = BitConverter.ToSingle(buffer, (offset++).Value);
+                position.Y = BitConverter.ToSingle(buffer, (offset++).Value);
+                position.Z = BitConverter.ToSingle(buffer, (offset++).Value);
 
-                int tessellationFactor = BitConverter.ToInt32(buffer, 52);
-                int nextNode = BitConverter.ToInt32(buffer, 56);
+                int tessellationFactor = BitConverter.ToInt32(buffer, (offset++).Value);
+                int damageLevel = 0;
+                int isHidden = 0;
+
+                if (header == IdVersion2Header)
+                {
+                    damageLevel = BitConverter.ToInt32(buffer, (offset++).Value);
+                    isHidden = BitConverter.ToInt32(buffer, (offset++).Value);
+                }
+
+                int nextNode = BitConverter.ToInt32(buffer, (offset++).Value);
 
                 if (vertNum > 0)
                 {
-                    short hdr = BitConverter.ToInt16(buffer, 60);
-                    int vertPtr = BitConverter.ToInt32(buffer, 62);
+                    short hdr = BitConverter.ToInt16(buffer, (offset++).Value);
+                    offset.Value += 2;
+                    int vertPtr = BitConverter.ToInt32(buffer, offset.Value);
 
                     List<Material> mtls = new List<Material>();
 
@@ -407,7 +437,9 @@ namespace RyzeEditor.ResourceManagment
                         Position = position,
                         Materials = mtls,
                         Indices = mtrlIndices,
-                        TessellationFactor = tessellationFactor
+                        TessellationFactor = tessellationFactor,
+                        DamageLevel = damageLevel,
+                        IsHidden = isHidden > 0
                     };
 
                     SubMeshes.Add(subMesh);
@@ -423,7 +455,9 @@ namespace RyzeEditor.ResourceManagment
                         Position = position,
                         Materials = new List<Material>(),
                         Indices = new Dictionary<int, List<uint>>(),
-                        TessellationFactor = tessellationFactor
+                        TessellationFactor = tessellationFactor,
+                        DamageLevel = damageLevel,
+                        IsHidden = isHidden > 0
                     };
 
                     SubMeshes.Add(subMesh);
@@ -549,31 +583,35 @@ namespace RyzeEditor.ResourceManagment
 
         private static List<Vertex> ReadVertexData(Stream fileStream, int vertNum)
         {
-            byte[] buffer = new byte[56];
+            const int VertexBufferSize = 56;
+            byte[] buffer = new byte[VertexBufferSize];
             var vertices = new List<Vertex>();
+            var offset = new FByteOffset();
 
             for (int i = 0; i < vertNum; i++)
             {
+                offset.Value = 0;
+
                 var vert = new Vertex();
-                fileStream.Read(buffer, 0, 56);
+                fileStream.Read(buffer, 0, VertexBufferSize);
                 vert.Pos.X = BitConverter.ToSingle(buffer, 0);
-                vert.Pos.Y = BitConverter.ToSingle(buffer, 4);
-                vert.Pos.Z = BitConverter.ToSingle(buffer, 8);
+                vert.Pos.Y = BitConverter.ToSingle(buffer, (offset++).Value);
+                vert.Pos.Z = BitConverter.ToSingle(buffer, (offset++).Value);
 
-                vert.Norm.X = BitConverter.ToSingle(buffer, 12);
-                vert.Norm.Y = BitConverter.ToSingle(buffer, 16);
-                vert.Norm.Z = BitConverter.ToSingle(buffer, 20);
+                vert.Norm.X = BitConverter.ToSingle(buffer, (offset++).Value);
+                vert.Norm.Y = BitConverter.ToSingle(buffer, (offset++).Value);
+                vert.Norm.Z = BitConverter.ToSingle(buffer, (offset++).Value);
 
-                vert.Tangent.X = BitConverter.ToSingle(buffer, 24);
-                vert.Tangent.Y = BitConverter.ToSingle(buffer, 28);
-                vert.Tangent.Z = BitConverter.ToSingle(buffer, 32);
+                vert.Tangent.X = BitConverter.ToSingle(buffer, (offset++).Value);
+                vert.Tangent.Y = BitConverter.ToSingle(buffer, (offset++).Value);
+                vert.Tangent.Z = BitConverter.ToSingle(buffer, (offset++).Value);
 
-                vert.Bitangent.X = BitConverter.ToSingle(buffer, 36);
-                vert.Bitangent.Y = BitConverter.ToSingle(buffer, 40);
-                vert.Bitangent.Z = BitConverter.ToSingle(buffer, 44);
+                vert.Bitangent.X = BitConverter.ToSingle(buffer, (offset++).Value);
+                vert.Bitangent.Y = BitConverter.ToSingle(buffer, (offset++).Value);
+                vert.Bitangent.Z = BitConverter.ToSingle(buffer, (offset++).Value);
 
-                vert.Tex.X = BitConverter.ToSingle(buffer, 48);
-                vert.Tex.Y = BitConverter.ToSingle(buffer, 52);
+                vert.Tex.X = BitConverter.ToSingle(buffer, (offset++).Value);
+                vert.Tex.Y = BitConverter.ToSingle(buffer, (offset++).Value);
 
                 vertices.Add(vert);
             }
@@ -647,5 +685,16 @@ namespace RyzeEditor.ResourceManagment
         public Quaternion Rotation { get; set; }
 
         public Vector3 Position { get; set; }
+    }
+
+    public class FByteOffset
+    {
+        public int Value { get; set; }
+
+        public static FByteOffset operator ++(FByteOffset a)
+        {
+            a.Value += sizeof(float);
+            return a;
+        }
     }
 }

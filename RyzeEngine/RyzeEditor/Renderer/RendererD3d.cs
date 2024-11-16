@@ -61,7 +61,7 @@ namespace RyzeEditor.Renderer
 
 			foreach (var subMesh in mesh.SubMeshes)
 			{
-                if (subMesh.VertexData.Count == 0)
+                if (subMesh.VertexData.Count == 0 || subMesh.IsHidden)
                 {
                     continue;
                 }

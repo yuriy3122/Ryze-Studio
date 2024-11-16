@@ -111,6 +111,9 @@ int	MaxExportPlugin::DoExport(const TCHAR* name, ExpInterface* ei, Interface* ip
 
 	g_interfacePtr = ip;
 
+	int currHeader = ID_VERSION;
+	g_outputFile.write((char*)&currHeader, 2);
+
 	// Go Through all scene nodes
 	ei->theScene->EnumTree(&g_meshExporter);
 
@@ -339,6 +342,15 @@ void MeshExporter::ProcNode(INode* node)
 	int tessellationFactor = 0;
 	node->GetUserPropInt(L"TessellationFactor", tessellationFactor);
 	g_outputFile.write((char*)&tessellationFactor, sizeof(int));
+
+	//Write damage level
+	int damageLevel = 0;
+	node->GetUserPropInt(L"DamageLevel", damageLevel);
+	g_outputFile.write((char*)&damageLevel, sizeof(int));
+
+	//Write isHidden
+	int isHidden = node->IsNodeHidden();
+	g_outputFile.write((char*)&isHidden, sizeof(int));
 
 	// We don't know how long node record is. Save stream pos, and temporary fill 4 bytes by zeroes.
 	const int zero = 0;
