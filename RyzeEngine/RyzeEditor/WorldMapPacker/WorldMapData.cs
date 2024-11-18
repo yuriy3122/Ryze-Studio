@@ -229,7 +229,8 @@ namespace RyzeEditor.Packer
                     ParentId = subMesh.ParentId,
                     VertexData = subMesh.VertexData,
                     Indices = subMesh.Indices,
-                    TessellationFactor = subMesh.TessellationFactor
+                    TessellationFactor = subMesh.TessellationFactor,
+                    
                 };
             }
 

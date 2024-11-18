@@ -525,10 +525,10 @@ namespace RyzeEditor.Packer
                     var tessFactor = new Half(subMesh.TessellationFactor);
                     stream.Write(BitConverter.GetBytes(tessFactor.RawValue), 0, sizeof(ushort));
 
-                    //Struct padding - 6 bytes
-                    stream.Write(BitConverter.GetBytes(0), 0, sizeof(int));
-                    ushort padding = 0;
-                    stream.Write(BitConverter.GetBytes(padding), 0, sizeof(ushort));
+                    var damageLevel = (ushort)subMesh.DamageLevel;
+                    stream.Write(BitConverter.GetBytes(damageLevel), 0, sizeof(ushort));
+                    int padding = 0;
+                    stream.Write(BitConverter.GetBytes(padding), 0, sizeof(int));
 
                     if (subMesh.TessellationFactor > 0)
                     {
@@ -674,7 +674,8 @@ namespace RyzeEditor.Packer
                                 Scale = subMesh.Scale,
                                 Rotation = subMesh.RotationRH,
                                 Position = subMesh.Position,
-                                TessellationFactor = subMesh.TessellationFactor
+                                TessellationFactor = subMesh.TessellationFactor,
+                                DamageLevel = subMesh.DamageLevel
                             };
 
                             subMeshDataList.Add(subMeshData);
@@ -695,7 +696,8 @@ namespace RyzeEditor.Packer
                                 Scale = subMesh.Scale,
                                 Rotation = subMesh.RotationRH,
                                 Position = subMesh.Position,
-                                TessellationFactor = subMesh.TessellationFactor
+                                TessellationFactor = subMesh.TessellationFactor,
+                                DamageLevel = subMesh.DamageLevel
                             };
 
                             subMeshDataList.Add(subMeshData);
@@ -897,6 +899,8 @@ namespace RyzeEditor.Packer
             public Vector3 Position { get; set; }
 
             public int TessellationFactor { get; set; }
+
+            public int DamageLevel { get; set; }
         }
     }
 }
