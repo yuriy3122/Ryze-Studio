@@ -15,7 +15,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectName>MaxExportPlugin</ProjectName>
+    <ProjectName>Max2017 ExportPlugin</ProjectName>
     <ProjectGuid>{6671F0BA-6FB8-4f35-8392-0676D05113A8}</ProjectGuid>
     <ConfigurationType>DynamicLibrary</ConfigurationType>
     <MaxSDK>C:\Program Files\Autodesk\3ds Max 2017 SDK\maxsdk</MaxSDK>
