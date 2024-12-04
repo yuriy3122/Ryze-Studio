@@ -74,7 +74,7 @@ namespace RyzeEditor.Renderer
                     }
                 }
 
-                bool isHidden = objectCount == 0;
+                bool isHidden = subMesh.IsHidden || objectCount == 0;
 
                 if (subMesh.VertexData.Count == 0 || isHidden)
                 {

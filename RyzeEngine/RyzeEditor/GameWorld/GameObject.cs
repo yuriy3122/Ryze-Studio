@@ -94,7 +94,7 @@ namespace RyzeEditor.GameWorld
             }
             set
             {
-                var mesh = _geometryMeshes.FirstOrDefault();
+                var mesh = _geometryMeshes?.FirstOrDefault();
 
                 if (mesh != null)
                 {
@@ -102,6 +102,8 @@ namespace RyzeEditor.GameWorld
 
                     foreach (var subMesh in subMeshes)
                     {
+                        subMesh.IsHidden = false;
+
                         var group = mesh.SubMeshes.Where(x => x.GeometryGroup == subMesh.GeometryGroup && x.Id != subMesh.Id).ToList();
 
                         foreach (var sm in group)
