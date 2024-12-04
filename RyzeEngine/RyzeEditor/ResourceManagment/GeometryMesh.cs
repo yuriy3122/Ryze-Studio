@@ -111,6 +111,8 @@ namespace RyzeEditor.ResourceManagment
 
         public int DamageLevel { get; set; }
 
+        public int GeometryGroup { get; set; }
+
         public bool IsHidden { get; set; }
 
         public BoundingBox BoundingBox
@@ -336,7 +338,7 @@ namespace RyzeEditor.ResourceManagment
 
             if (header == IdVersion2Header)
             {
-                buffer = new byte[74];
+                buffer = new byte[78];
             }
             else
             {
@@ -379,11 +381,13 @@ namespace RyzeEditor.ResourceManagment
 
                 int tessellationFactor = BitConverter.ToInt32(buffer, (offset++).Value);
                 int damageLevel = 0;
+                int geometryGroup = 0;
                 int isHidden = 0;
 
                 if (header == IdVersion2Header)
                 {
                     damageLevel = BitConverter.ToInt32(buffer, (offset++).Value);
+                    geometryGroup = BitConverter.ToInt32(buffer, (offset++).Value);
                     isHidden = BitConverter.ToInt32(buffer, (offset++).Value);
                 }
 
@@ -439,6 +443,7 @@ namespace RyzeEditor.ResourceManagment
                         Indices = mtrlIndices,
                         TessellationFactor = tessellationFactor,
                         DamageLevel = damageLevel,
+                        GeometryGroup = geometryGroup,
                         IsHidden = isHidden > 0
                     };
 
@@ -457,6 +462,7 @@ namespace RyzeEditor.ResourceManagment
                         Indices = new Dictionary<int, List<uint>>(),
                         TessellationFactor = tessellationFactor,
                         DamageLevel = damageLevel,
+                        GeometryGroup = geometryGroup,
                         IsHidden = isHidden > 0
                     };
 

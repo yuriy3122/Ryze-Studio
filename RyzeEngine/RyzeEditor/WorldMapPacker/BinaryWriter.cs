@@ -19,6 +19,7 @@ namespace RyzeEditor.Packer
         private CollisionWriter _collisionWriter;
         private VehicleWriter _vehicleWriter;
         private WorldChunkWriter _worldChunkWriter;
+        private Dictionary<IMesh, List<SubMeshData>> _subMeshList;
 
         public event EventHandler<PackerEventArgs> NewMessage;
         public event EventHandler<PackerEventArgs> OnComplete;
@@ -54,6 +55,7 @@ namespace RyzeEditor.Packer
         public BinaryWriter(WorldMapData worldMapData)
         {
             _worldMapData = worldMapData;
+            _subMeshList = new Dictionary<IMesh, List<SubMeshData>>();
         }
 
         protected virtual void OnNewMessage(PackerEventArgs e)
@@ -310,8 +312,8 @@ namespace RyzeEditor.Packer
                 stream.Write(obj.Scale.GetBytes(), 0, 3 * sizeof(float));                      //Scale
                 stream.Write(position.GetBytes(), 0, 3 * sizeof(float));                       //Position
 
-                long subMeshMask = -1;
-                stream.Write(BitConverter.GetBytes(subMeshMask), 0, sizeof(long));             //SubMesh mask - gameplay feature
+                long mask = -1;
+                stream.Write(BitConverter.GetBytes(mask), 0, sizeof(long));  //SubMesh Visible mask
 
                 stream.Write(BitConverter.GetBytes(0L), 0, sizeof(long));                      //Reserve for 64-bit pointer
                 stream.Write(BitConverter.GetBytes(obj.GeometryMeshes.Count), 0, sizeof(int)); //Geometry mesh count
@@ -483,7 +485,7 @@ namespace RyzeEditor.Packer
             stream.Position += indexBufferSize - indexBuffer.Count * sizeof(uint);
         }
 
-        private void WriteSubMeshData(FileStream stream, Dictionary<IMesh, List<SubMeshData>> subMeshes)
+        private void WriteSubMeshData(FileStream stream)
         {
             var patchIndex = 0;
 
@@ -500,10 +502,10 @@ namespace RyzeEditor.Packer
 
                 stream.Write(min.GetBytes(), 0, 3 * sizeof(float));
                 stream.Write(max.GetBytes(), 0, 3 * sizeof(float));
-                stream.Write(BitConverter.GetBytes(subMeshes[mesh.Key].Count), 0, sizeof(int));
+                stream.Write(BitConverter.GetBytes(_subMeshList[mesh.Key].Count), 0, sizeof(int));
                 stream.Write(BitConverter.GetBytes(mesh.Value), 0, sizeof(int));
 
-                foreach (var subMesh in subMeshes[mesh.Key])
+                foreach (var subMesh in _subMeshList[mesh.Key])
                 {
                     var position = new Vector3(subMesh.Position.X, subMesh.Position.Y, -1.0f * subMesh.Position.Z);
                     var scale = subMesh.Scale;
@@ -538,14 +540,14 @@ namespace RyzeEditor.Packer
             }
         }
 
-        private void WriteSubMeshPatchData(FileStream stream, Dictionary<IMesh, List<SubMeshData>> subMeshes, List<uint> indexBuffer, List<Vertex> vertexBuffer)
+        private void WriteSubMeshPatchData(FileStream stream, List<uint> indexBuffer, List<Vertex> vertexBuffer)
         {
             var patchIndexBuffer = new List<int>();
             var patchDataBuffer = new List<PatchData>();
 
             foreach (var mesh in _worldMapData.Meshes)
             {
-                foreach (var subMesh in subMeshes[mesh.Key])
+                foreach (var subMesh in _subMeshList[mesh.Key])
                 {
                     if (subMesh.TessellationFactor > 0)
                     {
@@ -627,14 +629,14 @@ namespace RyzeEditor.Packer
         {
             var vertexBuffer = new List<Vertex>();
             var indexBuffer = new List<uint>();
-            var subMeshes = new Dictionary<IMesh, List<SubMeshData>>();
+            _subMeshList = new Dictionary<IMesh, List<SubMeshData>>();
             var uidList = new Dictionary<Guid, List<SubMeshData>>();
 
             foreach (var mesh in _worldMapData.Meshes)
             {
                 var subMeshDataList = new List<SubMeshData>();
 
-                subMeshes[mesh.Key] = subMeshDataList;
+                _subMeshList[mesh.Key] = subMeshDataList;
 
                 foreach (var subMesh in mesh.Key.SubMeshes)
                 {
@@ -675,7 +677,8 @@ namespace RyzeEditor.Packer
                                 Rotation = subMesh.RotationRH,
                                 Position = subMesh.Position,
                                 TessellationFactor = subMesh.TessellationFactor,
-                                DamageLevel = subMesh.DamageLevel
+                                DamageLevel = subMesh.DamageLevel,
+                                IsHidden = subMesh.IsHidden
                             };
 
                             subMeshDataList.Add(subMeshData);
@@ -697,7 +700,8 @@ namespace RyzeEditor.Packer
                                 Rotation = subMesh.RotationRH,
                                 Position = subMesh.Position,
                                 TessellationFactor = subMesh.TessellationFactor,
-                                DamageLevel = subMesh.DamageLevel
+                                DamageLevel = subMesh.DamageLevel,
+                                IsHidden = subMesh.IsHidden
                             };
 
                             subMeshDataList.Add(subMeshData);
@@ -748,9 +752,9 @@ namespace RyzeEditor.Packer
 
             WriteIndexBufferData(stream, indexBuffer);
 
-            WriteSubMeshData(stream, subMeshes);
+            WriteSubMeshData(stream);
 
-            WriteSubMeshPatchData(stream, subMeshes, indexBuffer, vertexBuffer);
+            WriteSubMeshPatchData(stream, indexBuffer, vertexBuffer);
         }
 
         private void WriteMaterialData(FileStream stream)
@@ -901,6 +905,8 @@ namespace RyzeEditor.Packer
             public int TessellationFactor { get; set; }
 
             public int DamageLevel { get; set; }
+
+            public bool IsHidden { get; set; }
         }
     }
 }

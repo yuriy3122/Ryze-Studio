@@ -42,10 +42,12 @@ namespace RyzeEditor.GameWorld
 	[ImplementPropertyChanged]
 	public class GameObject : EntityBase, IVisualElement
 	{
-		public GameObject(List<string> geometryMeshIds, List<string> collisionMeshIds)
+        public GameObject(List<string> geometryMeshIds, List<string> collisionMeshIds)
 		{
 			Id = Guid.NewGuid();
             _geometryMeshIds = geometryMeshIds;
+            SubmeshVisibleMask = -1;
+            DamageLevel = 0;
         }
 
         [InspectorVisible(false)]
@@ -82,7 +84,43 @@ namespace RyzeEditor.GameWorld
         public bool RenderBitangents { get; set; }
 
         [InspectorVisible(false)]
-        public long SubMeshMask { get; set; } = -1;
+        public long SubmeshVisibleMask { get; set; }
+
+        public int DamageLevel
+        { 
+            get 
+            {
+                return _damageLevel;
+            }
+            set
+            {
+                var mesh = _geometryMeshes.FirstOrDefault();
+
+                if (mesh != null)
+                {
+                    var subMeshes = mesh.SubMeshes.Where(x => x.DamageLevel == value && x.GeometryGroup > 0).ToList();
+
+                    foreach (var subMesh in subMeshes)
+                    {
+                        var group = mesh.SubMeshes.Where(x => x.GeometryGroup == subMesh.GeometryGroup && x.Id != subMesh.Id).ToList();
+
+                        foreach (var sm in group)
+                        {
+                            var i = mesh.SubMeshes.IndexOf(sm);
+
+                            long mask = 1 << i;
+                            SubmeshVisibleMask &= ~mask;//hide submesh
+                        }
+
+                        var j = mesh.SubMeshes.IndexOf(subMesh);
+                        long m = 1 << j;
+                        SubmeshVisibleMask |= m;//show submesh
+                    }
+                }
+
+                _damageLevel = value;
+            }
+        }
 
         /// <summary>
         /// Include in Ray Traced acceleration stucture
@@ -206,5 +244,7 @@ namespace RyzeEditor.GameWorld
 
             return data != null;
 		}
-	}
+
+        private int _damageLevel;
+    }
 }

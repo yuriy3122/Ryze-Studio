@@ -470,6 +470,11 @@ void MeshExporter::ProcNode(INode* node)
 	node->GetUserPropInt(L"DamageLevel", damageLevel);
 	g_outputFile.write((char*)&damageLevel, sizeof(int));
 
+	//Write Geometry Group
+	int geometryGroup = 0;
+	node->GetUserPropInt(L"GeometryGroup", geometryGroup);
+	g_outputFile.write((char*)&geometryGroup, sizeof(int));
+
 	//Write isHidden
 	int isHidden = node->IsNodeHidden();
 	g_outputFile.write((char*)&isHidden, sizeof(int));

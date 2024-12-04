@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using BulletSharp.SoftBody;
 using RyzeEditor.Extentions;
 using RyzeEditor.GameWorld;
 using RyzeEditor.ResourceManagment;
@@ -59,9 +60,23 @@ namespace RyzeEditor.Renderer
 			_context.VertexShader.Set(effect.VertexShader);
             _context.PixelShader.Set(mode.ShadowMap ? null : effect.PixelShader);
 
-			foreach (var subMesh in mesh.SubMeshes)
+			for (int i = 0; i < mesh.SubMeshes.Count; i++)
 			{
-                if (subMesh.VertexData.Count == 0 || subMesh.IsHidden)
+                var subMesh = mesh.SubMeshes[i];
+
+                int objectCount = 0;
+
+                foreach (var gameObject in gameObjects)
+                {
+                    if ((gameObject.SubmeshVisibleMask & (1 << i)) != 0)
+                    {
+                        objectCount++;
+                    }
+                }
+
+                bool isHidden = objectCount == 0;
+
+                if (subMesh.VertexData.Count == 0 || isHidden)
                 {
                     continue;
                 }
@@ -72,6 +87,11 @@ namespace RyzeEditor.Renderer
 
                 foreach (var gameObject in gameObjects)
                 {
+                    if ((gameObject.SubmeshVisibleMask & (1 << i)) == 0)
+                    {
+                        continue;
+                    }
+
                     SubMeshTransform subMeshTransform = null;
 
                     if (gameObject.SubMeshTransforms != null && gameObject.SubMeshTransforms.ContainsKey(subMesh.Id))
@@ -108,18 +128,18 @@ namespace RyzeEditor.Renderer
 
 				_context.InputAssembler.SetVertexBuffers(0, _vertexBufferBinding, _instanceBufferBinding);
 				
-				for (int i = 0; i < subMesh.Materials.Count; i++)
+				for (int j = 0; j < subMesh.Materials.Count; j++)
 				{
-                    if (!subMesh.Indices.ContainsKey(i))
+                    if (!subMesh.Indices.ContainsKey(j))
                     {
                         continue;
                     }
 
 					_context.MapSubresource(_indexBuffer, MapMode.WriteDiscard, MapFlags.None, out stream);
-					stream.WriteRange(subMesh.Indices[i].ToArray());
+					stream.WriteRange(subMesh.Indices[j].ToArray());
 					_context.UnmapSubresource(_indexBuffer, 0);
 
-					var material = subMesh.Materials[i];
+					var material = subMesh.Materials[j];
 
 					if (!mode.ShadowMap)
 					{
@@ -133,20 +153,20 @@ namespace RyzeEditor.Renderer
                             material.Diffuse = new Vector3(0.0f, 0.0f, 0.0f);
                         }
 
-                        for (int j = 0; j < RenderMode.ShadowMapCascadeNumber; j++)
+                        for (int k = 0; k < RenderMode.ShadowMapCascadeNumber; k++)
                         {
-                            _context.PixelShader.SetShaderResource(1 + j, GetDepthMapShaderResourceView(j));
+                            _context.PixelShader.SetShaderResource(1 + k, GetDepthMapShaderResourceView(k));
                         }
                     }
 
                     var lightViewProj = new Matrix[RenderMode.ShadowMapCascadeNumber];
                     Vector3 ligthPos = mode.DirectLightDir * 10.0f + _camera.LookAtDir;
 
-                    for (int j = 0; j < RenderMode.ShadowMapCascadeNumber; j++)
+                    for (int k = 0; k < RenderMode.ShadowMapCascadeNumber; k++)
                     {
-                        float size = Vector3.Distance(_camera.LookAtDir, _camera.Position) * (j * 5.5f + 2.5f);
-                        lightViewProj[j] = Matrix.LookAtLH(ligthPos, _camera.LookAtDir, _camera.UpDir) * Matrix.OrthoLH(size, size, -size, size);
-                        lightViewProj[j].Transpose();
+                        float size = Vector3.Distance(_camera.LookAtDir, _camera.Position) * (k * 5.5f + 2.5f);
+                        lightViewProj[k] = Matrix.LookAtLH(ligthPos, _camera.LookAtDir, _camera.UpDir) * Matrix.OrthoLH(size, size, -size, size);
+                        lightViewProj[k].Transpose();
                     }
 
                     var view = Matrix.LookAtLH(_camera.Position, _camera.LookAtDir, _camera.UpDir);
@@ -179,9 +199,9 @@ namespace RyzeEditor.Renderer
                     data.AddRange(normMatrix.ToArray());
                     data.AddRange(viewProj.ToArray());
 
-                    for (int j = 0; j < RenderMode.ShadowMapCascadeNumber; j++)
+                    for (int k = 0; k < RenderMode.ShadowMapCascadeNumber; k++)
                     {
-                        data.AddRange(lightViewProj[j].ToArray());
+                        data.AddRange(lightViewProj[k].ToArray());
                     }
 
                     data.AddRange(diffuseColor.ToArray());
@@ -192,7 +212,7 @@ namespace RyzeEditor.Renderer
 
                     _context.UpdateSubresource(data.ToArray(), effect.ContantBuffer);
 					_context.InputAssembler.SetIndexBuffer(_indexBuffer, Format.R32_UInt, 0);
-					_context.DrawIndexedInstanced(subMesh.Indices[i].Count, gameObjects.Count(), 0, 0, 0);
+					_context.DrawIndexedInstanced(subMesh.Indices[j].Count, objectCount, 0, 0, 0);
 				}
 			}
 		}

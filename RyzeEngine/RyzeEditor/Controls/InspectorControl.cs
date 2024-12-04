@@ -524,13 +524,15 @@ namespace RyzeEditor.Controls
 
             var prop = property;
 
-            var label = new Label { AutoSize = true, Dock = DockStyle.Fill, Text = string.Format("{0}: ", property.Name) };
-            var panel = new TableLayoutPanel { ColumnCount = 2, RowCount = 1 };
-            panel.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 70F));
-            panel.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 30F));
+            var label = new Label { AutoSize = true, Dock = DockStyle.Fill, Text = property.Name };
+            var panel = new TableLayoutPanel() { Dock = DockStyle.Fill, Height = 30, ColumnCount = 2, RowCount = 1 };
+            panel.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 60F));
+            panel.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 40F));
             panel.RowStyles.Add(new RowStyle(SizeType.AutoSize));
             panel.Controls.Add(label, 0, 0);
             panel.Controls.Add(control, 1, 0);
+
+            _controls.Add(prop.Name, control);
 
             _retval = layoutPanel.RowStyles.Add(new RowStyle(SizeType.AutoSize));
             layoutPanel.Controls.Add(panel, 0, _retval);
