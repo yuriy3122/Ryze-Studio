@@ -356,9 +356,9 @@ namespace RyzeEditor.Packer
 
                 foreach (var point in convexHullShape.UnscaledPoints)
                 {
-                    stream.Write(BitConverter.GetBytes(point.X), 0, sizeof(float));
-                    stream.Write(BitConverter.GetBytes(point.Y), 0, sizeof(float));
-                    stream.Write(BitConverter.GetBytes(point.Z), 0, sizeof(float));
+                    stream.Write(BitConverter.GetBytes(point.X - convexHullShape.Center.X), 0, sizeof(float));
+                    stream.Write(BitConverter.GetBytes(point.Y - convexHullShape.Center.Y), 0, sizeof(float));
+                    stream.Write(BitConverter.GetBytes(point.Z - convexHullShape.Center.Z), 0, sizeof(float));
                     stream.Write(BitConverter.GetBytes(0L), 0, sizeof(float));
                 }
             }

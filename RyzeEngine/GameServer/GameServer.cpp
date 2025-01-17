@@ -129,7 +129,13 @@ int main(int argc, const char* argv[])
 	const size_t size = 46;
 	char* buffer = (char*)malloc(size);
 
-	int port = atoi(argv[2]);
+	int port = 11000;
+
+	if (argc > 2)
+	{
+		port = atoi(argv[2]);
+	}
+
 	char* IP_ADDRESS_S = "127.0.0.5";
 	WSADATA wsaData;
 	SOCKET sendSocket;
