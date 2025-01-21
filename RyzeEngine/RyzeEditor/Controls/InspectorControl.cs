@@ -307,7 +307,7 @@ namespace RyzeEditor.Controls
                 }
                 else if (property.PropertyType == typeof(float))
                 {
-                    control = new NumericUpDown { DecimalPlaces = 2, Increment = 0.1M };
+                    control = new NumericUpDown { DecimalPlaces = 2, Maximum = 10000000, Increment = 0.1M };
                     control.DataBindings.Add("Value", rigidBody, property.Name);
                 }
                 else if (property.PropertyType == typeof(Vector3))
