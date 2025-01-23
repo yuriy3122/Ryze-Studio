@@ -16,6 +16,8 @@ namespace RyzeEditor.GameWorld
         public RigidBody()
         {
             Id = Guid.NewGuid();
+            AnisotropicFriction = new Vector3(1.0f, 1.0f, 1.0f);
+            Friction = 0.5f;
         }
 
         private string _meshId;
@@ -73,6 +75,16 @@ namespace RyzeEditor.GameWorld
         public CollisionShapeType ShapeType { get; set; }
 
         public float Mass { get; set; }
+
+        public Vector3 AnisotropicFriction { get; set; }
+
+        public float Restitution { get; set; }
+
+        public float Friction { get; set; }
+
+        public float RollingFriction { get; set; }
+
+        public float SpinningFriction { get; set; }
 
         //For Heightfield shape
         public float GridSpacing { get; set; }

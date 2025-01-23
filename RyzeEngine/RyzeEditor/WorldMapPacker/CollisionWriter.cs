@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using BulletSharp;
 using BulletSharp.Math;
+using RyzeEditor.Extentions;
 using RyzeEditor.GameWorld;
 using RyzeEditor.ResourceManagment;
 
@@ -283,6 +284,14 @@ namespace RyzeEditor.Packer
                 stream.Write(BitConverter.GetBytes(rigidBody.UserIndex), 0, sizeof(int));                      //Game Object id
                 stream.Write(BitConverter.GetBytes(rigidBody.CollisionShape.UserIndex), 0, sizeof(int));       //Shape index
                 stream.Write(BitConverter.GetBytes(rigidBody.InvMass), 0, sizeof(float));                      //Inv mass
+
+                var anisotropicFriction = new SharpDX.Vector3(rigidBody.AnisotropicFriction.X, rigidBody.AnisotropicFriction.Y, rigidBody.AnisotropicFriction.Z);
+                stream.Write(anisotropicFriction.GetBytes(), 0, 3 * sizeof(float));
+
+                stream.Write(BitConverter.GetBytes(rigidBody.Restitution), 0, sizeof(float));                  //Restitution
+                stream.Write(BitConverter.GetBytes(rigidBody.Friction), 0, sizeof(float));                     //Friction
+                stream.Write(BitConverter.GetBytes(rigidBody.RollingFriction), 0, sizeof(float));              //RollingFriction
+                stream.Write(BitConverter.GetBytes(rigidBody.SpinningFriction), 0, sizeof(float));             //SpinningFriction
             }
         }
 
@@ -487,7 +496,16 @@ namespace RyzeEditor.Packer
 
                     shape = collisionShapesCache[key];
                     var constructionInfo = new RigidBodyConstructionInfo(rigidBody.Mass, motionState, shape);
-                    var newRigidBody = new BulletSharp.RigidBody(constructionInfo) { UserIndex = _worldMapData.GameObjects[group.Key] };
+                    var newRigidBody = new BulletSharp.RigidBody(constructionInfo)
+                    {
+                        UserIndex = _worldMapData.GameObjects[group.Key],
+                        AnisotropicFriction = new Vector3(rigidBody.AnisotropicFriction.X, rigidBody.AnisotropicFriction.Y, rigidBody.AnisotropicFriction.Z),
+                        Restitution = rigidBody.Restitution,
+                        Friction = rigidBody.Friction,
+                        RollingFriction = rigidBody.RollingFriction,
+                        SpinningFriction = rigidBody.SpinningFriction
+                    };
+
                     _dynamicsWorld.AddRigidBody(newRigidBody);
                 }
             }

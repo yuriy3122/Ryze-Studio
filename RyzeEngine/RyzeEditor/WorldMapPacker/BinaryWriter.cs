@@ -29,7 +29,7 @@ namespace RyzeEditor.Packer
         #region contants
 
         private const ushort ID_HEADER = 0x1FF1;
-        private const ushort ID_VERSION = 0x0001;
+        private const ushort ID_VERSION = 0x0002;
         private const ushort ID_TEXTURE_CHUNK = 0x0001;
         private const ushort ID_MATERIAL_CHUNK = 0x0002;
         private const ushort ID_MESH_CHUNK = 0x0003;
