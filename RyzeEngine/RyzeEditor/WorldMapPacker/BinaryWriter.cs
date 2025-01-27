@@ -510,12 +510,18 @@ namespace RyzeEditor.Packer
                     var position = new Vector3(subMesh.Position.X, subMesh.Position.Y, -1.0f * subMesh.Position.Z);
                     var scale = subMesh.Scale;
                     var rotation = subMesh.Rotation;
+                    var boundBoxMin = new Vector3(subMesh.BoundBoxMin.X, subMesh.BoundBoxMin.Y, -1.0f * subMesh.BoundBoxMin.Z);
+                    var boundBoxMax = new Vector3(subMesh.BoundBoxMax.X, subMesh.BoundBoxMax.Y, -1.0f * subMesh.BoundBoxMax.Z);
 
                     subMesh.PatchIndexBufferOffset = patchIndex;
 
                     stream.Write(rotation.GetBytes(), 0, 4 * sizeof(float));
                     stream.Write(scale.GetBytes(), 0, 3 * sizeof(float));
                     stream.Write(position.GetBytes(), 0, 3 * sizeof(float));
+
+                    stream.Write(boundBoxMin.GetBytes(), 0, 3 * sizeof(float));
+                    stream.Write(boundBoxMax.GetBytes(), 0, 3 * sizeof(float));
+
                     stream.Write(BitConverter.GetBytes(0L), 0, sizeof(long));
                     stream.Write(BitConverter.GetBytes(subMesh.Id), 0, sizeof(uint));
                     stream.Write(BitConverter.GetBytes(subMesh.ParentId), 0, sizeof(uint));
@@ -678,7 +684,9 @@ namespace RyzeEditor.Packer
                                 Position = subMesh.Position,
                                 TessellationFactor = subMesh.TessellationFactor,
                                 DamageLevel = subMesh.DamageLevel,
-                                IsHidden = subMesh.IsHidden
+                                IsHidden = subMesh.IsHidden,
+                                BoundBoxMin = subMesh.BoundingBox.Minimum,
+                                BoundBoxMax = subMesh.BoundingBox.Maximum
                             };
 
                             subMeshDataList.Add(subMeshData);
@@ -701,7 +709,9 @@ namespace RyzeEditor.Packer
                                 Position = subMesh.Position,
                                 TessellationFactor = subMesh.TessellationFactor,
                                 DamageLevel = subMesh.DamageLevel,
-                                IsHidden = subMesh.IsHidden
+                                IsHidden = subMesh.IsHidden,
+                                BoundBoxMin = subMesh.BoundingBox.Minimum,
+                                BoundBoxMax = subMesh.BoundingBox.Maximum
                             };
 
                             subMeshDataList.Add(subMeshData);
@@ -901,6 +911,10 @@ namespace RyzeEditor.Packer
             public Quaternion Rotation { get; set; }
 
             public Vector3 Position { get; set; }
+
+            public Vector3 BoundBoxMin { get; set; }
+
+            public Vector3 BoundBoxMax { get; set; }
 
             public int TessellationFactor { get; set; }
 
