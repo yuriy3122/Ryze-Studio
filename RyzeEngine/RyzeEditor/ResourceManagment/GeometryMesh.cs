@@ -115,50 +115,6 @@ namespace RyzeEditor.ResourceManagment
 
         public bool IsHidden { get; set; }
 
-        public BoundingBox BoundingBox
-        {
-            get
-            {
-                var vertices = new List<Vector3>();
-
-                foreach (var vertex in VertexData)
-                {
-                    Vector3 vertPosition = vertex.Pos;
-                    var matrix = Matrix.Scaling(Scale.X, Scale.Y, Scale.Z) *
-                                 Matrix.RotationQuaternion(Rotation) *
-                                 Matrix.Translation(Position.X, Position.Y, Position.Z);
-
-                    Vector3.TransformCoordinate(ref vertPosition, ref matrix, out Vector3 position);
-
-                    vertices.Add(position);
-                }
-
-                return BoundingBox.FromPoints(vertices.ToArray());
-            }
-        }
-
-        public BoundingSphere BoundingSphere
-        {
-            get
-            {
-                var vertices = new List<Vector3>();
-
-                foreach (var vertex in VertexData)
-                {
-                    Vector3 vertPosition = vertex.Pos;
-                    var matrix = Matrix.Scaling(Scale.X, Scale.Y, Scale.Z) *
-                                 Matrix.RotationQuaternion(Rotation) *
-                                 Matrix.Translation(Position.X, Position.Y, Position.Z);
-
-                    Vector3.TransformCoordinate(ref vertPosition, ref matrix, out Vector3 position);
-
-                    vertices.Add(position);
-                }
-
-                return BoundingSphere.FromPoints(vertices.ToArray());
-            }
-        }
-
         public SubMesh(uint nodeId, uint parentNodeId)
         {
             Id = nodeId;
@@ -245,6 +201,29 @@ namespace RyzeEditor.ResourceManagment
             while (parentId < uint.MaxValue);
 
             return matrix;
+        }
+
+        /// <summary>
+        /// SubMesh Bound Box in model space
+        /// </summary>
+        /// <param name="mesh"></param>
+        /// <returns></returns>
+        public BoundingBox GetBoundingBox(IMesh mesh)
+        {
+            var vertices = new List<Vector3>();
+
+            var matrix = GetMatrix(mesh);
+
+            foreach (var vertex in VertexData)
+            {
+                Vector3 vertPosition = vertex.Pos;
+
+                Vector3.TransformCoordinate(ref vertPosition, ref matrix, out Vector3 position);
+
+                vertices.Add(position);
+            }
+
+            return BoundingBox.FromPoints(vertices.ToArray());
         }
 
         public Matrix GetMatrix(IMesh mesh)

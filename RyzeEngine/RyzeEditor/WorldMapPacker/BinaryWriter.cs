@@ -510,6 +510,7 @@ namespace RyzeEditor.Packer
                     var position = new Vector3(subMesh.Position.X, subMesh.Position.Y, -1.0f * subMesh.Position.Z);
                     var scale = subMesh.Scale;
                     var rotation = subMesh.Rotation;
+
                     var boundBoxMin = new Vector3(subMesh.BoundBoxMin.X, subMesh.BoundBoxMin.Y, -1.0f * subMesh.BoundBoxMin.Z);
                     var boundBoxMax = new Vector3(subMesh.BoundBoxMax.X, subMesh.BoundBoxMax.Y, -1.0f * subMesh.BoundBoxMax.Z);
 
@@ -672,6 +673,8 @@ namespace RyzeEditor.Packer
 
                             indexBuffer.AddRange(indices);
 
+                            var boundBox = subMesh.GetBoundingBox(mesh.Key);
+
                             var subMeshData = new SubMeshData
                             {
                                 Id = subMesh.Id,
@@ -685,8 +688,8 @@ namespace RyzeEditor.Packer
                                 TessellationFactor = subMesh.TessellationFactor,
                                 DamageLevel = subMesh.DamageLevel,
                                 IsHidden = subMesh.IsHidden,
-                                BoundBoxMin = subMesh.BoundingBox.Minimum,
-                                BoundBoxMax = subMesh.BoundingBox.Maximum
+                                BoundBoxMin = boundBox.Minimum,
+                                BoundBoxMax = boundBox.Maximum
                             };
 
                             subMeshDataList.Add(subMeshData);
@@ -697,6 +700,8 @@ namespace RyzeEditor.Packer
                     {
                         for (int i = 0; i < subMesh.Materials.Count; i++)
                         {
+                            var boundBox = subMesh.GetBoundingBox(mesh.Key);
+
                             var subMeshData = new SubMeshData
                             {
                                 Id = subMesh.Id,
@@ -710,8 +715,8 @@ namespace RyzeEditor.Packer
                                 TessellationFactor = subMesh.TessellationFactor,
                                 DamageLevel = subMesh.DamageLevel,
                                 IsHidden = subMesh.IsHidden,
-                                BoundBoxMin = subMesh.BoundingBox.Minimum,
-                                BoundBoxMax = subMesh.BoundingBox.Maximum
+                                BoundBoxMin = boundBox.Minimum,
+                                BoundBoxMax = boundBox.Maximum
                             };
 
                             subMeshDataList.Add(subMeshData);
