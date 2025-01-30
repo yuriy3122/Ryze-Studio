@@ -33,6 +33,7 @@ namespace RyzeEditor.Packer
         private const ushort ID_TEXTURE_CHUNK = 0x0001;
         private const ushort ID_MATERIAL_CHUNK = 0x0002;
         private const ushort ID_MESH_CHUNK = 0x0003;
+        private const ushort ID_GEOMETRY_SUBMESH_CHUNK = 0x0004;
         private const ushort ID_GAME_OBJ_CHUNK = 0x0006;
         private const ushort ID_POINT_LIGHT_CHUNK = 0x0007;
         private const ushort ID_INDEX_BUFFER_CHUNK = 0x0008;
@@ -487,7 +488,9 @@ namespace RyzeEditor.Packer
 
         private void WriteSubMeshData(FileStream stream)
         {
-            var patchIndex = 0;
+            uint patchIndex = 0;
+            uint geometrySubmeshId = 0;
+            var geometrySubMeshes = new List<GeometrySubMesh>();
 
             foreach (var mesh in _worldMapData.Meshes)
             {
@@ -507,43 +510,65 @@ namespace RyzeEditor.Packer
 
                 foreach (var subMesh in _subMeshList[mesh.Key])
                 {
+                    var boundBoxMin = new Vector3(subMesh.BoundBoxMin.X, subMesh.BoundBoxMin.Y, -1.0f * subMesh.BoundBoxMin.Z);
+                    var boundBoxMax = new Vector3(subMesh.BoundBoxMax.X, subMesh.BoundBoxMax.Y, -1.0f * subMesh.BoundBoxMax.Z);
+
+                    var newGeometrySubMesh = new GeometrySubMesh()
+                    {
+                        BoundingBox = new BoundingBox(boundBoxMin, boundBoxMax),
+                        IndexCount = subMesh.IndexCount,
+                        IndexBufferOffset = subMesh.IndexBufferOffset,
+                        PatchIndexBufferOffset = patchIndex,
+                        TessellationFactor = subMesh.TessellationFactor,
+                        MaterialId = subMesh.MaterialId
+                    };
+
+                    var geometrySubMesh = geometrySubMeshes.FirstOrDefault(x => x.Equals(newGeometrySubMesh));
+
+                    if (geometrySubMesh == null)
+                    {
+                        geometrySubMesh = newGeometrySubMesh;
+                        geometrySubMesh.Id = ++geometrySubmeshId;
+                        geometrySubMeshes.Add(geometrySubMesh);
+
+                        if (geometrySubMesh.TessellationFactor > 0)
+                        {
+                            patchIndex += (geometrySubMesh.IndexCount / 3);
+                        }
+                    }
+
                     var position = new Vector3(subMesh.Position.X, subMesh.Position.Y, -1.0f * subMesh.Position.Z);
                     var scale = subMesh.Scale;
                     var rotation = subMesh.Rotation;
 
-                    var boundBoxMin = new Vector3(subMesh.BoundBoxMin.X, subMesh.BoundBoxMin.Y, -1.0f * subMesh.BoundBoxMin.Z);
-                    var boundBoxMax = new Vector3(subMesh.BoundBoxMax.X, subMesh.BoundBoxMax.Y, -1.0f * subMesh.BoundBoxMax.Z);
-
-                    subMesh.PatchIndexBufferOffset = patchIndex;
-
-                    stream.Write(rotation.GetBytes(), 0, 4 * sizeof(float));
-                    stream.Write(scale.GetBytes(), 0, 3 * sizeof(float));
-                    stream.Write(position.GetBytes(), 0, 3 * sizeof(float));
-
-                    stream.Write(boundBoxMin.GetBytes(), 0, 3 * sizeof(float));
-                    stream.Write(boundBoxMax.GetBytes(), 0, 3 * sizeof(float));
-
-                    stream.Write(BitConverter.GetBytes(0L), 0, sizeof(long));
-                    stream.Write(BitConverter.GetBytes(subMesh.Id), 0, sizeof(uint));
-                    stream.Write(BitConverter.GetBytes(subMesh.ParentId), 0, sizeof(uint));
-                    stream.Write(BitConverter.GetBytes(subMesh.IndexCount), 0, sizeof(int));
-                    stream.Write(BitConverter.GetBytes(subMesh.IndexBufferOffset), 0, sizeof(int));
-                    stream.Write(BitConverter.GetBytes(subMesh.PatchIndexBufferOffset), 0, sizeof(int));
-                    stream.Write(BitConverter.GetBytes(subMesh.MaterialId), 0, sizeof(int));
-
-                    var tessFactor = new Half(subMesh.TessellationFactor);
-                    stream.Write(BitConverter.GetBytes(tessFactor.RawValue), 0, sizeof(ushort));
-
-                    var damageLevel = (ushort)subMesh.DamageLevel;
-                    stream.Write(BitConverter.GetBytes(damageLevel), 0, sizeof(ushort));
-                    int padding = 0;
-                    stream.Write(BitConverter.GetBytes(padding), 0, sizeof(int));
-
-                    if (subMesh.TessellationFactor > 0)
-                    {
-                        patchIndex += (subMesh.IndexCount / 3);
-                    }
+                    stream.Write(rotation.GetBytes(), 0, 4 * sizeof(float));                       //rotation;
+                    stream.Write(scale.GetBytes(), 0, 3 * sizeof(float));                          //scale
+                    stream.Write(position.GetBytes(), 0, 3 * sizeof(float));                       //position
+                    stream.Write(BitConverter.GetBytes(0L), 0, sizeof(long));                      //parent pointer
+                    stream.Write(BitConverter.GetBytes(0L), 0, sizeof(long));                      //geometrySubmesh pointer
+                    stream.Write(BitConverter.GetBytes(subMesh.Id), 0, sizeof(uint));              //id
+                    stream.Write(BitConverter.GetBytes(subMesh.ParentId), 0, sizeof(uint));        //parentId
+                    stream.Write(BitConverter.GetBytes(geometrySubMesh.Id), 0, sizeof(uint));      //geometrySubmeshId
+                    stream.Write(BitConverter.GetBytes(subMesh.GeometryGroup), 0, sizeof(ushort)); //groupId
+                    stream.Write(BitConverter.GetBytes(subMesh.DamageLevel), 0, sizeof(ushort));   //damageLevel
                 }
+            }
+
+            stream.Write(BitConverter.GetBytes(ID_GEOMETRY_SUBMESH_CHUNK), 0, sizeof(ushort));
+            stream.Write(BitConverter.GetBytes(geometrySubMeshes.Count), 0, sizeof(int));
+
+            foreach (var geometrySubMesh in geometrySubMeshes)
+            {
+                stream.Write(geometrySubMesh.BoundingBox.Minimum.GetBytes(), 0, 3 * sizeof(float));
+                stream.Write(geometrySubMesh.BoundingBox.Maximum.GetBytes(), 0, 3 * sizeof(float));
+
+                stream.Write(BitConverter.GetBytes(geometrySubMesh.Id), 0, sizeof(uint));
+                stream.Write(BitConverter.GetBytes(geometrySubMesh.IndexCount), 0, sizeof(uint));
+                stream.Write(BitConverter.GetBytes(geometrySubMesh.IndexBufferOffset), 0, sizeof(uint));
+                stream.Write(BitConverter.GetBytes(geometrySubMesh.PatchIndexBufferOffset), 0, sizeof(uint));
+
+                stream.Write(BitConverter.GetBytes(geometrySubMesh.TessellationFactor), 0, sizeof(ushort));
+                stream.Write(BitConverter.GetBytes(geometrySubMesh.MaterialId), 0, sizeof(ushort));
             }
         }
 
@@ -558,13 +583,13 @@ namespace RyzeEditor.Packer
                 {
                     if (subMesh.TessellationFactor > 0)
                     {
-                        for (int i = 0; i < subMesh.IndexCount / 3; i++)
+                        for (uint i = 0; i < subMesh.IndexCount / 3; i++)
                         {
-                            patchIndexBuffer.Add(subMesh.PatchIndexBufferOffset + i);
+                            patchIndexBuffer.Add((int)(subMesh.PatchIndexBufferOffset + i));
 
-                            uint i0 = indexBuffer[subMesh.IndexBufferOffset + 3 * i + 0];
-                            uint i1 = indexBuffer[subMesh.IndexBufferOffset + 3 * i + 1];
-                            uint i2 = indexBuffer[subMesh.IndexBufferOffset + 3 * i + 2];
+                            uint i0 = indexBuffer[(int)(subMesh.IndexBufferOffset + 3 * i + 0)];
+                            uint i1 = indexBuffer[(int)(subMesh.IndexBufferOffset + 3 * i + 1)];
+                            uint i2 = indexBuffer[(int)(subMesh.IndexBufferOffset + 3 * i + 2)];
 
                             Vertex v0 = vertexBuffer[(int)i0];
                             Vertex v1 = vertexBuffer[(int)i1];
@@ -679,17 +704,18 @@ namespace RyzeEditor.Packer
                             {
                                 Id = subMesh.Id,
                                 ParentId = subMesh.ParentId,
-                                IndexBufferOffset = indexOffset,
-                                IndexCount = indices.Count,
-                                MaterialId = _worldMapData.Materials[subMesh.Materials[i]],
+                                IndexBufferOffset = (uint)indexOffset,
+                                IndexCount = (uint)indices.Count,
+                                MaterialId = (ushort)_worldMapData.Materials[subMesh.Materials[i]],
                                 Scale = subMesh.Scale,
                                 Rotation = subMesh.RotationRH,
                                 Position = subMesh.Position,
-                                TessellationFactor = subMesh.TessellationFactor,
+                                TessellationFactor = (ushort)subMesh.TessellationFactor,
                                 DamageLevel = subMesh.DamageLevel,
                                 IsHidden = subMesh.IsHidden,
                                 BoundBoxMin = boundBox.Minimum,
-                                BoundBoxMax = boundBox.Maximum
+                                BoundBoxMax = boundBox.Maximum,
+                                GeometryGroup = (ushort)subMesh.GeometryGroup
                             };
 
                             subMeshDataList.Add(subMeshData);
@@ -708,15 +734,16 @@ namespace RyzeEditor.Packer
                                 ParentId = subMesh.ParentId,
                                 IndexBufferOffset = uidList[subMeshGeometry.Uid][i].IndexBufferOffset,
                                 IndexCount = uidList[subMeshGeometry.Uid][i].IndexCount,
-                                MaterialId = _worldMapData.Materials[subMesh.Materials[i]],
+                                MaterialId = (ushort)_worldMapData.Materials[subMesh.Materials[i]],
                                 Scale = subMesh.Scale,
                                 Rotation = subMesh.RotationRH,
                                 Position = subMesh.Position,
-                                TessellationFactor = subMesh.TessellationFactor,
+                                TessellationFactor = (ushort)subMesh.TessellationFactor,
                                 DamageLevel = subMesh.DamageLevel,
                                 IsHidden = subMesh.IsHidden,
                                 BoundBoxMin = boundBox.Minimum,
-                                BoundBoxMax = boundBox.Maximum
+                                BoundBoxMax = boundBox.Maximum,
+                                GeometryGroup = (ushort)subMesh.GeometryGroup
                             };
 
                             subMeshDataList.Add(subMeshData);
@@ -903,13 +930,13 @@ namespace RyzeEditor.Packer
 
             public uint ParentId { get; set; }
 
-            public int IndexCount { get; set; }
+            public uint IndexCount { get; set; }
 
-            public int IndexBufferOffset { get; set; }
+            public uint IndexBufferOffset { get; set; }
 
-            public int PatchIndexBufferOffset { get; set; }
+            public uint PatchIndexBufferOffset { get; set; }
 
-            public int MaterialId { get; set; }
+            public ushort MaterialId { get; set; }
 
             public Vector3 Scale { get; set; }
 
@@ -921,11 +948,13 @@ namespace RyzeEditor.Packer
 
             public Vector3 BoundBoxMax { get; set; }
 
-            public int TessellationFactor { get; set; }
+            public ushort TessellationFactor { get; set; }
 
             public int DamageLevel { get; set; }
 
             public bool IsHidden { get; set; }
+
+            public ushort GeometryGroup { get; set; }
         }
     }
 }

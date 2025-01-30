@@ -254,6 +254,53 @@ namespace RyzeEditor.ResourceManagment
         }
     }
 
+    public class GeometrySubMesh
+    {
+        public BoundingBox BoundingBox { get; set; }
+
+        public uint Id { get; set; }
+
+        public uint IndexCount { get; set; }
+
+        public uint IndexBufferOffset { get; set; }
+
+        public uint PatchIndexBufferOffset { get; set; }
+
+        public ushort TessellationFactor { get; set; }
+
+        public ushort MaterialId { get; set; }
+
+        public override bool Equals(object obj)
+        {
+            if (obj == null)
+            {
+                return false;
+            }
+
+            var geomSubMesh = (GeometrySubMesh)obj;
+
+            if (IndexCount == geomSubMesh.IndexCount && 
+                IndexBufferOffset == geomSubMesh.IndexBufferOffset &&
+                MaterialId == geomSubMesh.MaterialId)
+            {
+                return true;
+            }
+
+            return false;
+        }
+
+        public override int GetHashCode()
+        {
+            int hash = 17;
+            hash = hash * 23 + IndexCount.GetHashCode();
+            hash = hash * 23 + IndexBufferOffset.GetHashCode();
+            hash = hash * 23 + PatchIndexBufferOffset.GetHashCode();
+            hash = hash * 23 + TessellationFactor.GetHashCode();
+            hash = hash * 23 + MaterialId.GetHashCode();
+            return hash;
+        }
+    }
+
     [Serializable]
     public class GeometryMesh : IMesh
     {
