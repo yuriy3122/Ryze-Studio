@@ -68,7 +68,9 @@ namespace RyzeEditor.Renderer
 
                 foreach (var gameObject in gameObjects)
                 {
-                    if ((gameObject.SubmeshVisibleMask & (1 << i)) != 0)
+                    long u = 1;
+
+                    if ((gameObject.SubmeshVisibleMask & (u << i)) != 0)
                     {
                         objectCount++;
                     }
@@ -87,7 +89,9 @@ namespace RyzeEditor.Renderer
 
                 foreach (var gameObject in gameObjects)
                 {
-                    if ((gameObject.SubmeshVisibleMask & (1 << i)) == 0)
+                    long u = 1;
+
+                    if ((gameObject.SubmeshVisibleMask & (u << i)) == 0)
                     {
                         continue;
                     }

@@ -106,16 +106,20 @@ namespace RyzeEditor.GameWorld
 
                         var group = mesh.SubMeshes.Where(x => x.GeometryGroup == subMesh.GeometryGroup && x.Id != subMesh.Id).ToList();
 
+                        long u = 1;
+
                         foreach (var sm in group)
                         {
                             var i = mesh.SubMeshes.IndexOf(sm);
 
-                            long mask = 1 << i;
+                            u = 1;
+                            long mask = u << i;
                             SubmeshVisibleMask &= ~mask;//hide submesh
                         }
 
                         var j = mesh.SubMeshes.IndexOf(subMesh);
-                        long m = 1 << j;
+                        u = 1;
+                        long m = u << j;
                         SubmeshVisibleMask |= m;//show submesh
                     }
                 }
