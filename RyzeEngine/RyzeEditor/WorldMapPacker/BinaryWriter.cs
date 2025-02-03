@@ -314,7 +314,7 @@ namespace RyzeEditor.Packer
                 stream.Write(position.GetBytes(), 0, 3 * sizeof(float));                       //Position
 
                 long mask = -1;
-                stream.Write(BitConverter.GetBytes(mask), 0, sizeof(long));  //SubMesh Visible mask
+                stream.Write(BitConverter.GetBytes(mask), 0, sizeof(long));                    //SubMesh Visible mask
 
                 stream.Write(BitConverter.GetBytes(0L), 0, sizeof(long));                      //Reserve for 64-bit pointer
                 stream.Write(BitConverter.GetBytes(obj.GeometryMeshes.Count), 0, sizeof(int)); //Geometry mesh count
@@ -726,14 +726,22 @@ namespace RyzeEditor.Packer
                     {
                         for (int i = 0; i < subMesh.Materials.Count; i++)
                         {
+                            if (!subMeshGeometry.Indices.ContainsKey(i))
+                            {
+                                continue;
+                            }
+
                             var boundBox = subMesh.GetBoundingBox(mesh.Key);
+
+                            var materialId = (ushort)_worldMapData.Materials[subMesh.Materials[i]];
+                            var item = uidList[subMeshGeometry.Uid].FirstOrDefault(x => x.MaterialId == materialId);
 
                             var subMeshData = new SubMeshData
                             {
                                 Id = subMesh.Id,
                                 ParentId = subMesh.ParentId,
-                                IndexBufferOffset = uidList[subMeshGeometry.Uid][i].IndexBufferOffset,
-                                IndexCount = uidList[subMeshGeometry.Uid][i].IndexCount,
+                                IndexBufferOffset = item.IndexBufferOffset,
+                                IndexCount = item.IndexCount,
                                 MaterialId = (ushort)_worldMapData.Materials[subMesh.Materials[i]],
                                 Scale = subMesh.Scale,
                                 Rotation = subMesh.RotationRH,

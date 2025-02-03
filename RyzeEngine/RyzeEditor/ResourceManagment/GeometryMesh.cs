@@ -35,7 +35,7 @@ namespace RyzeEditor.ResourceManagment
             }
 
             var vertex = (Vertex)obj;
-            var epsilon = new Vector3(1e-8f, 1e-8f, 1e-8f);
+            var epsilon = new Vector3(1e-6f, 1e-6f, 1e-6f);
 
             if (!Vector3.NearEqual(vertex.Pos, Pos, epsilon))
             {
@@ -120,6 +120,29 @@ namespace RyzeEditor.ResourceManagment
             Id = nodeId;
             ParentId = parentNodeId == 0 ? uint.MaxValue : parentNodeId;
             Scale = Vector3.One;
+        }
+
+        public bool IsEqualMaterials(SubMesh subMesh)
+        {
+            if (subMesh == null)
+            {
+                return false;
+            }
+
+            if (subMesh.Materials.Count != Materials.Count)
+            {
+                return false;
+            }
+
+            foreach (var material in subMesh.Materials)
+            {
+                if (!Materials.Any(x => x.Equals(material)))
+                {
+                    return false;
+                }
+            }
+
+            return true;
         }
 
         public bool IsEqualGeometry(SubMesh subMesh)

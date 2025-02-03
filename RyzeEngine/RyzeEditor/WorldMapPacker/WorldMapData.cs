@@ -111,7 +111,7 @@ namespace RyzeEditor.Packer
                             }
                         }
 
-                        ProcessSubMeshGeometry(subMesh);                        
+                        ProcessSubMeshGeometry(subMesh);                       
                     }
                 }
             }
@@ -216,7 +216,10 @@ namespace RyzeEditor.Packer
             {
                 if (subMesh.VertexData.Count != 0 && key.IsEqualGeometry(subMesh))
                 {
-                    data = SubMeshGeometryList[key];
+                    if (subMesh.IsEqualMaterials(key))
+                    {
+                        data = SubMeshGeometryList[key];
+                    }
                 }
             }
 
