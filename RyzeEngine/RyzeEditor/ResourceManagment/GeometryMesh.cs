@@ -35,34 +35,35 @@ namespace RyzeEditor.ResourceManagment
             }
 
             var vertex = (Vertex)obj;
-            var epsilon = new Vector3(1e-6f, 1e-6f, 1e-6f);
+            var epsilon1 = new Vector3(1e-6f, 1e-6f, 1e-6f);
+            var epsilon2 = new Vector3(1e-3f, 1e-3f, 1e-3f);
 
-            if (!Vector3.NearEqual(vertex.Pos, Pos, epsilon))
+            if (!Vector3.NearEqual(vertex.Pos, Pos, epsilon1))
             {
                 return false;
             }
 
-            if (!Vector3.NearEqual(vertex.Norm, Norm, epsilon))
+            if (!Vector3.NearEqual(vertex.Norm, Norm, epsilon1))
             {
                 return false;
             }
 
-            if (!Vector3.NearEqual(vertex.Tangent, Tangent, epsilon))
+            if (!Vector3.NearEqual(vertex.Tangent, Tangent, epsilon2))
             {
                 return false;
             }
 
-            if (!Vector3.NearEqual(vertex.Bitangent, Bitangent, epsilon))
+            if (!Vector3.NearEqual(vertex.Bitangent, Bitangent, epsilon2))
             {
                 return false;
             }
 
-            if (Vector4.Distance(vertex.Weights, Weights) > 0.00001f)
+            if (Vector4.Distance(vertex.Weights, Weights) > 0.001f)
             {
                 return false;
             }
 
-            if (Vector2.Distance(vertex.Tex, Tex) > 0.00001f)
+            if (Vector2.Distance(vertex.Tex, Tex) > 0.001f)
             {
                 return false;
             }
@@ -661,12 +662,47 @@ namespace RyzeEditor.ResourceManagment
                 vert.Tangent.Y = BitConverter.ToSingle(buffer, (offset++).Value);
                 vert.Tangent.Z = BitConverter.ToSingle(buffer, (offset++).Value);
 
+                if (float.IsNaN(vert.Tangent.X))
+                {
+                    vert.Tangent.X = 0.0f;
+                }
+                if (float.IsNaN(vert.Tangent.Y))
+                {
+                    vert.Tangent.Y = 0.0f;
+                }
+                if (float.IsNaN(vert.Tangent.Z))
+                {
+                    vert.Tangent.Z = 0.0f;
+                }
+
                 vert.Bitangent.X = BitConverter.ToSingle(buffer, (offset++).Value);
                 vert.Bitangent.Y = BitConverter.ToSingle(buffer, (offset++).Value);
                 vert.Bitangent.Z = BitConverter.ToSingle(buffer, (offset++).Value);
 
+                if (float.IsNaN(vert.Bitangent.X))
+                {
+                    vert.Bitangent.X = 0.0f;
+                }
+                if (float.IsNaN(vert.Bitangent.Y))
+                {
+                    vert.Bitangent.Y = 0.0f;
+                }
+                if (float.IsNaN(vert.Bitangent.Z))
+                {
+                    vert.Bitangent.Z = 0.0f;
+                }
+
                 vert.Tex.X = BitConverter.ToSingle(buffer, (offset++).Value);
                 vert.Tex.Y = BitConverter.ToSingle(buffer, (offset++).Value);
+
+                if (float.IsNaN(vert.Tex.X))
+                {
+                    vert.Tex.Y = 0.0f;
+                }
+                if (float.IsNaN(vert.Tex.Y))
+                {
+                    vert.Tex.Y = 0.0f;
+                }
 
                 vertices.Add(vert);
             }
