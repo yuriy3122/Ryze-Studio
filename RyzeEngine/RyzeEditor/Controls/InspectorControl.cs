@@ -505,20 +505,25 @@ namespace RyzeEditor.Controls
             {
                 entity.PropertyChanged += (sender, args) =>
                 {
-                    if (sender == null || !_controls.ContainsKey(args.PropertyName) || !(_controls[args.PropertyName] is NumericUpDown numUpDown))
+                    if (sender == null || !_controls.ContainsKey(args.PropertyName) || (args.PropertyName != property.Name) || !(_controls[args.PropertyName] is NumericUpDown numUpDown))
                     {
                         return;
                     }
 
-                    control.ValueChanged -= ControlValueChanged;
+                    var propChangedType = sender.GetType().GetProperty(args.PropertyName).PropertyType;
 
-                    if (_selection.Get().OfType<EntityBase>().Count() == 1)
+                    if (propChangedType == typeof(int))
                     {
-                        var param = sender.GetType().GetProperty(args.PropertyName)?.GetValue(sender);
-                        if (param != null) numUpDown.Value = (int) param;
-                    }
+                        control.ValueChanged -= ControlValueChanged;
 
-                    control.ValueChanged += ControlValueChanged;
+                        if (_selection.Get().OfType<EntityBase>().Count() == 1)
+                        {
+                            var param = sender.GetType().GetProperty(args.PropertyName)?.GetValue(sender);
+                            if (param != null) numUpDown.Value = (int)param;
+                        }
+
+                        control.ValueChanged += ControlValueChanged;
+                    }
                 };
             }
 
@@ -558,20 +563,25 @@ namespace RyzeEditor.Controls
             {
                 entity.PropertyChanged += (sender, args) =>
                 {
-                    if (sender == null || !_controls.ContainsKey(args.PropertyName) || !(_controls[args.PropertyName] is CheckBox checkBox))
+                    if (sender == null || !_controls.ContainsKey(args.PropertyName) || (args.PropertyName != property.Name) || !(_controls[args.PropertyName] is CheckBox checkBox))
                     {
                         return;
                     }
 
-                    checkBox.CheckStateChanged -= ControlValueChanged;
+                    var propChangedType = sender.GetType().GetProperty(args.PropertyName).PropertyType;
 
-                    if (_selection.Get().OfType<EntityBase>().Count() == 1)
+                    if (propChangedType == typeof(bool))
                     {
-                        var param = sender.GetType().GetProperty(args.PropertyName).GetValue(sender);
-                        checkBox.Checked = (bool)param;
-                    }
+                        checkBox.CheckStateChanged -= ControlValueChanged;
 
-                    checkBoxControl.CheckedChanged += ControlValueChanged;
+                        if (_selection.Get().OfType<EntityBase>().Count() == 1)
+                        {
+                            var param = sender.GetType().GetProperty(args.PropertyName).GetValue(sender);
+                            checkBox.Checked = (bool)param;
+                        }
+
+                        checkBoxControl.CheckedChanged += ControlValueChanged;
+                    }
                 };
             }
 
@@ -597,7 +607,7 @@ namespace RyzeEditor.Controls
             }
 
             var propertyInfo = entities.First().GetType().GetProperty(property.Name);
-            var numericControl = new NumericUpDown { DecimalPlaces = 2, Maximum = 10000000, Increment = 0.1M, Dock = DockStyle.Fill, Anchor = AnchorStyles.Top };
+            var numericControl = new NumericUpDown { DecimalPlaces = 2, Maximum = 1000000, Increment = 0.1M, Dock = DockStyle.Fill, Anchor = AnchorStyles.Top };
 
             if (entities.Count == 1)
             {
@@ -609,24 +619,29 @@ namespace RyzeEditor.Controls
             {
                 entity.PropertyChanged += (sender, args) =>
                 {
-                    if (sender == null || !_controls.ContainsKey(args.PropertyName) || !(_controls[args.PropertyName] is NumericUpDown numUpDown))
+                    if (sender == null || !_controls.ContainsKey(args.PropertyName) || (args.PropertyName != property.Name) || !(_controls[args.PropertyName] is NumericUpDown numUpDown))
                     {
                         return;
                     }
 
-                    numUpDown.ValueChanged -= ControlValueChanged;
+                    var propChangedType = sender.GetType().GetProperty(args.PropertyName).PropertyType;
 
-                    if (_selection.Get().OfType<EntityBase>().Count() == 1)
+                    if (propChangedType == typeof(float))
                     {
-                        var param = sender.GetType().GetProperty(args.PropertyName).GetValue(sender);
+                        numUpDown.ValueChanged -= ControlValueChanged;
 
-                        if (param != null)
+                        if (_selection.Get().OfType<EntityBase>().Count() == 1)
                         {
-                            numUpDown.Value = Convert.ToDecimal(param);
-                        }
-                    }
+                            var param = sender.GetType().GetProperty(args.PropertyName).GetValue(sender);
 
-                    numUpDown.ValueChanged += ControlValueChanged;
+                            if (param != null)
+                            {
+                                numUpDown.Value = Convert.ToDecimal(param);
+                            }
+                        }
+
+                        numUpDown.ValueChanged += ControlValueChanged;
+                    }
                 };
             }
 
