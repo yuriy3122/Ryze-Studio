@@ -402,7 +402,7 @@ namespace RyzeEditor.Controls
             {
                 entity.PropertyChanged += (sender, args) =>
                 {
-                    if (sender == null || !_controls.ContainsKey(args.PropertyName) || !(_controls[args.PropertyName] is QuaternionUpDown quaternionDown))
+                    if (sender == null || !_controls.ContainsKey(args.PropertyName) || (args.PropertyName != property.Name) || !(_controls[args.PropertyName] is QuaternionUpDown quaternionDown))
                     {
                         return;
                     }
@@ -459,7 +459,7 @@ namespace RyzeEditor.Controls
             {
                 entity.PropertyChanged += (sender, args) =>
                 {
-                    if (sender == null || !_controls.ContainsKey(args.PropertyName) || !(_controls[args.PropertyName] is VectorUpDown vecUpDown))
+                    if (sender == null || !_controls.ContainsKey(args.PropertyName) || (args.PropertyName != property.Name) || !(_controls[args.PropertyName] is VectorUpDown vecUpDown))
                     {
                         return;
                     }
@@ -741,7 +741,7 @@ namespace RyzeEditor.Controls
             {
                 entity.PropertyChanged += (sender, args) =>
                 {
-                    if (sender == null || !_controls.ContainsKey(args.PropertyName) || !(_controls[args.PropertyName] is WheelControl wheelControl))
+                    if (sender == null || !_controls.ContainsKey(args.PropertyName) || (args.PropertyName != property.Name) || !(_controls[args.PropertyName] is WheelControl wheelControl))
                     {
                         return;
                     }

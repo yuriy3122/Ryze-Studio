@@ -363,6 +363,18 @@ namespace RyzeEditor
                     _objectHierarchyControl.UpdateHierarchy(entities);
                 }
 
+                foreach (var entity in _worldMap.Entities)
+                {
+                    var gameObject = entity as GameObject;
+
+                    if (gameObject != null)
+                    {
+                        int level = gameObject.DamageLevel;
+                        gameObject.DamageLevel = 0;
+                        gameObject.DamageLevel = gameObject.DamageLevel;
+                    }
+                }
+
                 _worldMap.SetModified();
                 _serverClient.WorldMap = _worldMap;
 
