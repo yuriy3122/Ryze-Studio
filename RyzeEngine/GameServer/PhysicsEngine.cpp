@@ -1,6 +1,5 @@
 #include <iostream>
 #include "PhysicsEngine.h"
-#include <BulletCollision/CollisionShapes/btHeightfieldTerrainShape.h>
 
 #pragma warning(disable:6011)
 
@@ -23,7 +22,7 @@ PhysicsEngine::PhysicsEngine(ResourceManager* resourceManager)
 	m_overlappingPairCache = new btAxisSweep3(worldMin, worldMax);
 	m_solver = new btSequentialImpulseConstraintSolver;
 
-	m_dynamicsWorld = new btDiscreteDynamicsWorld(m_dispatcher, m_overlappingPairCache, m_solver, m_collisionConfiguration);
+	m_dynamicsWorld = new btSoftRigidDynamicsWorld(m_dispatcher, m_overlappingPairCache, m_solver, m_collisionConfiguration);
 	m_dynamicsWorld->getSolverInfo().m_minimumSolverBatchSize = 128;
 	m_dynamicsWorld->getSolverInfo().m_globalCfm = 0.00001;
 	m_dynamicsWorld->setGravity(btVector3(0, -9.8, 0));
@@ -328,7 +327,7 @@ btCollisionShape* PhysicsEngine::CreateHeightfieldTerrainShape(const collision_s
 	btVector3 localScaling(shape->gridSpacing, 1.0f, shape->gridSpacing);
 	collisionShape->setLocalScaling(localScaling);
 
-	return collisionShape;
+	return NULL;
 }
 
 btRigidBody* PhysicsEngine::CreateRigidBody(const rigid_body_t* rigidBody, btCollisionShape* collisionShape)

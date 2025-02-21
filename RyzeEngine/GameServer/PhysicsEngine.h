@@ -4,6 +4,8 @@
 #include "SubMeshTransform.h"
 #include "ResourceManager.h"
 #include "btBulletDynamicsCommon.h"
+#include <BulletCollision/CollisionShapes/btHeightfieldTerrainShape.h>
+#include <BulletSoftBody/btSoftRigidDynamicsWorld.h>
 #include <map>
 #include <vector>
 
