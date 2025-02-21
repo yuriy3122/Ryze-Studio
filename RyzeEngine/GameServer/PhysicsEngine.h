@@ -6,6 +6,7 @@
 #include "btBulletDynamicsCommon.h"
 #include <BulletCollision/CollisionShapes/btHeightfieldTerrainShape.h>
 #include <BulletSoftBody/btSoftRigidDynamicsWorld.h>
+#include <BulletSoftBody/btSoftBodyRigidBodyCollisionConfiguration.h>
 #include <map>
 #include <vector>
 

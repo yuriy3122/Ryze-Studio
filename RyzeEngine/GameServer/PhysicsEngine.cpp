@@ -14,7 +14,7 @@ PhysicsEngine::PhysicsEngine(ResourceManager* resourceManager)
 	m_resourceManager = resourceManager;
 	m_subMeshTransforms = map<int, SubMeshTransformList>{};
 
-	m_collisionConfiguration = new btDefaultCollisionConfiguration();
+	m_collisionConfiguration = new btSoftBodyRigidBodyCollisionConfiguration();
 	m_dispatcher = new btCollisionDispatcher(m_collisionConfiguration);
 
 	btVector3 worldMin(-1000, -1000, -1000);
