@@ -44,7 +44,7 @@ private:
 	btCollisionDispatcher* m_dispatcher;
 	btBroadphaseInterface* m_overlappingPairCache;
 	btSequentialImpulseConstraintSolver* m_solver;
-	btDiscreteDynamicsWorld* m_dynamicsWorld;
+	btSoftRigidDynamicsWorld* m_dynamicsWorld;
 
 	map<int, btCollisionShape*> m_collisionShapes;
 	map<int, btRaycastVehicle*> m_vehicles;
