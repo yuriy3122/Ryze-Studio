@@ -72,7 +72,7 @@ namespace RyzeEditor.Renderer
             _desc = new SwapChainDescription
 			{
 				BufferCount = 1,
-				ModeDescription = new ModeDescription((int)(_widthScale * _camera.ClientWndSize.Width), (int)(_heigthScale * _camera.ClientWndSize.Height), new Rational(30, 1), Format.R8G8B8A8_UNorm),
+				ModeDescription = new ModeDescription((int)(_widthScale * _camera.ClientWndSize.Width), (int)(_heigthScale * _camera.ClientWndSize.Height), new Rational(60, 1), Format.R8G8B8A8_UNorm),
 				IsWindowed = true,
 				OutputHandle = _handle,
 				SampleDescription = new SampleDescription(1, 0),

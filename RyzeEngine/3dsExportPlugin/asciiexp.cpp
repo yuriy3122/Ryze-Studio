@@ -599,13 +599,16 @@ void MeshExporter::ExportStdMaterial(Mtl* material)
 	g_outputFile.write((char*)fileName, sizeof(TCHAR) * hdr);
 }
 
-void MeshExporter::ExportDefaultMaterial()
+void MeshExporter::ExportDefaultMaterial(DWORD col)
 {
 	int numMtls = 1;
 	g_outputFile.write((char*)&numMtls, sizeof(int));
 
 	Color color;
-	color.r = color.g = color.b = 0.5f;
+	color.r = (float)(int)GetRValue(col) / 255.0f;
+	color.g = (float)(int)GetGValue(col) / 255.0f;
+	color.b = (float)(int)GetBValue(col) / 255.0f;
+
 	g_outputFile.write((char*)&color.r, sizeof(float));
 	g_outputFile.write((char*)&color.g, sizeof(float));
 	g_outputFile.write((char*)&color.b, sizeof(float));
@@ -670,7 +673,9 @@ void MeshExporter::ExportMaterial(INode* node)
 
 	if (material == NULL)
 	{
-		ExportDefaultMaterial();
+		DWORD color = node->GetWireColor();
+
+		ExportDefaultMaterial(color);
 
 		return;
 	}

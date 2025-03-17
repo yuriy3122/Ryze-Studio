@@ -82,7 +82,7 @@ private:
 	int GetEqualVertex(const Point3& vp, const Point3& vn, const Point3& tc);
 
 	void ExportStdMaterial(Mtl* material);
-	void ExportDefaultMaterial();
+	void ExportDefaultMaterial(DWORD col);
 	void ExportAnimationKeys(INode* node, ISkin* iskin);
 
 	vector<VertexPosition> m_vertices;
