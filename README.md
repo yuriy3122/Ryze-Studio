@@ -1,4 +1,4 @@
-<h4 align="center" ![screenshot](https://github.com/yuriy3122/Ryze-Studio/blob/main/logo.jpeg) </h4>
+![screenshot](https://github.com/yuriy3122/Ryze-Studio/blob/main/logo.jpeg)
 
 <h5 align="center">RYZE STUDIO</h5>
 
