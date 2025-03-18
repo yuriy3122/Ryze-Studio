@@ -1,4 +1,4 @@
-<h5 align="center" <img src="[logo.jpg](https://github.com/yuriy3122/Ryze-Studio/blob/main/RYZE%20Studio.jpg)" alt="Logo">>RYZE STUDIO</h5>
+<div align="center" <img src="https://github.com/yuriy3122/Ryze-Studio/blob/main/RYZE%20Studio.jpg" alt="Logo">RYZE STUDIO</div>
 
 <h5 align="center" img>RYZE STUDIO</h5>
 
