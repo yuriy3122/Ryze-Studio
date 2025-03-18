@@ -7,9 +7,9 @@
   <br>
 </h1>
 
-<h4 align="center">RYZE STUDIO <a href="" target="_blank">RYZE</a>.</h4>
+<h4 align="center">RYZE STUDIO</h4>
 
-![screenshot](https://drive.google.com/file/d/1fKj7hYnd4GxIaavB7KSIDvZ40TJ7PZUL/view?usp=sharing)
+![screenshot](https://github.com/yuriy3122/Ryze-Studio/blob/main/RYZE%20Studio.jpg)
 
 ## Key Features
 
