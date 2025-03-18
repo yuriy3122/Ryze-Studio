@@ -1,7 +1,7 @@
 
 <h1 align="center">
   <br>
-  <a href="https://drive.google.com/file/d/1pLtjgewNdGedlq1eXpw1EWfiCYDqI2n7/view?usp=sharing"><img src="https://drive.google.com/file/d/1pLtjgewNdGedlq1eXpw1EWfiCYDqI2n7/view?usp=sharing" alt="Markdownify" width="200"></a>
+  <a href="https://github.com/yuriy3122/Ryze-Studio/blob/main/RYZE%20logo.jpeg" alt="Markdownify" width="200"></a>
   <br>
   RYZE
   <br>
