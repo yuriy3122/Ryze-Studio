@@ -1,6 +1,7 @@
-<img src="https://github.com/yuriy3122/Ryze-Studio/blob/main/RYZE%20Studio.jpg" alt="Logo">
 
 <h5 align="center">RYZE STUDIO</h5>
+
+<img src="https://github.com/yuriy3122/Ryze-Studio/blob/main/RYZE%20Studio.jpg" alt="Logo">
 
 ## Key Features
 
