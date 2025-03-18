@@ -1,8 +1,6 @@
-![screenshot](https://github.com/yuriy3122/Ryze-Studio/blob/main/logo.jpeg)
+<h5 align="center" <img src="[logo.jpg](https://github.com/yuriy3122/Ryze-Studio/blob/main/RYZE%20Studio.jpg)" alt="Logo">>RYZE STUDIO</h5>
 
-<h5 align="center">RYZE STUDIO</h5>
-
-![screenshot](https://github.com/yuriy3122/Ryze-Studio/blob/main/RYZE%20Studio.jpg)
+<h5 align="center" img>RYZE STUDIO</h5>
 
 ## Key Features
 
