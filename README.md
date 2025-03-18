@@ -1,6 +1,6 @@
-<div align="center" <img src="https://github.com/yuriy3122/Ryze-Studio/blob/main/RYZE%20Studio.jpg" alt="Logo">RYZE STUDIO</div>
+<img src="https://github.com/yuriy3122/Ryze-Studio/blob/main/RYZE%20Studio.jpg" alt="Logo">
 
-<h5 align="center" img>RYZE STUDIO</h5>
+<h5 align="center">RYZE STUDIO</h5>
 
 ## Key Features
 
