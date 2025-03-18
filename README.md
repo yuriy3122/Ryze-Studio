@@ -1,4 +1,4 @@
-[![name](https://github.com/yuriy3122/Ryze-Studio/blob/main/logo.jpeg)]
+![name](https://github.com/yuriy3122/Ryze-Studio/blob/main/logo.jpeg)
 
 <h5 align="center">RYZE STUDIO</h5>
 
