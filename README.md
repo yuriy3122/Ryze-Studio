@@ -2,7 +2,7 @@
   <img src="https://github.com/yuriy3122/Ryze-Studio/blob/main/logo.jpeg" />
 </p>
 
-<h5 align="center">RYZE STUDIO</h5>
+<h1 align="center">RYZE STUDIO</h1>
 
 <img src="https://github.com/yuriy3122/Ryze-Studio/blob/main/RYZE%20Studio.jpg" alt="Screenshot">
 
