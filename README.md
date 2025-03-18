@@ -1,4 +1,6 @@
-<div style="text-align: center"><img src="https://github.com/yuriy3122/Ryze-Studio/blob/main/logo.jpeg"></div>
+<div style="display: flex; justify-content: center;">
+  <img src="https://github.com/yuriy3122/Ryze-Studio/blob/main/logo.jpeg" style="width: 40px; height: 40px;" />
+</div>
 
 <h5 align="center">RYZE STUDIO</h5>
 
