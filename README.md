@@ -1,7 +1,7 @@
 
 <h1 align="center">
   <br>
-  <a href="(https://github.com/yuriy3122/Ryze-Studio/blob/main/RYZE%20Studio.jpg)"></a>
+  <a href="(https://github.com/yuriy3122/Ryze-Studio/blob/main/logo.jpeg)"></a>
   <br>
   RYZE
   <br>
