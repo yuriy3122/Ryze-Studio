@@ -1,11 +1,4 @@
-
-<h1 align="center">
-  <br>
-  <a href="(https://github.com/yuriy3122/Ryze-Studio/blob/main/logo.jpeg)"></a>
-  <br>
-  RYZE
-  <br>
-</h1>
+![screenshot](https://github.com/yuriy3122/Ryze-Studio/blob/main/logo.jpeg)
 
 <h4 align="center">RYZE STUDIO</h4>
 
