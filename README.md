@@ -11,12 +11,12 @@
 
 * Arranging objects on a 3D scene
   - Scale, Translation and Rotation tools.
-* Integration with the Bullet3 physics engine, setting object properties to simulate the physical world.
+* Integration with the Bullet3 physics engine, setting object properties to simulate the physical world
   - Soft and Rigid bodies simulation.
 * Compiling 3D scenes into a proprietary binary format for loading scenes on mobile devices.
 
 ## How To Use
 
-To clone and run this application, you'll need Microsoft Visual Studio 2022
+To clone and run this application, you'll need Microsoft Visual Studio 2022.
 
 
