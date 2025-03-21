@@ -11,7 +11,7 @@
 
 * Arranging objects on a 3D scene
   - Scale, Translation and Rotation tools.
-* Integration with the Bullet3 physics engine, setting object properties to simulate the physical world
+* Integration with the Bullet physics engine, setting object properties to simulate the physical world
   - Soft and Rigid bodies simulation.
 * Compiling 3D scenes into a proprietary binary format for loading scenes on mobile devices.
 
